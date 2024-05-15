@@ -38,6 +38,8 @@ var categoryObject = {
   parentId: null,
   description: "",
   url: "",
+  feature_image: null,
+  thumbnail_cat_image: null,
   meta: {
     title: "",
     description: "",
@@ -50,10 +52,9 @@ const AllCategoryComponent = () => {
   const products = useSelector((state) => state.products);
   const [categories, setCategories] = useState([]);
   const setting = useSelector((state) => state.settings);
-  const [singlecategory, setSingleCategory] = useState(categoryObject);
+  const [singleCategory, setSingleCategory] = useState(categoryObject);
   const [editMode, setEditmode] = useState(false);
   const [isUrlChanged, setIsUrlChanged] = useState(false);
-  const [featuredImage, setfeaturedImage] = useState(null);
   const [filtered, setfilterdData] = useState([]);
   const [loading, setloading] = useState(false);
   const columndata = [
@@ -105,24 +106,34 @@ const AllCategoryComponent = () => {
   useEffect(() => {
     setloading(get(products, "loading"));
   }, [get(products, "loading")]);
-
+  const getImage = (image) => {
+    if (image) {
+      return getBaseUrl(setting) + image;
+    }
+  };
   const editCategory = (cat) => {
     setEditmode(true);
-    setfeaturedImage(null);
-    if (cat.image) {
-      setfeaturedImage(getBaseUrl(setting) + cat.image);
-    }
-    setSingleCategory({ ...singlecategory, ...cat });
+    setSingleCategory({
+      ...singleCategory,
+      feature_image: null,
+      thumbnail_cat_image: null,
+    });
+    setSingleCategory({
+      ...singleCategory,
+      ...cat,
+      feature_image: getImage(cat?.image),
+      thumbnail_cat_image: getImage(cat?.thumbnail_image),
+    });
   };
   const handleChange = (e) => {
     if (e.target.name === "parentId" && !e.target.value) {
-      setSingleCategory({ ...singlecategory, [e.target.name]: null });
+      setSingleCategory({ ...singleCategory, [e.target.name]: null });
       return;
     }
-    setSingleCategory({ ...singlecategory, [e.target.name]: e.target.value });
+    setSingleCategory({ ...singleCategory, [e.target.name]: e.target.value });
   };
   const updateCat = () => {
-    var errors = validate(["name"], singlecategory);
+    var errors = validate(["name"], singleCategory);
 
     if (!isEmpty(errors)) {
       dispatch({
@@ -134,13 +145,19 @@ const AllCategoryComponent = () => {
         },
       });
     } else {
-      dispatch(categoryUpdateAction(singlecategory));
+      if (singleCategory?.feature_image) {
+        delete singleCategory?.feature_image;
+      }
+      if (singleCategory?.thumbnail_cat_image) {
+        delete singleCategory?.thumbnail_cat_image;
+      }
+      dispatch(categoryUpdateAction(singleCategory));
       setEditmode(false);
       setSingleCategory(categoryObject);
     }
   };
   const addCat = () => {
-    var errors = validate(["name"], singlecategory);
+    var errors = validate(["name"], singleCategory);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -151,99 +168,80 @@ const AllCategoryComponent = () => {
         },
       });
     } else {
-      dispatch(categoryAddAction(singlecategory));
+      if (singleCategory?.feature_image) {
+        delete singleCategory?.feature_image;
+      }
+      if (singleCategory?.thumbnail_cat_image) {
+        delete singleCategory?.thumbnail_cat_image;
+      }
+      dispatch(categoryAddAction(singleCategory));
     }
   };
   const cancelCat = () => {
     document.forms[0].reset();
     setEditmode(false);
-    setfeaturedImage(null);
     setSingleCategory(categoryObject);
-    setIsUrlChanged(false)
+    setIsUrlChanged(false);
   };
-  const fileChange = (e) => {
+  const handleFileChange = (e, apiName) => {
     const files = get(e, "target.files", []);
-
+    const name = get(e, "target.name", "");
     if (files.length > 0) {
-      setfeaturedImage(URL.createObjectURL(files[0]));
       setSingleCategory({
-        ...singlecategory,
-        image: files,
+        ...singleCategory,
+        [apiName]: files,
+        [name]: URL.createObjectURL(files[0]),
       });
-    } else {
-      setfeaturedImage(featuredImage);
     }
   };
 
-  const updatefileChange = (e) => {
-    const files = get(e, 'target.files', []);
-
-    if (files.length > 0) {
-      setfeaturedImage(URL.createObjectURL(files[0]));
-      setSingleCategory({
-        ...singlecategory,
-        update_image: files,
-      });
-    } else {
-      setfeaturedImage(featuredImage);
-    }
-  };
-
-  // const isUrlExist = async (url) => {
-  //   if (url) {
-  //     setSingleCategory({
-  //       ...singlecategory,
-  //       url: url,
-  //     });
-  //     if (!isUrlChanged) {
-  //       setIsUrlChanged(true)
-  //     }
-  //   }
-  // };
   const isUrlExist = async (url) => {
     if (url && !editMode) {
-      updateUrlOnBlur(url)
+      updateUrlOnBlur(url);
     }
   };
   const updateUrl = async (URL, setEditPermalink) => {
-    if (singlecategory?.id) {
-      await query(CHECK_VALID_URL, { url: URL, entryId: singlecategory?.id }).then(res => {
-        if (get(res, 'data.validateUrl.url')) {
-          const newUrl = get(res, 'data.validateUrl.url')
+    if (singleCategory?.id) {
+      await query(CHECK_VALID_URL, {
+        url: URL,
+        entryId: singleCategory?.id,
+      }).then((res) => {
+        if (get(res, "data.validateUrl.url")) {
+          const newUrl = get(res, "data.validateUrl.url");
           setSingleCategory({
-            ...singlecategory,
+            ...singleCategory,
             url: newUrl,
           });
-          setEditPermalink((previous) => !previous)
+          setEditPermalink((previous) => !previous);
         }
       });
     } else {
-      await query(CHECK_VALID_URL, { url: URL }).then(res => {
-        if (get(res, 'data.validateUrl.url')) {
-          const newUrl = get(res, 'data.validateUrl.url')
+      await query(CHECK_VALID_URL, { url: URL }).then((res) => {
+        if (get(res, "data.validateUrl.url")) {
+          const newUrl = get(res, "data.validateUrl.url");
           setSingleCategory({
-            ...singlecategory,
+            ...singleCategory,
             url: newUrl,
           });
-          setEditPermalink((previous) => !previous)
+          setEditPermalink((previous) => !previous);
         }
       });
     }
-  }
+  };
   const updateUrlOnBlur = async (URL) => {
     if (URL) {
-      await query(CHECK_VALID_URL, { url: URL }).then(res => {
-        if (get(res, 'data.validateUrl.url')) {
-          const newUrl = get(res, 'data.validateUrl.url')
+      await query(CHECK_VALID_URL, { url: URL }).then((res) => {
+        if (get(res, "data.validateUrl.url")) {
+          const newUrl = get(res, "data.validateUrl.url");
           setSingleCategory({
-            ...singlecategory,
+            ...singleCategory,
             url: newUrl,
           });
-          setIsUrlChanged(true)
+          setIsUrlChanged(true);
         }
       });
-    } 
-  }
+    }
+  };
   const handleOnChangeSearch = (filtereData) => {
     setfilterdData(filtereData);
   };
@@ -280,27 +278,19 @@ const AllCategoryComponent = () => {
                 variant="outlined"
                 className={clsx(classes.marginBottom, classes.width100)}
                 onChange={handleChange}
-                value={singlecategory.name}
+                value={singleCategory.name}
                 onBlur={(e) =>
-                  !singlecategory.url || singlecategory.url !== e.target.value
-                    ? (!isUrlChanged && isUrlExist(singlecategory.name))
+                  !singleCategory.url || singleCategory.url !== e.target.value
+                    ? !isUrlChanged && isUrlExist(singleCategory.name)
                     : null
                 }
               />
-              <Box component="div" mb={singlecategory.url ? 2 : 0}>
-                {/* <URLComponent
-                  url={singlecategory.url}
-                  onInputChange={(updatedUrl) => {
-                    setSingleCategory({ ...singlecategory, url: updatedUrl });
-                  }}
-                  pageUrl="category"
-                  tableUrl="ProductCat"
-                /> */}
+              <Box component="div" mb={singleCategory.url ? 2 : 0}>
                 <ValidUrlComponent
-                  url={singlecategory.url}
+                  url={singleCategory.url}
                   onSubmit={updateUrl}
                   onInputChange={(updatedUrl) => {
-                    setSingleCategory({ ...singlecategory, url: updatedUrl });
+                    setSingleCategory({ ...singleCategory, url: updatedUrl });
                   }}
                   pageUrl="collection"
                   tableUrl="ProductCat"
@@ -312,9 +302,9 @@ const AllCategoryComponent = () => {
                   <Select
                     native
                     value={
-                      singlecategory.parentId === null
+                      singleCategory.parentId === null
                         ? ""
-                        : singlecategory.parentId
+                        : singleCategory.parentId
                     }
                     onChange={handleChange}
                     inputProps={{
@@ -328,7 +318,7 @@ const AllCategoryComponent = () => {
                           key={cat.id}
                           value={cat.id}
                           disabled={
-                            editMode && cat.id === singlecategory.id
+                            editMode && cat.id === singleCategory.id
                               ? true
                               : false
                           }
@@ -344,8 +334,10 @@ const AllCategoryComponent = () => {
                 <Box component="span">
                   <CardBlocks title="Change Category Image">
                     <FeaturedImageComponent
-                      image={featuredImage}
-                      feautedImageChange={(e) => updatefileChange(e)}
+                      image={get(singleCategory, "feature_image")}
+                      feautedImageChange={(e) =>
+                        handleFileChange(e, "upload_image")
+                      }
                     />
                   </CardBlocks>
                 </Box>
@@ -356,9 +348,41 @@ const AllCategoryComponent = () => {
                     className={classes.flex1}
                   >
                     <FeaturedImageComponent
-                      image={featuredImage}
-                      feautedImageChange={(e) => fileChange(e)}
-                    // style={{marginBottom: '200px'}}
+                      image={get(singleCategory, "feature_image")}
+                      feautedImageChange={(e) => handleFileChange(e, "image")}
+                    />
+                  </CardBlocks>
+                </Box>
+              )}
+              {editMode ? (
+                <Box component="span">
+                  <CardBlocks title="Change Thumbnail Image">
+                    <FeaturedImageComponent
+                      image={get(singleCategory, "thumbnail_cat_image")}
+                      feautedImageChange={(e) =>
+                        handleFileChange(e, "upload_thumbnail_image")
+                      }
+                      text="Thumbnail"
+                      name="thumbnail_cat_image"
+                      id="thumnail-image"
+                    />
+                  </CardBlocks>
+                </Box>
+              ) : (
+                <Box component="span">
+                  <CardBlocks
+                    title="Choose Thumbnail Image"
+                    className={classes.flex1}
+                  >
+                    <FeaturedImageComponent
+                      image={get(singleCategory, "thumbnail_cat_image")}
+                      feautedImageChange={(e) =>
+                        handleFileChange(e, "thumbnail_image")
+                      }
+                      // style={{marginBottom: '200px'}}
+                      id="thumnail-image"
+                      name="thumbnail_cat_image"
+                      text="Thumbnail"
                     />
                   </CardBlocks>
                 </Box>
@@ -375,21 +399,21 @@ const AllCategoryComponent = () => {
                 )}
                 multiline
                 rows={3}
-                value={singlecategory.description}
+                value={singleCategory.description}
                 onChange={handleChange}
                 style={{ marginRight: "20px" }}
               />
 
               <Box component="div" mb={2}>
                 <TextInput
-                  value={singlecategory.meta.title}
+                  value={singleCategory.meta.title}
                   label="Meta Title"
                   name="metatitle"
                   onInputChange={(e) => {
                     setSingleCategory({
-                      ...singlecategory,
+                      ...singleCategory,
                       meta: {
-                        ...singlecategory.meta,
+                        ...singleCategory.meta,
                         title: e.target.value,
                       },
                     });
@@ -398,14 +422,14 @@ const AllCategoryComponent = () => {
               </Box>
               <Box component="div" mb={2}>
                 <TextInput
-                  value={singlecategory.meta.keywords}
+                  value={singleCategory.meta.keywords}
                   label="Meta Keyword"
                   name="metakeyword"
                   onInputChange={(e) => {
                     setSingleCategory({
-                      ...singlecategory,
+                      ...singleCategory,
                       meta: {
-                        ...singlecategory.meta,
+                        ...singleCategory.meta,
                         keywords: e.target.value,
                       },
                     });
@@ -414,14 +438,14 @@ const AllCategoryComponent = () => {
               </Box>
               <Box component="div" mb={2}>
                 <TextInput
-                  value={singlecategory.meta.description}
+                  value={singleCategory.meta.description}
                   label="Meta Description"
                   name="metadescription"
                   onInputChange={(e) => {
                     setSingleCategory({
-                      ...singlecategory,
+                      ...singleCategory,
                       meta: {
-                        ...singlecategory.meta,
+                        ...singleCategory.meta,
                         description: e.target.value,
                       },
                     });

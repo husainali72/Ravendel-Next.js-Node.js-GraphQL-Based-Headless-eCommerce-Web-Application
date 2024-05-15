@@ -7,13 +7,20 @@ import NoImagePlaceholder from "../../assets/images/no-image-placeholder.png";
 import UserPlaceholder from "../../assets/images/user-placeholder.png";
 import theme from "../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
-import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png"
-const FeaturedImageComponentTheme = ({ image, feautedImageChange, user }) => {
+import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
+const FeaturedImageComponentTheme = ({
+  image,
+  feautedImageChange,
+  user,
+  text,
+  name,
+  id,
+}) => {
   const classes = viewStyles();
 
   const imageOnError = (event) => {
-    event.target.src = NoImagePlaceHolder
-  }
+    event.target.src = NoImagePlaceHolder;
+  };
 
   return (
     <>
@@ -37,26 +44,38 @@ const FeaturedImageComponentTheme = ({ image, feautedImageChange, user }) => {
         accept="image/*"
         className={classes.input}
         style={{ display: "none" }}
-        id="featured-image"
-        name="feature_image"
+        name={name || "feature_image"}
+        id={id || "featured-image"}
         type="file"
         onChange={(e) => feautedImageChange(e)}
       />
-      <label htmlFor="featured-image" className={classes.feautedImage}>
+      <label htmlFor={id || "featured-image"} className={classes.feautedImage}>
         <ImageIcon />{" "}
-        {!isEmpty(image) ? "Change Featured Image" : "Set Featured Image"}
+        {!isEmpty(image)
+          ? `Change ${text || "Feature"} Image`
+          : `Set ${text || "Feature"} Image`}
       </label>
     </>
   );
 };
 
-const FeaturedImageComponent = ({ image, feautedImageChange, user }) => {
+const FeaturedImageComponent = ({
+  image,
+  feautedImageChange,
+  user,
+  text,
+  name,
+  id,
+}) => {
   return (
     <ThemeProvider theme={theme}>
       <FeaturedImageComponentTheme
+        id={id}
+        name={name}
         image={image}
         feautedImageChange={feautedImageChange}
         user={user}
+        text={text}
       />
     </ThemeProvider>
   );

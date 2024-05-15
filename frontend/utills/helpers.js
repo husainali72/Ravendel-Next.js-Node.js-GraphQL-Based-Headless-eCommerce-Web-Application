@@ -11,7 +11,7 @@ import NoImagePlaceHolder from "../components/images/NoImagePlaceHolder.png";
 import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
 import moment from "moment";
-import { CASH_ON_DELIVERY, PAYPAL, RAZORPAY, STRIPE } from "./constant";
+import { BANKTRANSFER, CASH_ON_DELIVERY, PAYPAL, RAZORPAY, STRIPE } from "./constant";
 import notify from "./notifyToast";
 import { outOfStockMessage } from "../components/validationMessages";
 /* -------------------------------image funtion ------------------------------- */
@@ -346,6 +346,8 @@ export const getPaymentMethodLabel = (paymentMethod) => {
       return "Paypal";
     case RAZORPAY:
       return "Razor Pay";
+    case BANKTRANSFER:
+      return "Bank Transfer";
     default:
       return "Cash On Delivery";
   }

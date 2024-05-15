@@ -21,35 +21,32 @@ const EditCategoriesComponent = ({
   useEffect(() => {
     dispatch(categoriesAction());
   }, []);
+  const updateCategoryData = (categoriesData, selectedCategoyTree) => {
+    categoriesData.forEach((category) => {
+      const matchingCategory = selectedCategoyTree.find((cat) => {
+        return cat.name === category.name;
+      });
+      if (matchingCategory) {
+        if (matchingCategory.checked) {
+          category.checked = true;
+        }
+
+        if (category.children) {
+          updateCategoryData(category.children, matchingCategory.children);
+        }
+      }
+    });
+  };
 
   useEffect(() => {
     if (products?.categories && products?.categories?.length) {
       var selectedCat = JSON.parse(JSON.stringify(products.categories));
-      if (selectedCategories && selectedCategories?.length > 0) {
-        if (selectedCat && selectedCat?.length) {
-          selectedCat.map((cat) => {
-            if (~selectedCategories.indexOf(cat?.id)) {
-              cat.checked = true;
-            } else {
-              cat.checked = false;
-            }
-          });
-        }
-      } else {
-        // Handle the case where selectedCategories is empty
-
-        selectedCat?.map((cat) => {
-          cat.checked = false;
-        });
-      }
-      let updatedCategories = [];
-      updatedCategories = unflatten(selectedCat)?.map((item) => {
-        let selectedCategory = selectedCategoriesTree?.find(
-          (selected) => selected?.id === item?.id
-        );
-        return selectedCategory || item;
+      selectedCat?.map((cat) => {
+        cat.checked = false;
       });
-      setCatList(updatedCategories);
+      let cat = unflatten(selectedCat);
+      updateCategoryData(cat, selectedCategoriesTree);
+      setCatList(cat);
     }
   }, [products.categories, selectedCategories, selectedCategoriesTree]);
 

@@ -12,6 +12,7 @@ const SubCategoryProducts = ({
   handleFilter,
   handleScroll,
   handleSorting,
+  clearFilter
 }) => {
 
   return (
@@ -28,6 +29,7 @@ const SubCategoryProducts = ({
                 <div className="primary-sidebar sticky-sidebar category-shop-cart my-1">
                   <div className="theiaStickySidebar category-box-filler">
                     <CategoryFilter
+                    clearFilter={clearFilter}
                       filterCategoryData={get(
                         filteredProductData,
                         "filterData",
@@ -93,5 +95,6 @@ SubCategoryProducts.propTypes = {
   handleFilter: PropTypes.func.isRequired,
   handleSorting: PropTypes.func.isRequired,
   handleScroll: PropTypes.func.isRequired,
+  clearFilter: PropTypes.func.isRequired,
 };
 export default SubCategoryProducts;

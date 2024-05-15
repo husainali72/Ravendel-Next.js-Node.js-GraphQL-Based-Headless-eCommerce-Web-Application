@@ -1,4 +1,4 @@
-  /* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { capitalize, get } from "lodash";
@@ -32,16 +32,31 @@ const Orderdetail = (props) => {
     const options = [];
 
     const addPaymentOption = (method) => {
-      let paymentMethod=get(payment, `[${method}]`)
-      if (get(paymentMethod, 'enable')) {
-        const {
-          title,
-          description,
-        } = paymentMethod;
+      let paymentMethod = get(payment, `[${method}]`);
+      if (get(paymentMethod, "enable")) {
+        const { title, description, account_details } = paymentMethod;
+        let detailItems = [];
+        if (account_details) {
+          detailItems = [
+            {
+              key: "Account Name",
+              value: get(account_details, "account_Name"),
+            },
+            {
+              key: "Account Number",
+              value: get(account_details, "account_number"),
+            },
+            { key: "Bank Name", value: get(account_details, "bank_name") },
+            { key: "Short Code", value: get(account_details, "short_code") },
+            { key: "IBAN", value: get(account_details, "iban") },
+            { key: "BIC/SWIFT", value: get(account_details, "bic_swift") },
+          ];
+        }
         options.push({
-          value:method.replaceAll('_', ''),
-        label:  title,
+          value: method.replaceAll("_", ""),
+          label: title,
           description,
+          detail: detailItems,
         });
       }
     };
@@ -91,11 +106,10 @@ const Orderdetail = (props) => {
     <>
       <div className="payment-method-container">
         <div className="payment-method">
-
           <h5 className="mb-2">Payment Mode</h5>
           <div className="checkout-shipping-address">
             <CheckBox
-             type="radio"
+              type="radio"
               options={paymentOptions}
               name="paymentMethod"
               onChange={(e) => handleBillingInfo(e)}

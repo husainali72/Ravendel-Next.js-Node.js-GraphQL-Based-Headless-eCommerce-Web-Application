@@ -6,6 +6,7 @@ import { handleError, mutation } from "../../utills/helpers";
 import { removeAllCartItemsAction } from "../../redux/actions/cartAction";
 import notify from "../../utills/notifyToast";
 import {
+  BANKTRANSFER,
   CASH_ON_DELIVERY,
   PAYPAL,
   RAZORPAY,
@@ -74,6 +75,20 @@ export const handleOrderPlaced = (
             case RAZORPAY:
               if (success && razorpayOrderId) {
                 razorPay(razorpayKey,razorpayOrderId,router,orderId)
+              }
+              break;
+            case BANKTRANSFER:
+              if (success && orderId) {
+                let id = customerId;
+                let variables = { userId: id };
+                dispatch(removeAllCartItemsAction(variables));
+                setBillingDetails("");
+                router.push({
+                  pathname: thankyouPageRoute,
+                  query: {
+                    orderId: orderId,
+                  },
+                });
               }
               break;
             default:

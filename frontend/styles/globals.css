@@ -2070,14 +2070,16 @@ footer .btn:hover a {
 
 .category-section-title {
   position: relative;
-  border-bottom: 1px solid #e2e9e1;
   margin-bottom: 12px !important;
   padding-bottom: 8px;
   font-size: 16px;
   font-weight: 600;
-  visibility: visible;
 }
-
+.filter-heading-container{
+  border-bottom: 1px solid #e2e9e1;
+  display: flex;
+  justify-content: space-between;
+}
 .shop-product-list {
   padding-top: 0;
   --bs-gutter-x: 1.5rem;
@@ -6511,6 +6513,7 @@ margin-bottom: 4px !important;
   margin-top: 1px;
 }
 
+
 .customer-review p{
   color: #636363;
   font-size: 14px;
@@ -6645,4 +6648,16 @@ margin-bottom: 4px !important;
 }
 .cart-main-container .card-btons.outline a{
   color: #088178;
+}
+
+.clear-filters-btn{
+  cursor: pointer;
+  color: var(--primary-color);
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 500;
+  border: none;
+  background-color: transparent;
+  margin-bottom: 12px !important;
+  padding-bottom: 8px;
 }
