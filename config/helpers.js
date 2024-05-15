@@ -266,6 +266,7 @@ const fs = require("fs");
 const Jimp = require("jimp");
 const sharp = require("sharp");
 const Zipcode = require("../models/Zipcode");
+const ProductCat = require("../models/ProductCat");
 const imgType = ["original", "large", "medium", "thumbnail"];
 
 //const path = require("path");
@@ -2032,57 +2033,113 @@ function getBreadcrumb(data) {
 module.exports.getBreadcrumb = getBreadcrumb
 
 const addCategoryAttributes = async (categoryTree, specifications, modal) => {
-  const productAttributes = []
-  for(let spec of specifications) {
-    let attribute = productAttributes.find(prodAttr => prodAttr.attributeId.toString() === spec.attributeId.toString())
-    if(!attribute) {
-      attribute = {
-        attributeId: spec.attributeId,
-        name: spec.key,
-        values: [
-          {
-            attributeValueId: spec.attributeValueId,
-            value: spec.value
-          }
-        ]
+  const parentChildren = {}
+  const checkedCategoryIDs = []
+
+  // get parent categories with their children
+  // get checked category of the product
+  const getParentChildren = (category) => {
+    category.forEach(cat => {
+      if(cat.checked) {
+        checkedCategoryIDs.push(cat.id)
       }
-      productAttributes.push(attribute)
-    } else {
-      let attributeValue = attribute.values.find(attrValue => attrValue.attributeValueId.toString() === spec.attributeValueId.toString())
-      if(!attributeValue) {
-        attributeValue = {
-          attributeValueId: spec.attributeValueId,
-          value: spec.value
+      if(cat.children.length) {
+        parentChildren[cat.id] = cat.children.map(catChild => catChild.id)
+        
+        getParentChildren(cat.children)
+      }
+    });
+  }
+  getParentChildren(categoryTree)
+
+  const checkedCategories = await ProductCat.find({_id: toObjectID(checkedCategoryIDs)}).select("attributes")
+
+  // populate data for product attributes
+  // and update category attributes accordingly
+  for(let cat of checkedCategories) {
+    const productAttributes = cat.attributes
+
+    specifications.forEach(spec => {
+      if(!isEmpty(spec) && !isEmpty(spec.key) && !isEmpty(spec.value)) {
+        let attribute = productAttributes.find(prodAttr => prodAttr.attributeId.toString() === spec.attributeId.toString())
+        if(!attribute) {
+          attribute = {
+            attributeId: spec.attributeId,
+            name: spec.key,
+            values: [
+              {
+                attributeValueId: spec.attributeValueId,
+                value: spec.value
+              }
+            ]
+          }
+          productAttributes.push(attribute)
+        } else {
+          let attributeValue = attribute.values.find(attrValue => attrValue.attributeValueId.toString() === spec.attributeValueId.toString())
+          if(!attributeValue) {
+            attributeValue = {
+              attributeValueId: spec.attributeValueId,
+              value: spec.value
+            }
+            attribute.values.push(attributeValue)
+          }
         }
-        attribute.values.push(attributeValue)
+      }
+    })
+
+    const bulkWriteQuery = [
+      {
+        updateMany: {
+          filter: { "_id": {$in: toObjectID(cat._id)} },
+          update: {
+            $set: {
+              attributes: productAttributes
+            }
+          }
+        }
+      }
+    ]
+    await modal.bulkWrite(bulkWriteQuery)
+  }
+
+  const parentIDs = Object.keys(parentChildren).reverse()
+  for(const parentID of parentIDs) {
+    const parentChildrenData = await ProductCat.find({parentId: toObjectID(parentID)}).select("attributes")
+
+    const commonAttributes = {};
+
+    for (const obj of parentChildrenData) {
+      for (const attribute of obj.attributes) {
+        const { attributeId, name, values } = attribute;
+        
+        if (!commonAttributes[attributeId]) {
+          // Add attribute to common attributes object
+          commonAttributes[attributeId] = { attributeId, name, values: [] };
+        }
+        
+        // Add distinct values to the attribute in common attributes object
+        for (const value of values) {
+          if (!commonAttributes[attributeId].values.some(v => v.value === value.value)) {
+            commonAttributes[attributeId].values.push(value);
+          }
+        }
       }
     }
 
-  }
-  
-  const productCategories = []
-  function getCategoryIds(category) {
+    const commonAttributesArray = Object.values(commonAttributes);
+    console.log(JSON.stringify(commonAttributesArray), parentID)
     
-    productCategories.unshift(category.id);
-    
-    if (category.children && category.children.length) {
-      getCategoryIds(category.children[category.children.length - 1])
-    }
   }
-  getCategoryIds(categoryTree[0])
-
-  const bulkWriteQuery = [
-    {
-      updateMany: {
-        filter: { "_id": {$in: toObjectID(productCategories[0])} },
-        update: {
-          $set: {
-            attributes: productAttributes
-          }
-        }
-      }
-    }
-  ]
-  await modal.bulkWrite(bulkWriteQuery)
 }
 module.exports.addCategoryAttributes = addCategoryAttributes
+
+const productScript = async (products) => {
+  console.log(products.length)
+  for(let product of products) {
+    console.log(product.name)
+    await addCategoryAttributes(product.categoryTree, product.specifications, ProductCat)
+
+    await product.save()
+  }
+}
+module.exports.productScript = productScript

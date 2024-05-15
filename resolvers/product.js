@@ -19,7 +19,8 @@ const {
   toObjectID,
   validateAndSetUrl,
   getBreadcrumb,
-  addCategoryAttributes
+  addCategoryAttributes,
+  productScript
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -1180,6 +1181,79 @@ module.exports = {
         data: response,
       };
     },
+    parentCategories: async (root, args) => {
+      try{
+        const cats = await ProductCat.find({parentId: null});
+        return {
+          message: MESSAGE_RESPONSE("RESULT_FOUND", "Parent Categories", true),
+          data: cats,
+        };
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    additionalDetails: async (root, args) => {
+      const { productId } = args
+      const additionalDetails = []
+      const existingProduct = await Product.findById(productId).select("categoryId")
+
+      const matchStage = {
+        $match: {
+          _id: {
+            $ne: toObjectID(existingProduct._id),
+          },
+          categoryId: {
+            $in: existingProduct.categoryId,
+          },
+        },
+      }
+      const sortStage = {
+        $sort: {
+          updated: -1
+        }
+      }
+      const limitStage = {
+        $limit: 10
+      }
+      const relatedProducts = await Product.aggregate([
+        matchStage,
+        sortStage,
+        limitStage
+      ])
+
+      additionalDetails.push({
+        title: "Related Products",
+        products: relatedProducts
+      })
+      additionalDetails.push({
+        title: "Similar Products",
+        products: relatedProducts
+      })
+
+      return additionalDetails
+    },
+    parentCategories: async (root, args) => {
+      try{
+        const cats = await ProductCat.find({parentId: null});
+        return {
+          message: MESSAGE_RESPONSE("RESULT_FOUND", "Parent Categories", true),
+          data: cats,
+        };
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    productCategoryUpdateScript: async (root, args) => {
+      // const query = {_id: toObjectID(["6641bca3fb7a278d29017721", "6641bda8fb7a278d29017da7"])}
+      const query = {categoryId: "6641bce6fb7a278d29017a27"}
+
+      const allProducts = await Product.find().select("categoryTree specifications name")
+      await productScript(allProducts)
+
+      return allProducts
+    }
   },
   Product: {
     categoryId: async (root, args) => {

@@ -251,6 +251,9 @@ module.exports = `
     filteredProducts(filter: customObject): [Product]
     relatedProducts(category: customArray, productID: ID): [Product]
     onSaleProducts: [Product]
+    additionalDetails(productId: ID!): customArray
+    parentCategories: productCategoriesRES
+    productCategoryUpdateScript: customArray
   }
 
   extend type Mutation {
