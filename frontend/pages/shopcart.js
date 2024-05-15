@@ -205,9 +205,7 @@ const YourCard = () => {
         <section className="shopcart-table loading-table">
           <Container>
             <div className="row">
-              <div className="col-12">
                 <LoadingCartTable />
-              </div>
             </div>
           </Container>
         </section>

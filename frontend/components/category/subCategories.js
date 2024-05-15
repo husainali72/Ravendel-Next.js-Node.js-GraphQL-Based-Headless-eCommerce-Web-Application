@@ -21,6 +21,7 @@ const SubCategoryProducts = ({
         <div className="single-category-page">
           {get(filteredProductData, "filterData", [])?.length > 0 && (
             <div className="category-option">
+              <h4 className="category-section-title">Filters</h4>
               <SubCategoryList
                 categoryTree={get(filteredProductData, "categoryTree", {})}
                 name={"Category"}

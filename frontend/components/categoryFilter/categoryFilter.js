@@ -79,12 +79,13 @@ const CategoryFilter = ({ filterCategoryData, handleFilter, clearFilter }) => {
   return (
     <div className=" category-filter-container">
       <div className="filter-heading-container">
+
         <h4 className="category-section-title">Filters</h4>
         <button className="clear-filters-btn" onClick={clearFilter}>
           Clear Filters
         </button>
       </div>
-      {filterData?.map((filter, index) => (
+      {filterData?.length > 0 && filterData?.map((filter, index) => (
         <div key={index} className="filter-section">
           {(() => {
             let data = get(filter, "data");

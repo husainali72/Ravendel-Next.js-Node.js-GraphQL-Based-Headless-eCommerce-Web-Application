@@ -7,13 +7,13 @@ export const categorySortingOption = [
   { id: 1, title: "Newest First", field: "date", type: "" },
   {
     id: 2,
-    title: "Price -- Low to High",
+    title: "Price - Low to High",
     field: "pricing.sellprice",
     type: "asc",
   },
   {
     id: 3,
-    title: "Price -- High to Low",
+    title: "Price - High to Low",
     field: "pricing.sellprice",
     type: "desc",
   },

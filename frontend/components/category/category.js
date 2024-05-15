@@ -37,13 +37,13 @@ const Category = ({ category }) => {
           />
         ) : null}
         <div>
-          <h5 className="black-color mt-3">
+          <h5 className="black-color mt-4">
             Products Category
           </h5>
           <div
             className={
               showSlider
-                ? "category pro-cat px-3"
+                ? "category pro-cat"
                 : " pro-cat category categoryShow "
             }
             ref={slider}

@@ -71,11 +71,11 @@ export default function Footer() {
   const session = useSession();
   const customerId = session?.data?.user?.accessToken?.customer?._id;
   return (
-    <section className="product-cart-section">
+    <section className="product-cart-section footer">
       <Container>
         <footer className="text-center text-lg-start text-muted">
           <section className="">
-            <div className="container text-center text-md-start">
+            <div className="text-center text-md-start">
               <hr className="hr_divider"></hr>
               <div className="row mt-5">
                 <div className="col-lg-4 col-md-6 mb-4 mt-2">
@@ -93,7 +93,7 @@ export default function Footer() {
                       phoneNumber ||
                        hour)
                        && (
-                        <h5 className="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated animated animated">
+                        <h5 className="fw-600 text-grey-4 wow fadeIn animated animated animated">
                           Contact
                         </h5>
                       )}
@@ -107,9 +107,9 @@ export default function Footer() {
                           {addressLine2 && ", "}
                           {city || ""}
                         </span>
+                        <br />
                       </>
                     )}
-                    <br />
                     {phoneNumber && (
                       <>
                         <strong>Phone : </strong>
@@ -118,9 +118,9 @@ export default function Footer() {
                             <a>{phoneNumber || ""}</a>
                           </span>
                         </Link>
+                        <br />
                       </>
                     )}
-                    <br />
                     {email && (
                       <>
                         <strong>Email : </strong>
@@ -129,9 +129,9 @@ export default function Footer() {
                             <a>{email || ""}</a>
                           </span>
                         </Link>
+                        <br />
                       </>
                     )}
-                    <br />
                     {get(Address, "hour", "") && (
                       <>
                         <strong>Hour: </strong>

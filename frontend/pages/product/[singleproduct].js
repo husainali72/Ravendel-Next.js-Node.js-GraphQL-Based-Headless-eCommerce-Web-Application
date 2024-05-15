@@ -81,7 +81,6 @@ const SingleProduct = ({
                   <Reviews product={singleproducts} />
                   <ProductDetails product={singleproducts} />
                 </div>
-                <hr></hr>
                 <AddionalDetail singleProduct={singleproducts} />
               </div>
             </div>

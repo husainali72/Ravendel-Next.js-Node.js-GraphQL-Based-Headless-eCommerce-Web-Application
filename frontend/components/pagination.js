@@ -1,16 +1,18 @@
 import React from "react";
+import { GrFormPrevious } from "react-icons/gr";
+import { GrFormNext } from "react-icons/gr";
 import PropTypes from "prop-types";
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination = ({ currentPage, totalPages, handlePageChange }) => {
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      onPageChange(currentPage - 1);
+      handlePageChange(currentPage - 1);
     }
   };
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      onPageChange(currentPage + 1);
+      handlePageChange(currentPage + 1);
     }
   };
 
@@ -18,7 +20,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
       pageNumbers.push(
-        <button key={i} onClick={() => onPageChange(i)} className={currentPage === i ? 'active' : ''}>
+        <button key={i} onClick={() => handlePageChange(i)} className={`page-number ${currentPage === i - 1 ? 'active' : ''}`}>
           {i}
         </button>
       );
@@ -29,11 +31,11 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   return (
     <div className="pagination-container">
       <button onClick={handlePrevPage} disabled={currentPage === 1}>
-        Previous
+        <GrFormPrevious/>
       </button>
       {renderPageNumbers()}
       <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-        Next
+        <GrFormNext/>
       </button>
     </div>
   );
@@ -42,7 +44,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 Pagination.propTypes = {
   currentPage: PropTypes.number.isRequired,
   totalPages: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
+  handlePageChange: PropTypes.func.isRequired,
 };
 
 export default Pagination;

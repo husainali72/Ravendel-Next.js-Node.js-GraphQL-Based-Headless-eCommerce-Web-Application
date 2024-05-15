@@ -326,7 +326,7 @@ export const CheckOut = () => {
         setCartItems([]);
         setCouponCardDetail({});
         //If the user is not authenticated Redirect the user to the login page
-        router.push("/account");
+        router.push("/login");
       }
     };
     getProducts();
@@ -868,7 +868,7 @@ export const CheckOut = () => {
                 <div className="toggle-info">
                   <p>
                     <i class="far fa-user"></i> Already have an account ?{" "}
-                    <Link href="/account">
+                    <Link href="/login">
                       <a>Click here to login</a>
                     </Link>
                   </p>
@@ -931,7 +931,7 @@ export const CheckOut = () => {
               <h3>Please Login First</h3>
             </div>
             <div className="checkout-unauthorised-container">
-              <Link href="/account">
+              <Link href="/login">
                 <button
                   type="button"
                   className="btn btn-success primary-btn-color checkout-login-btn"
