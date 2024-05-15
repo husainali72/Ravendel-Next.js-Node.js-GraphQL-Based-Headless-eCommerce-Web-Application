@@ -103,7 +103,7 @@ const OrderDetailAfter = ({ orderInfo }) => {
   const OrderSummaryDetail = createOrderSummaryTableData(orderInfo);
   return (
     <>
-      {orderInfo ? (
+      {orderInfo && Object.keys(orderInfo)?.length>0? (
         <>
           <div className="order-details">
             <div className="row order-row">

@@ -65,31 +65,37 @@ const AllOrdersComponent = () => {
   const columndata = [
     {
       name: 'orderNumber',
+      type: "text",
       title: "Order Number",
       sortingactive: true
     },
     {
       name: 'date',
+      type: 'date',
       title: "Date",
       sortingactive: true
     },
     {
       name: 'name',
+      type: "text",
       title: "Customer Name",
       sortingactive: true
     },
     {
       name: 'paymentStatus',
+      type: 'badge',
       title: "payment status",
       sortingactive: false
     },
     {
       name: 'shippingStatus',
+      type: 'badge',
       title: "shipping status",
       sortingactive: false
     },
     {
       name: 'actions',
+      type: 'actions',
       title: "Actions",
       sortingactive: false,
       component: ActionButton,

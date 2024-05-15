@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { FaTimes } from "react-icons/fa"; // Import the cross icon from react-icons/fa
+import { CiSearch } from "react-icons/ci";
 import InputField from "../../inputField";
 
 const Search = ({ searchData, onSearch }) => {
@@ -10,7 +11,7 @@ const Search = ({ searchData, onSearch }) => {
     const { value } = e.target;
     setSearchQuery(value);
     const filteredData = searchData.filter((data) =>
-      data.label.toLowerCase().includes(value.toLowerCase())
+      data?.label?.toLowerCase()?.includes(value?.toLowerCase())
     );
     onSearch(filteredData);
   };
@@ -23,6 +24,7 @@ const Search = ({ searchData, onSearch }) => {
   return (
     <div className="search-container">
       <div className="input-container">
+      <CiSearch />
         <InputField
           type="text"
           placeholder="Enter your search"

@@ -61,18 +61,29 @@ module.exports = {
             },
           },
           {
-            $skip: (page - 1) * limit
+            $group: {
+              _id: null,
+              count: {
+                $sum: 1
+              },
+              reviews: {
+                $push: "$$ROOT"
+              }
+            }
           },
           {
-            $limit: limit
+            $project: {
+              _id: 0,
+              count: 1,
+              reviews: {
+                $slice: ["$reviews", (page - 1) * limit, limit]
+              }
+            }
           }
         ]
         const existingReviews = await Review.aggregate(pipeline);
-        
-        return {
-          message: MESSAGE_RESPONSE("RESULT_FOUND", "Review", true),
-          data: existingReviews,
-        };
+
+        return existingReviews[0] || []
       }
       catch (error) {
         return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Review", false);

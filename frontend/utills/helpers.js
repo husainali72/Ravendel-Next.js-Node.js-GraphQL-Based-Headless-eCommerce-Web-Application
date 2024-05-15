@@ -12,6 +12,8 @@ import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
 import moment from "moment";
 import { CASH_ON_DELIVERY, PAYPAL, RAZORPAY, STRIPE } from "./constant";
+import notify from "./notifyToast";
+import { outOfStockMessage } from "../components/validationMessages";
 /* -------------------------------image funtion ------------------------------- */
 export const imageOnError = (event) => {
   event.target.src = NoImagePlaceHolder.src;
@@ -119,8 +121,8 @@ export const queryWithoutToken = async (query, variables) => {
 export const logoutAndClearData = async (dispatch) => {
   const data = await signOut({ redirect: false, callbackUrl: "/" });
   await removeItemFromLocalStorage("cart");
-  dispatch(logoutDispatch());
-  window.location.pathname = "/account";
+  await dispatch(logoutDispatch());
+  window.location.pathname = "/login";
 };
 
 // autoFocus next input
@@ -155,10 +157,10 @@ export const currencySetter = (settings, setCurrency) => {
   const currency = get(settings, "currency", "usd") || settings;
   const currencySymbols = {
     usd: "$",
-    eur: <i className="fas fa-euro-sign"></i>,
-    gbp: <i className="fas fa-pound-sign"></i>,
+    eur: '€',
+    gbp: '£',
     cad: "CA$",
-    inr: <i className="fas fa-rupee-sign"></i>,
+    inr: '₹',
   };
   const selectedSymbol = currencySymbols[currency];
   if (selectedSymbol) setCurrency(selectedSymbol);
@@ -239,6 +241,17 @@ export const removeItemFromLocalStorage = (key) => {
   } catch (error) {}
 };
 
+export const formatDate = (date) => (
+  new Date(date).toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+  })
+)
+
 export const convertDateToStringFormat = (date, setting) => {
   const selectedDateFormat = get(setting, "setting.general.date_format", "");
   let convertedDate = "";
@@ -308,25 +321,48 @@ export const iconSetter = (iconName) => {
 };
 
 export const checkPaymentMethod = (paymentMethod) => {
-  return paymentMethod === STRIPE || paymentMethod === PAYPAL||paymentMethod === RAZORPAY;
+  return (
+    paymentMethod === STRIPE ||
+    paymentMethod === PAYPAL ||
+    paymentMethod === RAZORPAY
+  );
 };
 
-export const generateCategoryUrl = (url) => {
-
-  return {href:`/subcategory/[categorys]?url=/${url}`,as:`/subcategory/${url}`}
+export const generateCategoryUrl = (slug) => {
+  let url = slug || "#";
+  return {
+    href: `/collection/[categorys]?url=/${url}`,
+    as: `/collection/${url}`,
+  };
 };
 
-export  const getPaymentMethodLabel=(paymentMethod)=>{
+export const getPaymentMethodLabel = (paymentMethod) => {
   switch (paymentMethod) {
     case CASH_ON_DELIVERY:
-      return 'Cash On Delivery';
+      return "Cash On Delivery";
     case STRIPE:
-      return 'Stripe';
+      return "Stripe";
     case PAYPAL:
-      return 'Paypal';
+      return "Paypal";
     case RAZORPAY:
-      return 'Razor Pay';
-    default :
-      return 'Cash On Delivery';
+      return "Razor Pay";
+    default:
+      return "Cash On Delivery";
   }
-}
+};
+
+
+export const isCurrentCategory = (url,router) => {
+  const { category } = router.query;
+  return category === url;
+};
+
+export const isAnyProductOutOfStock = (products) => {
+  const outOfStockProduct = products?.some(product => !product.available);
+  if (outOfStockProduct) {
+      notify(outOfStockMessage);
+  }
+  return outOfStockProduct; 
+};
+
+

@@ -80,7 +80,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
   return (
     <div className=" category-filter-container">
       <div className="filter-heading-container">
-      <h5 className="filter-heading">Filters</h5>
+      <h4 className="category-section-title">Filters</h4>
       </div>
       {filterData?.map((filter, index) => (
         <div key={index} className="filter-section">

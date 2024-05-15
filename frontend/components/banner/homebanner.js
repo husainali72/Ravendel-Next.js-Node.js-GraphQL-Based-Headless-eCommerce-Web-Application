@@ -6,7 +6,7 @@ import Image from "next/image";
 import PropTypes from "prop-types";
 const Homebanner = ({ settings, slider }) => {
   const [imageSrc, setImageSrc] = useState("");
-  const imageType = get(settings, "setting.imageStorage.status");
+  const imageType = get(settings, "imageStorage.status");
   const handleImageError = (e) => {
     // Handle the image loading error by setting a fallback image source
     if (e) {
@@ -20,11 +20,6 @@ const Homebanner = ({ settings, slider }) => {
       <Carousel>
         {slider.map((slide, i) => (
           <Carousel.Item key={i}>
-            <a
-              href={slide.link}
-              target={slide.open_in_tab ? "_blank" : null}
-              rel={slide.open_in_tab ? "noreferrer noopener" : null}
-            >
               <Image
                 src={
                   imageSrc
@@ -38,7 +33,6 @@ const Homebanner = ({ settings, slider }) => {
                 alt={`slider`}
                 onError={handleImageError}
               />
-            </a>
           </Carousel.Item>
         ))}
       </Carousel>

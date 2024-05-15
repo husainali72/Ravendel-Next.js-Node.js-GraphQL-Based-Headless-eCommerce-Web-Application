@@ -20,21 +20,25 @@ const AllCustomersComponent = () => {
   const columndata = [
     {
       name: "date",
+      type: "date",
       title: "date",
       sortingactive: true
     },
     {
       name: "name",
+      type: "text",
       title: "Customer Name",
       sortingactive: true
     },
     {
       name: "email",
+      type: "email",
       title: "Email",
       sortingactive: true
     },
     {
       name: "actions",
+      type: "actions",
       title: "Actions",
       sortingactive: false,
       component: ActionButton,

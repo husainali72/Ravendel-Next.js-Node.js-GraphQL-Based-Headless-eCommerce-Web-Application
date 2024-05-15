@@ -67,7 +67,7 @@ export const getFilteredProductsAction = (variable) => (dispatch) => {
   });
   queryWithoutToken(GET_FILTERED_PRODUCTS,variable)
     .then((response) => {
-      let filteredProducts=get(response,'data.getProducts')
+      let filteredProducts=get(response,'data.getCategoryPageData')
       let success=get(filteredProducts,'success')
       if (success) {
         return dispatch({

@@ -15,6 +15,7 @@ import { useTheme } from "@mui/material/styles";
 import viewStyles from "../../viewStyles.js";
 import theme from "../../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
+import { get } from "lodash";
 const GlobalShippingComponentComponent = ({
   shippingGlobalState,
   onGlobalShippingInputChange,
@@ -34,7 +35,7 @@ const GlobalShippingComponentComponent = ({
                 control={
                   <Checkbox
                     color="primary"
-                    checked={shippingGlobalState.is_global}
+                    checked={get(shippingGlobalState, "is_global", false)}
                     onChange={(e) =>
                       onGlobalShippingInputChange("is_global", e.target.checked)
                     }
@@ -43,63 +44,67 @@ const GlobalShippingComponentComponent = ({
                 label="Global Shipping"
               />
             </Grid>
-            <Grid item md={6} sm={12} xs={12}>
-              <FormControl
-                variant="outlined"
-                size="small"
-                fullWidth
-                style={{ marginBottom: isSmall ? 20 : 0 }}
-              >
-                <Select
-                  labelId="Shipping-name"
-                  id="Shipping-name"
-                  name="Shipping-name"
-                  value={shippingGlobalState.shippingClass}
-                  onChange={(e) =>
-                    onGlobalShippingInputChange(
-                      "shippingClass",
-                      e.target.value
-                    )
-                  }
+            {get(shippingGlobalState, "is_global") && (
+              <Grid item md={6} sm={12} xs={12}>
+                <FormControl
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  style={{ marginBottom: isSmall ? 20 : 0 }}
                 >
-                  {shippingState.shipping.shippingClass.map(
-                    (shipping, index) => {
-                      return (
-                        <MenuItem value={shipping._id} key={index}>
-                          {shipping.name}
-                        </MenuItem>
-                      );
+                  <Select
+                    labelId="Shipping-name"
+                    id="Shipping-name"
+                    name="Shipping-name"
+                    value={get(shippingGlobalState, "shippingClass")}
+                    onChange={(e) =>
+                      onGlobalShippingInputChange(
+                        "shippingClass",
+                        e.target.value
+                      )
                     }
-                  )}
-                </Select>
-              </FormControl>
-            </Grid>
+                  >
+                    {shippingState.shipping.shippingClass.map(
+                      (shipping, index) => {
+                        return (
+                          <MenuItem value={shipping._id} key={index}>
+                            {shipping.name}
+                          </MenuItem>
+                        );
+                      }
+                    )}
+                  </Select>
+                </FormControl>
+              </Grid>
+            )}
           </Grid>
-        {shippingGlobalState?.is_global&&  <Grid item md={12} sm={12} xs={12}>
-            <RadioGroup
-              aria-label="taxOption"
-              value={
-                shippingGlobalState.is_per_order ? "per_order" : "per_product"
-              }
-              onChange={(e) =>
-                onGlobalShippingInputChange(
-                  "is_per_order",
-                  e.target.value === "per_order"
-                )
-              }
-            >
-              <FormControlLabel
-                value="per_order"
-                control={<Radio color="primary" />}
-                label="Per Order"
-              />
-              <FormControlLabel
-                value="per_product"
-                control={<Radio color="primary" />}
-                label="Per Product"
-              />
-            </RadioGroup>
-          </Grid>}
+          {shippingGlobalState?.is_global && (
+            <Grid item md={12} sm={12} xs={12}>
+              <RadioGroup
+                aria-label="taxOption"
+                value={
+                  shippingGlobalState.is_per_order ? "per_order" : "per_product"
+                }
+                onChange={(e) =>
+                  onGlobalShippingInputChange(
+                    "is_per_order",
+                    e.target.value === "per_order"
+                  )
+                }
+              >
+                <FormControlLabel
+                  value="per_order"
+                  control={<Radio color="primary" />}
+                  label="Per Order"
+                />
+                <FormControlLabel
+                  value="per_product"
+                  control={<Radio color="primary" />}
+                  label="Per Product"
+                />
+              </RadioGroup>
+            </Grid>
+          )}
 
           {shippingGlobalState.is_global && (
             <Grid item md={12} sm={12} xs={12}>

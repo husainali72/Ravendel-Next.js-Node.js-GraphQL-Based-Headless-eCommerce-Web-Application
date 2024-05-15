@@ -108,7 +108,6 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           }
           add_section_web {
             label
-            name
             visible
             category
           }
@@ -145,6 +144,7 @@ export const GET_HOMEPAGE_QUERY = gql`
         image
       }
       sections {
+        display_type
         name
         section_img
         products {

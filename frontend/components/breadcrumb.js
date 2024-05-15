@@ -1,14 +1,11 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { Container } from "react-bootstrap";
-import { generateCategoryUrl } from "../utills/helpers";
 import { get } from "lodash";
-const CategoryBreadCrumb = ({ breadCrumbs }) => {
-  const router = useRouter();
+import CategoryLink from "./category/categoryLink";
+import PropTypes from "prop-types";
+const CategoryBreadCrumb = ({ breadCrumbs, className }) => {
   return (
-    <nav className="breadcrumb-nav" aria-label="breadcrumb" style={{}}>
+    <nav className={`breadcrumb-nav ${className}`} aria-label="breadcrumb" style={{}}>
       <Container>
         <ol className="breadcrumb" style={{ cursor: "pointer" }}>
           <li className="breadcrumb-item page-active">
@@ -24,15 +21,11 @@ const CategoryBreadCrumb = ({ breadCrumbs }) => {
                   <p style={{ marginLeft: "10px", marginRight: "10px" }}>
                     {">"}
                   </p>
-                  <Link
-                    href={get(breadCrumb, "url.href")}
-                    as={get(breadCrumb, "url.as")}
-                    style={{ marginLeft: "10px" }}
-                  >
+                  <CategoryLink url={get(breadCrumb, "url")}>
                     <li className="breadcrumb-item page-active breadcrumb-link">
                       {breadCrumb?.name}
                     </li>
-                  </Link>
+                  </CategoryLink>
                 </>
               );
             })}
@@ -40,5 +33,9 @@ const CategoryBreadCrumb = ({ breadCrumbs }) => {
       </Container>
     </nav>
   );
+};
+CategoryBreadCrumb.propTypes = {
+  breadCrumbs: PropTypes.array,
+  className: PropTypes.string
 };
 export default CategoryBreadCrumb;

@@ -13,7 +13,7 @@ import viewStyles from "../../viewStyles.js";
 import PhoneNumber from "../../components/phoneNumberValidation.js";
 import SocialMedia from "./socialmedialinks.js";
 import { menuItem } from "./setting-components/constant.js";
-import {  validatenested } from "../../components/validate";
+import { validatenested } from "../../components/validate";
 import { isEmpty } from "../../../utils/helper.js";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
 
@@ -33,14 +33,19 @@ const StoreAddressComponent = () => {
   const updateStoreAddress = () => {
     if (address) {
       let payload = { ...address, social_media };
-      if (get(payload,'social_media') && get(payload,'social_media')?.length > 0) {
-        get(payload,'social_media')?.forEach((item) => {
+      if (
+        get(payload, "social_media") &&
+        get(payload, "social_media")?.length > 0
+      ) {
+        get(payload, "social_media")?.forEach((item) => {
           delete item.__typename;
         });
       }
       delete payload.__typename;
-
-      let nested_validation = validatenested("social_media", ["handle"],payload);
+      let nested_validation = "";
+      if (social_media?.length > 0) {
+        nested_validation = validatenested("social_media", ["handle"], payload);
+      }
       if (!isEmpty(nested_validation)) {
         dispatch({
           type: ALERT_SUCCESS,
@@ -50,13 +55,13 @@ const StoreAddressComponent = () => {
             error: true,
           },
         });
-      }else{
-      dispatch(storeAddressUpdateAction(payload));
+      } else {
+        dispatch(storeAddressUpdateAction(payload));
       }
     }
   };
   const selectHandleChange = (e) => {
-    let obj = get(e,'target.value');
+    let obj = get(e, "target.value");
     setSocialMedia(obj);
   };
   const removeInput = (i) => {
@@ -65,7 +70,7 @@ const StoreAddressComponent = () => {
     setSocialMedia([...data]);
   };
   const LinkhandleChange = (e, i) => {
-    social_media[i].handle =get(e,'target.value');
+    social_media[i].handle = get(e, "target.value");
     setSocialMedia([...social_media]);
   };
   return (
@@ -103,9 +108,9 @@ const StoreAddressComponent = () => {
             <PhoneNumber
               className="phoneValidation"
               handleOnChange={(val) => {
-                setAddress({ ...address, phone: val });
+                setAddress({ ...address, phone_number: val });
               }}
-              phoneValue={get(address, "phone")}
+              phoneValue={get(address, "phone_number")}
               width="300px"
             />
           </Box>

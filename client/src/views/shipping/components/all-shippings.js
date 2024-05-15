@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import theme from "../../../theme/index.js";
-import { ThemeProvider, } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import TableComponent from "../../components/table.js";
 import ActionButton from "../../components/actionbutton.js";
 
@@ -9,47 +9,46 @@ const AllShippingComponentComponent = ({
   editShippingForm,
   deleteShipping,
 }) => {
-  const [Allshipping, setAllshipping] = useState([])
-  const [filtered, setfilterdData] = useState([])
+  const [Allshipping, setAllshipping] = useState([]);
+  const [filtered, setfilterdData] = useState([]);
   const columndata = [
-    { name: 'name', title: "Name", sortingactive: true },
-    { name: 'amount', title: "amount", sortingactive: true },
+    { name: "name", title: "Name", sortingactive: true, type: "text" },
+    { name: "amount", title: "amount", sortingactive: true,type: "text", },
     {
-      name: 'actions', title: "Actions", sortingactive: false, component: ActionButton,
+      name: "actions",
+      type: "actions",
+      title: "Actions",
+      sortingactive: false,
+      component: ActionButton,
       buttonOnClick: (type, id) => {
-        if (type === 'edit') {
+        if (type === "edit") {
+          let shipping = Allshipping.find((item) => item.id === id);
 
-          let shipping = Allshipping.find(item => item.id === id);
-
-          editShippingForm(shipping)
-
+          editShippingForm(shipping);
         } else if (type === "delete") {
-          deleteShipping(id)
+          deleteShipping(id);
         }
-      }
-    },]
+      },
+    },
+  ];
 
   useEffect(() => {
-
-    let data = []
+    let data = [];
     shippingState?.shipping?.shippingClass?.map((shipping) => {
-
       let object = {
         id: shipping._id,
         amount: shipping.amount,
         name: shipping.name,
-        system: shipping.system
-      }
-      data.push(object)
-    })
-    setAllshipping(data)
-    setfilterdData(data)
-
-  }, [shippingState.shipping.shippingClass])
+        system: shipping.system,
+      };
+      data.push(object);
+    });
+    setAllshipping(data);
+    setfilterdData(data);
+  }, [shippingState.shipping.shippingClass]);
   const handleOnChangeSearch = (filtereData) => {
-
-    setfilterdData(filtereData)
-  }
+    setfilterdData(filtereData);
+  };
   return (
     <TableComponent
       loading={shippingState.loading}
@@ -61,7 +60,6 @@ const AllShippingComponentComponent = ({
       classname="table-container"
       title="All Shippings"
     />
-
   );
 };
 

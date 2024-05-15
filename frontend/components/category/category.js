@@ -1,12 +1,11 @@
 import Container from "react-bootstrap/Container";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import useResizeObserver from "@react-hook/resize-observer";
 import { capitalize, get } from "lodash";
 import ProductImage from "../../components/imageComponent";
 import PropTypes from "prop-types";
-import { generateCategoryUrl } from "../../utills/helpers";
+import CategoryLink from "./categoryLink";
 const Category = ({ category }) => {
   const [showSlider, setShowSlider] = useState(false);
   const [inlineSize, setInlineSize] = useState(0);
@@ -38,9 +37,9 @@ const Category = ({ category }) => {
           />
         ) : null}
         <div>
-          <h4 className="theme-color my-3">
-            Products <span className="black-color">Category</span>
-          </h4>
+          <h5 className="black-color mt-3">
+            Products Category
+          </h5>
           <div
             className={
               showSlider
@@ -53,10 +52,7 @@ const Category = ({ category }) => {
               category?.map((item, i) => {
                 return (
                   <>
-                    <Link
-                      href={generateCategoryUrl(item?.url)?.href}
-                      as={generateCategoryUrl(item?.url)?.as}
-                    >
+                    <CategoryLink url={item?.url}>
                       <div className="category-cards" key={i}>
                         <div className="category-card-image">
                           <ProductImage src={get(item, "image")} />
@@ -68,7 +64,7 @@ const Category = ({ category }) => {
                           </p>
                         </div>
                       </div>
-                    </Link>
+                    </CategoryLink>
                   </>
                 );
               })

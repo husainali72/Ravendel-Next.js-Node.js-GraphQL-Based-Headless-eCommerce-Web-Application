@@ -1,8 +1,10 @@
 /* eslint-disable no-unused-vars */
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { SlHandbag } from "react-icons/sl";
 import { OpenNav, CloseNav } from "../utills/app";
 import ShopCartProducts from "./cardcomponent/ShopCartProduct";
+import { HiOutlineUserCircle } from "react-icons/hi2";
 import { Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { useSession } from "next-auth/react";
@@ -10,12 +12,11 @@ import { logoutDispatch } from "../redux/actions/userlogoutAction";
 import { logoutAndClearData } from "../utills/helpers";
 import { getSettings } from "../redux/actions/settingAction";
 import { calculateUserCart } from "../redux/actions/cartAction";
-import { Toaster } from "react-hot-toast";
 import { get } from "lodash";
 import PropTypes from "prop-types";
 import ProductImage from "./imageComponent";
-import AlertModal from "./alert/alertModal";
-import { expiredTimeErrorMessage } from "./validationMessages";
+import NavBar from "./navBar/navBar";
+import Search from "./globalSearch/globalSearch";
 const SessionCheckInterval = 60000;
 const Header = ({ setOpenMenu }) => {
   const data = useSession();
@@ -84,14 +85,14 @@ const Header = ({ setOpenMenu }) => {
   useEffect(() => {
     getCartLength();
     dispatch(getSettings());
-  }, [data, addedCart]);
+  }, [data]);
   const alertHandleConfirm = async () => {
     setShowModal(false);
     await logoutAndClearData(dispatch);
   };
   return (
     <header className="header-area header-style-5 mt-0">
-      <div className="header-top">
+      {/* <div className="header-top">
         <Container className="align-items-center">
           <Toaster />
           {showModal && (
@@ -173,7 +174,7 @@ const Header = ({ setOpenMenu }) => {
                     ) : (
                       <p>
                         <i className="far fa-user"></i>
-                        <Link href="/account">
+                        <Link href="/login">
                           <a className="login-link"> Log In / Sign Up</a>
                         </Link>
                       </p>
@@ -184,24 +185,26 @@ const Header = ({ setOpenMenu }) => {
             </div>
           </div>
         </Container>
-      </div>
+      </div> */}
       <div className="header-bottom sticky-white-bg">
         <Container>
           <div className="header-container header-wrap">
             <div className="app-logo">
               <Link href="/">
+                <a>
                 <ProductImage
                   src={get(settings, "setting.appearance.theme.logo")}
                   className="logo-image"
                   alt=""
                 />
+                </a>  
               </Link>
             </div>
             <div
-              className="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding d-lg-block hover-boder"
+              className="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding hover-boder"
               id="navigation"
             >
-              <nav>
+              {/* <nav>
                 <ul className="nav list" id="list">
                   <li className="nav-item">
                     <Link href="/">
@@ -223,38 +226,54 @@ const Header = ({ setOpenMenu }) => {
                     </Link>
                   </li>
                 </ul>
-              </nav>
-            </div>
-            <div>
-              <div className="dropdown cart-btn">
-                <Link href="/shopcart">
-                  <div className="add-to-cart-header">
-                    <a className="cart-icon action-btn">
+              </nav>      */}
+              <NavBar setOpenMenu={setOpenMenu}/>
+              <div className="nav-actions">
+                <Search/>
+                <div className="action-btn-wrapper">
+                    <div className="dropdown cart-btn">
+                      <Link href="/shopcart">
+                        <div className="add-to-cart-header">
+                          <a className="cart-icon action-btn">
+                            <SlHandbag />
+                          </a>
+                          <span className="pro-count blue">{cartItem?.length}</span>
+                        </div>
+                      </Link>
+                      <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
+                        <ShopCartProducts />
+                      </div>
+                      
+                    </div>
+                    <div className="profile-btn">
+                      <a className="action-btn profile">
+                        <HiOutlineUserCircle/>
+                      </a>
+                      <div className="dropdown-content">
+                        <Link href='/account'>My Account</Link>
+                        {data?.status === "authenticated" ? (
+                          <a onClick={logOutUser}>Logout</a>
+                          ):(
+                            <Link href='/login'>Login/Signup</Link>
+                          )
+                        }
+                      </div>
+                    </div>
+                    <div className="navigation-icon">
                       <i
-                        className="fas fa-shopping-bag font-awesome-icon"
-                        aria-hidden="true"
+                        className="fas fa-bars open-nav"
+                        id="openNav"
+                        onClick={() => OpenNav()}
                       ></i>
-                    </a>
-                    <span className="pro-count blue">{cartItem?.length}</span>
+                      <i
+                        className="fas fa-times close-nav"
+                        id="closeNav"
+                        onClick={() => CloseNav()}
+                      ></i>
+                    </div>
                   </div>
-                </Link>
-                <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
-                  <ShopCartProducts />
                 </div>
               </div>
-              <div className="navigation-icon">
-                <i
-                  className="fas fa-bars open-nav"
-                  id="openNav"
-                  onClick={() => OpenNav()}
-                ></i>
-                <i
-                  className="fas fa-times close-nav"
-                  id="closeNav"
-                  onClick={() => CloseNav()}
-                ></i>
-              </div>
-            </div>
           </div>
         </Container>
       </div>

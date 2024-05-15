@@ -59,16 +59,19 @@ const AllCategoryComponent = () => {
   const columndata = [
     {
       name: "date",
+      type: "date",
       title: "date",
       sortingactive: true,
     },
     {
       name: "name",
+      type: "text",
       title: "name",
       sortingactive: true,
     },
     {
       name: "actions",
+      type: "actions",
       title: "Actions",
       sortingactive: false,
       component: ActionButton,
@@ -156,6 +159,7 @@ const AllCategoryComponent = () => {
     setEditmode(false);
     setfeaturedImage(null);
     setSingleCategory(categoryObject);
+    setIsUrlChanged(false)
   };
   const fileChange = (e) => {
     const files = get(e, "target.files", []);
@@ -198,7 +202,7 @@ const AllCategoryComponent = () => {
   // };
   const isUrlExist = async (url) => {
     if (url && !editMode) {
-      updateUrl(url)
+      updateUrlOnBlur(url)
     }
   };
   const updateUrl = async (URL, setEditPermalink) => {
@@ -225,6 +229,20 @@ const AllCategoryComponent = () => {
         }
       });
     }
+  }
+  const updateUrlOnBlur = async (URL) => {
+    if (URL) {
+      await query(CHECK_VALID_URL, { url: URL }).then(res => {
+        if (get(res, 'data.validateUrl.url')) {
+          const newUrl = get(res, 'data.validateUrl.url')
+          setSingleCategory({
+            ...singlecategory,
+            url: newUrl,
+          });
+          setIsUrlChanged(true)
+        }
+      });
+    } 
   }
   const handleOnChangeSearch = (filtereData) => {
     setfilterdData(filtereData);
@@ -284,7 +302,7 @@ const AllCategoryComponent = () => {
                   onInputChange={(updatedUrl) => {
                     setSingleCategory({ ...singlecategory, url: updatedUrl });
                   }}
-                  pageUrl="category"
+                  pageUrl="collection"
                   tableUrl="ProductCat"
                 />
               </Box>

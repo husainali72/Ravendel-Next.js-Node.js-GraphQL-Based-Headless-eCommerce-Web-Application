@@ -73,13 +73,14 @@ export const ShopCart = () => {
 
     }
 
-    return <h5>Coming Soon...</h5>;
+    // return <h5>Coming Soon...</h5>;
 
     return (
         <>
 
             {!loading && cart && cart?.length > 0 ? (
                 <div>
+                    <b>{cart?.length} Item{cart?.length > 1 ? 's' : ''} in your cart</b>
                     {cart.map((item, i) =>
                         <div key={i} style={{ display: "flex", marginBottom: "1rem", backgroundColor: "#fff" }}>
                             <div className="shopping-cart-img td-flex">

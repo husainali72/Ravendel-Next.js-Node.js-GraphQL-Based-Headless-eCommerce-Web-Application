@@ -1,57 +1,143 @@
-import { get } from "lodash";
-import Link from "next/link";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
-import React from "react";
-import { FiChevronLeft } from "react-icons/fi";
-import { generateCategoryUrl } from "../../../utills/helpers";
+import { FiChevronDown, FiChevronLeft } from "react-icons/fi";
+import {
+  generateCategoryUrl,
+  isCurrentCategory,
+} from "../../../utills/helpers";
+import Link from "next/link";
+import { useEffect } from "react";
+import { get } from "lodash";
+import { useRouter } from "next/router";
+const CategoryName = ({ name, className }) => (
+  <span className={className}>{name}</span>
+);
+const CategoryLink = ({ url, name, isSelected, className }) => {
+  const router = useRouter();
+  const customClassName = `fw-semibold cursor-pointer mb-1 parent-category ${className} ${
+    isSelected ? "active" : ""
+  }`;
 
-const SubCategoryList = ({ name, categories }) => {
+  if (!isCurrentCategory(url, router)) {
+    return (
+      <Link
+        href={generateCategoryUrl(url)?.href}
+        as={generateCategoryUrl(url)?.as}
+      >
+        <a className={customClassName}>
+          <CategoryName name={name} className={customClassName} />
+        </a>
+      </Link>
+    );
+  } else {
+    return <CategoryName name={name} className={customClassName} />;
+  }
+};
+
+const SubCategoryItem = ({ url, name }) => (
+  <Link href={generateCategoryUrl(url)?.href} as={generateCategoryUrl(url)?.as}>
+    <li className="fw-semibold cursor-pointer mb-1 child-categories">{name}</li>
+  </Link>
+);
+
+const SubCategoryList = ({ name, categoryTree }) => {
+  const [expanded, setExpanded] = useState(true);
+  // const [showMore, setShowMore] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState({});
+  useEffect(() => {
+    const initialSubcategories = get(categoryTree, "subCategories.subCategories", []).slice(
+      0,
+      5
+    );
+    setSelectedCategory({
+      ...get(categoryTree, "subCategories", []),
+      subCategories: initialSubcategories,
+    });
+  }, [categoryTree]);
+  const handleToggle = () => {
+    setExpanded(!expanded);
+  };
+  // const handleShowMore = () => {
+  //   setShowMore(true);
+  //   setSelectedCategory({ ...get(categoryTree, "subCategories", {}) });
+  // };
   return (
     <div>
-      <div className="primary-sidebar sticky-sidebar category-shop-cart">
-        <div className="theiaStickySidebar category-box-filler">
-          <div className="widget-category">
-            <h4 className="category-section-title">{name}</h4>
-            <ul className="categories-shop">
-              {get(categories, "name") ? (
+      {categoryTree && Object.keys(categoryTree)?.length > 0 && (
+        <div className="primary-sidebar sticky-sidebar category-shop-cart">
+          <div className="theiaStickySidebar category-box-filler">
+            <div className="widget-category">
+              <h4 className="category-section-title">{name}</h4>
+              <ul className="categories-shop">
                 <>
-                  <Link href={generateCategoryUrl(get(categories, "name"))}>
-                    <li className="fw-semibold cursor-pointer mb-1">
-                      <FiChevronLeft className="mb-1 back-category" />
-                      {get(categories, "name")}
-                    </li>
-                  </Link>
-                  {get(categories, "subCategories", [])?.map(
-                    (category, index) => (
-                      <Link
-                        href={generateCategoryUrl(category?.name)}
-                        key={index}
-                      >
-                        <li
-                          className={`fw-semibold cursor-pointer mb-1 ${
-                            category?.select ? "text-black" : ""
-                          }`}
-                        >
-                          {category?.name}
-                        </li>
-                      </Link>
-                    )
-                  )}
+                  <li className="fw-semibold cursor-pointer mb-1">
+                    <FiChevronLeft className="mb-1 back-category-disable custom-icon-color" />
+                    <CategoryLink
+                      url={get(categoryTree, "url")}
+                      name={get(categoryTree, "name")}
+                      isSelected={get(categoryTree, "select", false)}
+                    />
+                  </li>
+                  <li onClick={handleToggle}>
+                    {get(selectedCategory, "subCategories", [])?.length > 0 && (
+                      <>
+                        {expanded ? (
+                          <FiChevronDown className="mb-1 back-category" />
+                        ) : (
+                          <FiChevronLeft className="mb-1 back-category" />
+                        )}
+                      </>
+                    )}
+                    <CategoryLink
+                      className={
+                        get(selectedCategory, "subCategories", [])?.length <=
+                          0 && "child-categories"
+                      }
+                      url={get(selectedCategory, "url")}
+                      name={get(selectedCategory, "name", "")}
+                      isSelected={get(selectedCategory, "select", false)}
+                    />
+                  </li>
+                  {expanded &&
+                    get(selectedCategory, "subCategories", [])?.map(
+                      (category, index) => (
+                        <SubCategoryItem
+                          key={index}
+                          url={category?.url}
+                          name={category?.name}
+                        />
+                      )
+                    )}
                 </>
-              ) : (
-                <p>No categories found</p>
-              )}
-            </ul>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
 
+CategoryLink.propTypes = {
+  url: PropTypes.string.isRequired,
+  className: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  isSelected: PropTypes.bool,
+};
+CategoryName.propTypes = {
+  className: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  isSelected: PropTypes.bool,
+};
+
+SubCategoryItem.propTypes = {
+  url: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+};
+
 SubCategoryList.propTypes = {
   name: PropTypes.string.isRequired,
-  categories: PropTypes.array.isRequired,
+  categoryTree: PropTypes.object.isRequired,
 };
 
 export default SubCategoryList;

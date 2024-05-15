@@ -13,6 +13,7 @@ import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
 import { ImageStorageUpdateAction } from "../../../store/action/settingAction";
 import { useEffect } from "react";
 import { get } from "lodash";
+import Media from "./media";
 const defaultValue = {
     status: 'localStorage',
     s3_id: "",
@@ -126,7 +127,9 @@ const ImageSetting = () => {
                             </Button>
                         </Grid>
                     </CardBlocks>
-
+                    <CardBlocks title="Media">
+                    <Media />
+                    </CardBlocks>
                 </Box>
 
 

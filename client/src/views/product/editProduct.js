@@ -20,8 +20,8 @@ import {
   MenuItem,
   Autocomplete,
 } from "@mui/material";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useTheme } from "@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -35,6 +35,7 @@ import {
 import { getUpdatedUrl, query } from "../../utils/service";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import {
+  validatSpecification,
   validate,
   validatenested,
   validatenestedArray,
@@ -45,8 +46,8 @@ import {
   bucketBaseURL,
   baseUrl,
   getBaseUrl,
-  getResponseHandler,
   getCheckedIds,
+  calculateDiscount,
 } from "../../utils/helper";
 import {
   Alert,
@@ -89,6 +90,7 @@ let defaultobj = {
   pricing: {
     price: "",
     sellprice: "",
+    discountPercentage:''
   },
   status: "Draft",
   meta: {
@@ -114,7 +116,7 @@ let defaultobj = {
   specifications: [
     {
       group: "Specification 1",
-      customFields: [{ key: "", value: "" }],
+      customFields: [{ key: null, value: null }],
     },
   ],
   // attribute: [],
@@ -154,49 +156,94 @@ const EditProductComponent = ({ params }) => {
     dispatch(attributesAction());
   }, []);
   useEffect(() => {
-    if (get(productState, 'products') && isEmpty(get(productState, 'products'))) {
-      dispatch(productsAction())
+    if (
+      get(productState, "products") &&
+      isEmpty(get(productState, "products"))
+    ) {
+      dispatch(productsAction());
     }
-
-  }, [])
+  }, []);
   const productsOptions = useMemo(() => {
-    if (get(productState, 'products')) {
-      return productState?.products?.map(product => ({ label: product?.name, value: product?._id }))
+    if (get(productState, "products")) {
+      return productState?.products?.map((product) => ({
+        label: product?.name,
+        value: product?._id,
+      }));
     } else {
-      return []
+      return [];
     }
-  }, [productState])
+  }, [productState]);
   useEffect(() => {
     setloading(get(productState, "loading"));
   }, [get(productState, "loading")]);
   const getAttributeKeyObject = (attributeId) => {
     if (attributes && !!attributes?.length && attributeId) {
-      return attributes?.find(attribute => attribute?.id === attributeId)
+      return attributes?.find((attribute) => attribute?.id === attributeId);
     }
-  }
+  };
   const getAttributeValueObject = (attributeId, attributeValueId) => {
     if (attributes && !!attributes?.length && attributeId && attributeValueId) {
-      const selectedAttribute = attributes?.find(attribute => attribute?.id === attributeId)
+      const selectedAttribute = attributes?.find(
+        (attribute) => attribute?.id === attributeId
+      );
       if (selectedAttribute?.values && selectedAttribute?.values?.length) {
-        return selectedAttribute?.values?.find(attributeVal => attributeVal?._id === attributeValueId)
+        return selectedAttribute?.values?.find(
+          (attributeVal) => attributeVal?._id === attributeValueId
+        );
       }
     }
-  }
+  };
   useEffect(() => {
     if (productId) {
-      let groupedSpecifications = []
+      let groupedSpecifications = [];
       if (!isEmpty(get(productState, "product"))) {
         if (!isEmpty(productState.product)) {
           if (productState.product?.specifications) {
-            groupedSpecifications = productState.product?.specifications.reduce((acc, spec) => {
-              if (!acc.some(ac => ac?.group === spec.group)) {
-                acc.push({ group: spec?.group, customFields: [{ attributeId: spec?.attributeId, attributeValueId: spec?.attributeValueId, key: getAttributeKeyObject(spec?.attributeId), value: getAttributeValueObject(spec?.attributeId, spec?.attributeValueId) }] })
-              } else {
-                const Index = acc.findIndex(ac => ac?.group === spec.group);
-                acc[Index]?.customFields && acc[Index].customFields.push({ attributeId: spec.attributeId, attributeValueId: spec.attributeValueId, key: getAttributeKeyObject(spec?.attributeId), value: getAttributeValueObject(spec?.attributeId, spec?.attributeValueId) });
-              }
-              return acc;
-            }, []);
+            groupedSpecifications = productState.product?.specifications.reduce(
+              (acc, spec) => {
+                if (!acc.some((ac) => ac?.group === spec.group)) {
+                  acc.push({
+                    group: spec?.group,
+                    customFields: [
+                      {
+                        attributeId: spec?.attributeId,
+                        attributeValueId: spec?.attributeValueId,
+                        keyLabel: getAttributeKeyObject(spec?.attributeId)
+                          ?.name,
+                        valueLabel: getAttributeValueObject(
+                          spec?.attributeId,
+                          spec?.attributeValueId
+                        )?.name,
+                        key: getAttributeKeyObject(spec?.attributeId),
+                        value: getAttributeValueObject(
+                          spec?.attributeId,
+                          spec?.attributeValueId
+                        ),
+                      },
+                    ],
+                  });
+                } else {
+                  const Index = acc.findIndex((ac) => ac?.group === spec.group);
+                  acc[Index]?.customFields &&
+                    acc[Index].customFields.push({
+                      attributeId: spec.attributeId,
+                      attributeValueId: spec.attributeValueId,
+                      keyLabel: getAttributeKeyObject(spec?.attributeId)?.name,
+                      valueLabel: getAttributeValueObject(
+                        spec?.attributeId,
+                        spec?.attributeValueId
+                      )?.name,
+                      key: getAttributeKeyObject(spec?.attributeId),
+                      value: getAttributeValueObject(
+                        spec?.attributeId,
+                        spec?.attributeValueId
+                      ),
+                    });
+                }
+                return acc;
+              },
+              []
+            );
           }
           let defaultBrand = {};
           setTaxClass(productState.product.taxClass);
@@ -261,11 +308,11 @@ const EditProductComponent = ({ params }) => {
       ],
       product
     );
-    let custom_field = "";
+    let specifications = "";
 
-    // if (product.custom_field && product.custom_field.length > 0) {
-    //   custom_field = validatenested("custom_field", ["key", "value"], product);
-    // }
+    if (product.specifications && product.specifications.length > 0) {
+      specifications = validatSpecification(product?.specifications);
+    }
     if (product.combinations && product.combinations.length > 0) {
       combination_error = validatenested(
         "combinations",
@@ -318,41 +365,70 @@ const EditProductComponent = ({ params }) => {
           error: true,
         },
       });
-    } else if (!isEmpty(custom_field)) {
+    } else if (!isEmpty(specifications)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
           boolean: false,
-          message: custom_field,
-          error: true,
-        },
-      });
-    } else if (!isEmpty(combination_price_error)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: custom_field,
+          message: specifications,
           error: true,
         },
       });
     } else {
-      const transformedSpecifications = product?.specifications && !!product?.specifications?.length && product?.specifications.flatMap(spec => {
-        return spec.customFields.map(field => ({
-          attributeId: field?.attributeId,
-          key: field?.keyLabel, // Assuming you have a mapping for attributeId to key
-          attributeValueId: field?.attributeValueId,
-          value: field?.valueLabel, // Assuming you have a mapping for attributeValueId to value
-          group: spec.group
-        }));
-      });
+      const transformedSpecifications =
+        product?.specifications &&
+        !!product?.specifications?.length &&
+        product?.specifications.flatMap((spec) => {
+          if(spec?.customFields && !!spec?.customFields?.length){
+          return spec.customFields.map((field) => ({
+            attributeId: field?.attributeId,
+            key: field?.keyLabel, // Assuming you have a mapping for attributeId to key
+            attributeValueId: field?.attributeValueId,
+            value: field?.valueLabel, // Assuming you have a mapping for attributeValueId to value
+            group: spec.group,
+          }));
+        }return []
+        });
       // product.specifications = transformedSpecifications ? transformedSpecifications : product?.specifications
-      if (productId) {
-        product.update_gallery_image = gallery;
-        dispatch(productUpdateAction({ ...product, specifications: transformedSpecifications ? transformedSpecifications : product?.specifications }, navigate));
+      let price = get(product, "pricing.price");
+      let sellprice = get(product, "pricing.sellprice");
+      if (price >= sellprice && sellprice <= price) {
+        if (productId) {
+          product.update_gallery_image = gallery;
+          dispatch(
+            productUpdateAction(
+              {
+                ...product,
+                specifications: transformedSpecifications
+                  ? transformedSpecifications
+                  : product?.specifications,
+              },
+              navigate
+            )
+          );
+        } else {
+          product.gallery_image = gallery;
+          dispatch(
+            productAddAction(
+              {
+                ...product,
+                specifications: transformedSpecifications
+                  ? transformedSpecifications
+                  : product?.specifications,
+              },
+              navigate
+            )
+          );
+        }
       } else {
-        product.gallery_image = gallery;
-        dispatch(productAddAction({ ...product, specifications: transformedSpecifications ? transformedSpecifications : product?.specifications }, navigate));
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: false,
+            message: "Sale price couldn't exceed original price",
+            error: true,
+          },
+        });
       }
     }
   };
@@ -378,43 +454,44 @@ const EditProductComponent = ({ params }) => {
     }
   };
 
-
-  const updateUrl = async (URL, setEditPermalink) => {
+  const updateUrl = async (url, setEditPermalink) => {
     if (productId) {
-      await query(CHECK_VALID_URL, { url: URL, entryId: productId }).then(res => {
-        if (get(res, 'data.validateUrl.url')) {
-          const newUrl = get(res, 'data.validateUrl.url')
-          setProduct({
-            ...product,
-            url: newUrl,
-          });
-          setEditPermalink((previous) => !previous)
+      await query(CHECK_VALID_URL, { url: url, entryId: productId }).then(
+        (res) => {
+          if (get(res, "data.validateUrl.url")) {
+            const newUrl = get(res, "data.validateUrl.url");
+            setProduct({
+              ...product,
+              url: newUrl,
+            });
+            setEditPermalink((previous) => !previous);
+          }
         }
-      });
+      );
     } else {
-      await query(CHECK_VALID_URL, { url: URL }).then(res => {
-        if (get(res, 'data.validateUrl.url')) {
-          const newUrl = get(res, 'data.validateUrl.url')
+      await query(CHECK_VALID_URL, { url: url }).then((res) => {
+        if (get(res, "data.validateUrl.url")) {
+          const newUrl = get(res, "data.validateUrl.url");
           setProduct({
             ...product,
             url: newUrl,
           });
-          setEditPermalink((previous) => !previous)
+          setEditPermalink((previous) => !previous);
         }
       });
     }
-  }
+  };
   const isUrlExist = async (url) => {
     if (url && !productId) {
-      updateUrl(url)
+      updateUrlOnBlur(url);
     }
-    }
-  const [selectedClonedProject, setSelectedClonedProject] = useState('')
+  };
+  const [selectedClonedProject, setSelectedClonedProject] = useState("");
 
   const addCustomField = () => {
     setProduct({
       ...product,
-      custom_field: [...product.custom_field, { key: "", value: "" }],
+      custom_field: [...product.custom_field, { key: null, value: null }],
     });
   };
 
@@ -455,13 +532,18 @@ const EditProductComponent = ({ params }) => {
 
     // Update the selected value in the specifications array
     updatedProduct.specifications[index].customFields[secIndex].key = value;
-    updatedProduct.specifications[index].customFields[secIndex].attributeId = value?.id;
-    updatedProduct.specifications[index].customFields[secIndex].keyLabel = value?.name;
+    updatedProduct.specifications[index].customFields[secIndex].attributeId =
+      value?.id;
+    updatedProduct.specifications[index].customFields[secIndex].keyLabel =
+      value?.name;
 
     // clear value if selected
-    const selectedValue = get(product, `specifications[${index}].customFields[${secIndex}].value`)
+    const selectedValue = get(
+      product,
+      `specifications[${index}].customFields[${secIndex}].value`
+    );
     if (selectedValue) {
-      updatedProduct.specifications[index].customFields[secIndex].value = '';
+      updatedProduct.specifications[index].customFields[secIndex].value = "";
     }
     // Set the updated product state
     setProduct(updatedProduct);
@@ -479,41 +561,89 @@ const EditProductComponent = ({ params }) => {
 
     // Update the selected value in the specifications array
     updatedProduct.specifications[index].customFields[secIndex].value = value;
-    updatedProduct.specifications[index].customFields[secIndex].valueLabel = value?.name;
-    updatedProduct.specifications[index].customFields[secIndex].attributeValueId = value?._id;
+    updatedProduct.specifications[index].customFields[secIndex].valueLabel =
+      value?.name;
+    updatedProduct.specifications[index].customFields[
+      secIndex
+    ].attributeValueId = value?._id;
 
     // Set the updated product state
     setProduct(updatedProduct);
   };
 
   const getSpecificationValueOptions = (index, secIndex) => {
-    const selectedKey = get(product, `specifications[${index}].customFields[${secIndex}].attributeId`)
+    const selectedKey = get(
+      product,
+      `specifications[${index}].customFields[${secIndex}].attributeId`
+    );
     if (!selectedKey) {
-      return <MenuItem value=''>Select any attribute first</MenuItem>
+      return <MenuItem value="">Select any attribute first</MenuItem>;
     }
-    const selectedAttribute = attributes?.find(attribute => attribute?.id === selectedKey)
+    const selectedAttribute = attributes?.find(
+      (attribute) => attribute?.id === selectedKey
+    );
     if (selectedAttribute?.values && selectedAttribute?.values?.length) {
-      return selectedAttribute?.values?.map(val => <MenuItem value={val}>{val?.name}</MenuItem>)
+      return selectedAttribute?.values?.map((val) => (
+        <MenuItem value={val}>{val?.name}</MenuItem>
+      ));
     }
-  }
+  };
   const cloneProject = async (event, value) => {
-    let groupedSpecifications = []
-    if (get(value, 'value') && productState?.products) {
-      const productToClone = productState?.products.find(product => product?._id === value?.value);
+    let groupedSpecifications = [];
+    let shipping;
+    if (get(value, "value") && productState?.products) {
+      const productToClone = productState?.products.find(
+        (product) => product?._id === value?.value
+      );
       if (!isEmpty(productToClone)) {
         if (productToClone?.specifications) {
-          groupedSpecifications = productToClone?.specifications.reduce((acc, spec) => {
-            if (!acc.some(ac => ac?.group === spec.group)) {
-              acc.push({ group: spec?.group, customFields: [{ attributeId: spec?.attributeId, attributeValueId: spec?.attributeValueId, key: getAttributeKeyObject(spec?.attributeId), value: getAttributeValueObject(spec?.attributeId, spec?.attributeValueId) }] })
-            } else {
-              const Index = acc.findIndex(ac => ac?.group === spec.group);
-              acc[Index]?.customFields && acc[Index].customFields.push({ attributeId: spec.attributeId, attributeValueId: spec.attributeValueId, key: getAttributeKeyObject(spec?.attributeId), value: getAttributeValueObject(spec?.attributeId, spec?.attributeValueId) });
-            }
-            return acc;
-          }, []);
+          groupedSpecifications = productToClone?.specifications.reduce(
+            (acc, spec) => {
+              if (!acc.some((ac) => ac?.group === spec?.group)) {
+                acc.push({
+                  group: spec?.group,
+                  customFields: [
+                    {
+                      attributeId: spec?.attributeId,
+                      attributeValueId: spec?.attributeValueId,
+                      key: getAttributeKeyObject(spec?.attributeId),
+                      value: getAttributeValueObject(
+                        spec?.attributeId,
+                        spec?.attributeValueId
+                      ),
+                      keyLabel: getAttributeKeyObject(spec?.attributeId)?.name,
+                      valueLabel: getAttributeValueObject(
+                        spec?.attributeId,
+                        spec?.attributeValueId
+                      )?.name,
+                    },
+                  ],
+                });
+              } else {
+                const Index = acc.findIndex((ac) => ac?.group === spec?.group);
+                acc[Index]?.customFields &&
+                  acc[Index].customFields.push({
+                    attributeId: spec?.attributeId,
+                    attributeValueId: spec?.attributeValueId,
+                    key: getAttributeKeyObject(spec?.attributeId),
+                    value: getAttributeValueObject(
+                      spec?.attributeId,
+                      spec?.attributeValueId
+                    ),
+                    keyLabel: getAttributeKeyObject(spec?.attributeId)?.name,
+                    valueLabel: getAttributeValueObject(
+                      spec?.attributeId,
+                      spec?.attributeValueId
+                    )?.name,
+                  });
+              }
+              return acc;
+            },
+            []
+          );
         }
         let defaultBrand = {};
-        setTaxClass(productToClone.taxClass);
+        setTaxClass(productToClone?.taxClass);
         if (productToClone.brand) {
           if (!isEmpty(get(brandState, "brands"))) {
             for (let i in brandState.brands) {
@@ -527,9 +657,14 @@ const EditProductComponent = ({ params }) => {
             }
           }
         }
-        const categoryIds = !!productToClone.categoryId && productToClone.categoryId?.map((cat) => cat.id)
-        if (get(productToClone, '_id')) {
-          setClonedId(get(productToClone, '_id'))
+        if (productToClone?.shipping) {
+          shipping = productToClone?.shipping;
+        }
+        const categoryIds =
+          !!productToClone.categoryId &&
+          productToClone.categoryId?.map((cat) => cat.id);
+        if (get(productToClone, "_id")) {
+          setClonedId(get(productToClone, "_id"));
         }
         const { url, ...rest } = productToClone;
         setProduct({
@@ -539,6 +674,7 @@ const EditProductComponent = ({ params }) => {
           specifications: groupedSpecifications,
           categoryId: categoryIds,
           brand: defaultBrand || "",
+          shipping,
         });
 
         if (productToClone.feature_image) {
@@ -548,28 +684,54 @@ const EditProductComponent = ({ params }) => {
         }
       }
     }
-  }
+  };
   const addSpecificationField = (index) => {
     const updatedProduct = { ...product };
-    updatedProduct.specifications[index].customFields.push({ key: '', value: '' })
-    setProduct(updatedProduct)
-  }
+    updatedProduct.specifications[index].customFields.push({
+      key: null,
+      value: null,
+    });
+    setProduct(updatedProduct);
+  };
   const removeSpecificationField = (index) => {
     const updatedProduct = { ...product };
     updatedProduct.specifications.splice(index, 1);
-    setProduct(updatedProduct)
-  }
+    setProduct(updatedProduct);
+  };
   const removeCustomSpecField = (index, secIndex) => {
     const updatedProduct = { ...product };
-    updatedProduct.specifications[index].customFields.splice(secIndex, 1)
-    setProduct(updatedProduct)
-  }
+    updatedProduct.specifications[index].customFields.splice(secIndex, 1);
+    setProduct(updatedProduct);
+  };
   const addSpecificationGroup = () => {
     const updatedProduct = { ...product };
-    const specificationsLength = get(product, 'specifications')?.length + 1;
-    updatedProduct.specifications.push({ group: `Specification ${specificationsLength ? specificationsLength : ''}`, customFields: [{ key: '', value: '' }] })
-    setProduct(updatedProduct)
+    const specificationsLength = get(product, "specifications")?.length + 1;
+    updatedProduct.specifications.push({
+      group: `Specification ${
+        specificationsLength ? specificationsLength : ""
+      }`,
+      customFields: [{ key: null, value: null }],
+    });
+    setProduct(updatedProduct);
+  };
+
+  const updateUrlOnBlur = async (url) => {
+    if (url) {
+      await query(CHECK_VALID_URL, { url: url }).then(res => {
+        if (get(res, 'data.validateUrl.url')) {
+          const newUrl = get(res, 'data.validateUrl.url')
+          setProduct({
+            ...product,
+            url: newUrl,
+          });
+          setIsUrlChanged(true)
+        }
+      });
+    } 
   }
+  const getDiscountPrice = (discountPrice) => {
+    return discountPrice ? `${discountPrice}% OFF` : 'No Discount';
+  };
   return (
     <>
       <Alert />
@@ -591,11 +753,11 @@ const EditProductComponent = ({ params }) => {
                 <TextField
                   label="Name"
                   name="name"
-                  value={product.name}
+                  value={get(product, "name", "")}
                   onChange={handleChange}
                   onBlur={(e) =>
-                    !product.url || product.url !== e.target.value
-                      ? (!isUrlChanged && isUrlExist(product.name))
+                    !product?.url || product?.url !== e?.target?.value
+                      ? !isUrlChanged && isUrlExist(product?.name)
                       : null
                   }
                   variant="outlined"
@@ -606,7 +768,7 @@ const EditProductComponent = ({ params }) => {
               {/* ===================Url=================== */}
               <Box component="div" mb={2}>
                 <ValidUrlComponent
-                  url={product.url}
+                  url={get(product, "url")}
                   onSubmit={updateUrl}
                   onInputChange={(updatedUrl) => {
                     setProduct({
@@ -622,7 +784,7 @@ const EditProductComponent = ({ params }) => {
               {/* ===================Description=================== */}
               <Box component="div">
                 <TinymceEditor
-                  value={product.description}
+                  value={get(product, "description")}
                   onEditorChange={(value) =>
                     setProduct({ ...product, description: value })
                   }
@@ -631,26 +793,26 @@ const EditProductComponent = ({ params }) => {
             </CardBlocks>
             {/* ===================Categories=================== */}
             <CardBlocks title="Categories">
-            <EditCategoriesComponent
-              selectedCategoriesTree={get(product, "categoryTree", [])}
-                  selectedCategories={get(product, "categoryId", [])}
-                  onCategoryChange={(items) => {
-                    if (items && items?.length > 0) {
-                      const checkedIds = getCheckedIds(items);
-                      setProduct({
-                        ...product,
-                        categoryId: checkedIds,
-                        categoryTree: items,
-                      });
-                    }else{
-                      setProduct({
-                        ...product,
-                        categoryId: [],
-                        categoryTree: [],
-                      });
-                    }
-                  }}
-                />
+              <EditCategoriesComponent
+                selectedCategoriesTree={get(product, "categoryTree", [])}
+                selectedCategories={get(product, "categoryId", [])}
+                onCategoryChange={(items) => {
+                  if (items && items?.length > 0) {
+                    const checkedIds = getCheckedIds(items);
+                    setProduct({
+                      ...product,
+                      categoryId: checkedIds,
+                      categoryTree: items,
+                    });
+                  } else {
+                    setProduct({
+                      ...product,
+                      categoryId: [],
+                      categoryTree: [],
+                    });
+                  }
+                }}
+              />
             </CardBlocks>
             {/* ===================Pricing=================== */}
             <CardBlocks title="Pricing">
@@ -663,17 +825,11 @@ const EditProductComponent = ({ params }) => {
                     fullWidth
                     type="number"
                     value={product.pricing.price}
-                    onChange={(e) => {
-                      if (e.target.value >= 0) {
-                        e.target.value > product.pricing.sellprice
-                          ? setProduct({
-                            ...product,
-                            pricing: {
-                              ...product.pricing,
-                              price: Number(e.target.value),
-                            },
-                          })
-                          : dispatch({
+                    onBlur={(e) => {
+                      let value = get(e, "target.value");
+                      if (value >= 0) {
+                        value < get(product, "pricing.sellprice") &&
+                          dispatch({
                             type: ALERT_SUCCESS,
                             payload: {
                               boolean: false,
@@ -682,6 +838,23 @@ const EditProductComponent = ({ params }) => {
                               error: true,
                             },
                           });
+                      }
+                    }}
+                    onChange={(e) => {
+                      let price = get(e, "target.value");
+                      let sellprice = get(product, "pricing.sellprice");
+                      if (price >= 0) {
+                        setProduct({
+                          ...product,
+                          pricing: {
+                            ...product.pricing,
+                            price: Number(price),
+                            discountPercentage: calculateDiscount(
+                              price,
+                              sellprice
+                            ),
+                          },
+                        });
                       }
                     }}
                   />
@@ -694,17 +867,11 @@ const EditProductComponent = ({ params }) => {
                     fullWidth
                     type="number"
                     value={product.pricing.sellprice}
-                    onChange={(e) => {
-                      if (e.target.value >= 0) {
-                        e.target.value < product.pricing.price
-                          ? setProduct({
-                            ...product,
-                            pricing: {
-                              ...product.pricing,
-                              sellprice: Number(e.target.value),
-                            },
-                          })
-                          : dispatch({
+                    onBlur={(e) => {
+                      let value = get(e, "target.value");
+                      if (value >= 0) {
+                        value > get(product, "pricing.price") &&
+                          dispatch({
                             type: ALERT_SUCCESS,
                             payload: {
                               boolean: false,
@@ -715,7 +882,32 @@ const EditProductComponent = ({ params }) => {
                           });
                       }
                     }}
+                    onChange={(e) => {
+                      let sellprice = get(e, "target.value");
+                      let price = get(product, "pricing.price");
+                      if (sellprice >= 0) {
+                        setProduct({
+                          ...product,
+                          pricing: {
+                            ...product.pricing,
+                            sellprice: Number(sellprice),
+                            discountPercentage: calculateDiscount(
+                              price,
+                              sellprice
+                            ),
+                          },
+                        });
+                      }
+                    }}
                   />
+                </Grid>
+                <Grid className={classes.discountAmount}>
+                  <Typography fontWeight="700" variant="body1" ml={2}>
+                    Discount Percentage :
+                  </Typography>
+                  <Typography fontWeight="400" variant="body1" ml={2}>
+                   { getDiscountPrice(get(product,'pricing.discountPercentage',0))}
+                  </Typography>
                 </Grid>
               </Grid>
             </CardBlocks>
@@ -728,7 +920,7 @@ const EditProductComponent = ({ params }) => {
                       control={
                         <Checkbox
                           color="primary"
-                          checked={get(product, 'product_type.virtual', false)}
+                          checked={get(product, "product_type.virtual", false)}
                           name="virtual"
                           value="virtual"
                           onChange={(e) =>
@@ -748,7 +940,11 @@ const EditProductComponent = ({ params }) => {
                       control={
                         <Checkbox
                           color="primary"
-                          checked={get(product, 'product_type.downloadable', false)}
+                          checked={get(
+                            product,
+                            "product_type.downloadable",
+                            false
+                          )}
                           name="downloadable"
                           value="downloadable"
                           onChange={(e) =>
@@ -1181,7 +1377,9 @@ const EditProductComponent = ({ params }) => {
                   options={productsOptions}
                   sx={{ width: 300 }}
                   onChange={cloneProject}
-                  renderInput={(params) => <TextField {...params} label="Select product" />}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Select product" />
+                  )}
                 />
                 {/* <FormControl variant="outlined" sx={{ width: "100%" }}>
                   <InputLabel id="product">Select product</InputLabel>

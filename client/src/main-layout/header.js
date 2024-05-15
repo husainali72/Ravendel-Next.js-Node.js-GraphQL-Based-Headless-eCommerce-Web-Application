@@ -48,7 +48,6 @@ const HeaderComponenet = ({onSidebarOpen}) => {
   }, [get(logoState, "settings")])
   useEffect(() => {
     dispatch(getSettings())
-    dispatch(getDatesAction())
   }, [])
 
   const handleClick = (event) => {

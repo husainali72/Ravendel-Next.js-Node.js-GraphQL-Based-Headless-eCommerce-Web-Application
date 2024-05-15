@@ -714,16 +714,16 @@ const populateYearMonth = (
   let monthObj = {
     month: moment(orderMonth + 1, "MM").format("MMM"),
     orders: [order],
-    GrossSales: order.cartTotal,
-    NetSales: order.grandTotal,
+    GrossSales: order.totalSummary.cartTotal,
+    NetSales: order.totalSummary.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal,
   };
   let yearObj = {
     year: orderYear,
     months: [monthObj],
-    GrossSales: order.cartTotal,
-    NetSales: order.grandTotal,
+    GrossSales: order.totalSummary.cartTotal,
+    NetSales: order.totalSummary.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal,
   };
@@ -741,8 +741,8 @@ const populateSales = (
   paymentSuccessSubTotal,
   paymentSuccessGrandTotal
 ) => {
-  data.GrossSales += order.cartTotal;
-  data.NetSales += order.grandTotal;
+  data.GrossSales += order.totalSummary.cartTotal;
+  data.NetSales += order.totalSummary.grandTotal;
   data.paymentSuccessGrossSales += paymentSuccessSubTotal;
   data.paymentSuccessNetSales += paymentSuccessGrandTotal;
 
@@ -1011,6 +1011,7 @@ module.exports.emptyCart = emptyCart;
 
 const addZipcodes = async (zipcode_file, filepath, modal) => {
   try {
+    const zipcodeRegex = /^\S{4,}$/;
     let { filename, mimetype, encoding, createReadStream } = await zipcode_file.file;
     const stream = createReadStream();
 
@@ -1038,11 +1039,10 @@ const addZipcodes = async (zipcode_file, filepath, modal) => {
     if (fs.existsSync(path)) {
       let csvData = await readFile(path, { encoding: "utf8", flag: "r" });
       csvData = csvData.split(",");
-
+      const allZipCode = await modal.find({});
       for (let zipcode of csvData) {
-        if (zipcode.length >= 5 && zipcode.length <= 10) {
-          const existingZipcode = await modal.findOne({ zipcode });
-          if (!existingZipcode) {
+        if (zipcodeRegex.test(zipcode)) {
+          if (!allZipCode.some(item => item.zipcode === zipcode)) {
             const newZipcode = new modal({ zipcode });
             await newZipcode.save();
           }
@@ -1279,9 +1279,8 @@ const calculateCart = async (userId, cartItems) => {
         // console.log('taxPercentage', taxPercentage);
       }
 
-      // console.log('before calculating tax amount');
       prod.taxAmount = 0;
-      if (taxPercentage != 0) {
+      if (taxPercentage && taxPercentage != 0) {
         // console.log('tax.is_inclusive : ', tax.is_inclusive);
         if (!tax.is_inclusive) {
           prod.taxAmount = prod.amount * taxPercentage / 100;
@@ -1653,7 +1652,7 @@ const addOrder = async(args) => {
         quantity: (+item.qty)
       }
     });
-    request.requestBody({
+    const requestBody = {
       intent:'CAPTURE',
       purchase_units: [
         {
@@ -1664,6 +1663,10 @@ const addOrder = async(args) => {
               item_total: {
                 currency_code: currencycode,
                 value: calculatedCart.totalSummary.cartTotal
+              },
+              tax_total: {
+                currency_code: currencycode,
+                value: calculatedCart.totalSummary.totalTax
               },
               shipping: {
                 currency_code: currencycode,
@@ -1678,7 +1681,8 @@ const addOrder = async(args) => {
           items: paypalItems
         }
       ]
-    });
+    };
+    request.requestBody(requestBody);
     const order = await paypalClient.execute(request);
     paypalOrderId = order.result.id;
     

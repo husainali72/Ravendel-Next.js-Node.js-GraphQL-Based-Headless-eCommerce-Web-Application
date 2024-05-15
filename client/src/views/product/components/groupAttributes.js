@@ -301,7 +301,7 @@ const AttributesComponent = ({
       if (max) {
         generatedVariants.push({
           combinations: comb,
-          productID: currentVariants.combinations[index]?.productID,
+          productID: currentVariants?.combinations[index]?.productID,
           // sku: currentVariants.combinations[index].sku,
           // quantity: currentVariants.combinations[index].quantity,
           // pricing: {

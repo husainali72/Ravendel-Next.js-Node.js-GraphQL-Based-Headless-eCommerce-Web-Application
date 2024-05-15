@@ -1,14 +1,10 @@
-/* eslint-disable no-unused-vars */
-
 import React, { useState, useEffect } from "react";
-import PageTitle from "../../components/PageTitle";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { get } from "lodash";
 import { getFilteredProductsAction } from "../../redux/actions/productAction";
 import { ARRAY, CHOICE, LIMIT } from "../../components/categoryFilter/constant";
 import SubCategoryProducts from "../../components/category/subCategories";
-import Meta from "../../components/Meta";
 import ParentCategories from "../../components/category/parentCategories";
 
 const SingleCategoryProduct = () => {
@@ -21,8 +17,7 @@ const SingleCategoryProduct = () => {
     const { category } = get(router, "query");
     let variable = {
       mainFilter: {
-        // categoryId: "63b2b9d81681cb950fbf5b4b",
-        categoryId: "63b2b9d81681cb950fbf5b4b",
+        categoryUrl: category,
       },
       pageNo: 1,
       limit: LIMIT,
@@ -30,14 +25,13 @@ const SingleCategoryProduct = () => {
     setFilterPayload({ ...variable });
   }, [router]);
   useEffect(() => {
-    if (get(filterPayload, "mainFilter.categoryId")) {
+    if (get(filterPayload, "mainFilter.categoryUrl")) {
       dispatch(getFilteredProductsAction(filterPayload));
     }
   }, [filterPayload]);
   useEffect(() => {
     setFilteredProductData({
       ...get(productFilterData, "productFilter", {}),
-      isParentNull: false,
     });
   }, [productFilterData]);
   const handleFilter = (filters) => {
@@ -81,10 +75,13 @@ const SingleCategoryProduct = () => {
 
     // Destructure the "data" field from each object
     filteredData = filteredData.map((item) => {
-      const { data, ...rest } = item;
+      const { ...rest } = item;
       return rest;
     });
     setFilterPayload({ ...filterPayload, filters: filteredData });
+  };
+  const handleSorting = (sortingPayload) => {
+    setFilterPayload({ ...filterPayload, sort: sortingPayload });
   };
   const handleScroll = () => {
     setFilterPayload((prevPayload) => ({
@@ -99,14 +96,18 @@ const SingleCategoryProduct = () => {
   return (
     <div>
       {/* <Meta title={singlecategory?.meta?.title} description={singlecategory?.meta?.description} keywords={singlecategory?.meta?.keywords}/> */}
-      <PageTitle title={"category"} />
-      {filteredProductData?.isParentNull ? (
-        <ParentCategories categories={get(filteredProductData, "category")} />
+      {/* <PageTitle title={"Collection"} /> */}
+      {get(filteredProductData, "isMostParentCategory") ? (
+        <ParentCategories
+          categories={get(filteredProductData, "mostParentCategoryData", {})}
+          categoryName={get(router, 'query.category', '')}
+        />
       ) : (
         <SubCategoryProducts
           filteredProductData={filteredProductData}
           handleFilter={handleFilter}
           handleScroll={handleScroll}
+          handleSorting={handleSorting}
         />
       )}
     </div>

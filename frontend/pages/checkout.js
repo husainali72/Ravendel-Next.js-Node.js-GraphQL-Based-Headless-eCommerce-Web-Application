@@ -13,13 +13,13 @@ import { useForm } from "react-hook-form";
 import CustomerDetail from "../components/checkoutcomponent/CustomerDetails";
 import { getSession, useSession } from "next-auth/react";
 import ShippingTaxCoupon from "../components/checkoutcomponent/ShippingTaxCoupon";
-import { currencySetter, query, queryWithoutToken } from "../utills/helpers";
+import {isAnyProductOutOfStock, currencySetter, getItemFromLocalStorage, handleError, mutation, query, queryWithoutToken } from "../utills/helpers";
 import { useRouter } from "next/router";
 import Stripes from "../components/checkoutcomponent/reactstripe/StripeContainer";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
 import OrderSummary from "../components/checkoutcomponent/CheckOutOrderSummary";
 import Stepper from "../components/checkoutcomponent/stepperbar/Stepper";
-import { calculateUserCart } from "../redux/actions/cartAction";
+import { calculateUnauthenticatedCart, calculateUserCart, changeQty, increaseQuantity, removeCartItemAction } from "../redux/actions/cartAction";
 import toast, { Toaster } from "react-hot-toast";
 import { CHECK_ZIPCODE } from "../queries/productquery";
 import { get } from "lodash";
@@ -27,6 +27,8 @@ import Loading from "../components/loadingComponent";
 import Paypal from "../components/checkoutcomponent/paypal/paypal";
 import { PAYPAL, RAZORPAY } from "../utills/constant";
 import { handleOrderPlaced } from "../components/checkoutcomponent/handleOrder";
+import { getAllProductsAction } from "../redux/actions/productAction";
+import { DELETE_CART_PRODUCTS } from "../queries/cartquery";
 
 const notify = (message, success) => {
   if (success) {
@@ -41,31 +43,30 @@ var billingInfoObject = {
   zip: "",
   state: "",
   city: "",
-  address_line2: "",
+  addressLine2: "",
   address: "",
   phone: "",
-  company: "",
   email: "",
   lastname: "",
   firstname: "",
-  country: "UK",
+  country: "",
   paymentMethod: "",
   transaction_id: "",
+  addressType: ''
 };
 var shippingObject = {
   order_notes: "",
   zip: "",
   state: "",
   city: "",
-  address_line2: "",
+  addressLine2: "",
   address: "",
   phone: "",
-  company: "",
   email: "",
   lastname: "",
   firstname: "",
-  country: "UK",
-  paymentMethod: "",
+  country: "",
+  addressType: ''
 };
 
 var savedShippingInfo;
@@ -90,7 +91,7 @@ export const CheckOut = () => {
   const [totalSummary, setTotalSummary] = useState({});
   const [CouponLoading, setCouponLoading] = useState(false);
   const [couponCode, setCouponCode] = useState("");
-  const steps = ["Address", "Shipping", "Order Detail"];
+  const steps = ["Address", "Shipping", "Order Details"];
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
   const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
   const [currency, setCurrency] = useState("$");
@@ -99,6 +100,179 @@ export const CheckOut = () => {
   const settings = useSelector((state) => state.setting);
   const [currencyOption, setCurrencyOption] = useState({});
   const [loading, setLoading] = useState(false);
+  const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false);
+  const [cartLoading, setCartLoading] = useState(false);
+  const cart = useSelector((state) => state.cart);
+  const allProducts = useSelector((state) => state.products);
+
+  useEffect(() => {
+    getUserCartData();
+    dispatch(getAllProductsAction());
+  }, []);
+
+  useEffect(() => {
+    setIsQuantityBtnLoading(get(cart, "loading"));
+  }, [get(cart, "loading")]);
+
+  const getUserCartData = async () => {
+    const userSession = await getSession();
+    if ("authenticated" === session?.status || null !== userSession) {
+      let id = get(userSession, "user.accessToken.customer._id");
+      dispatch(calculateUserCart(id));
+    } else {
+      const localStorageProducts = getItemFromLocalStorage("cart");
+      dispatch(calculateUnauthenticatedCart(localStorageProducts));
+    }
+  };
+
+  useEffect(() => {
+    const getProducts = async () => {
+      setCartLoading(true);
+      let cartItemsArray = [];
+      let allItem = [];
+      get(cart, "cartItems", [])?.map((cart) => {
+        const originalProduct = allProducts?.products?.find(
+          (prod) => prod?._id === cart?.productId
+        );
+        const orginalAttributes = originalProduct?.variation_master?.find(
+          (prod) => prod?.id === cart?.variantId
+        );
+        let cartProduct = {
+          _id: get(cart, "productId", ""),
+          variantId: get(cart, "variantId", ""),
+          quantity: parseInt(get(cart, "qty")),
+          productQuantity: get(originalProduct, "quantity"),
+          name: get(cart, "productTitle"),
+          pricing: get(cart, "productPrice"),
+          price: get(originalProduct, "pricing.price"),
+          short_description: get(originalProduct, "short_description"),
+          feature_image: get(cart, "productImage"),
+          url: get(originalProduct, "url"),
+          attributes: get(cart, "attributes", []),
+          shippingClass: get(cart, "shippingClass"),
+          taxClass: get(cart, "taxClass"),
+          discountPercentage: get(cart, "discountPercentage"),
+          amount: get(cart, "amount"),
+          mrpAmount: get(cart, "mrpAmount"),
+          available: get(cart, "available"),
+        };
+        allItem.push(cartProduct);
+        cartItemsArray.push(cartProduct);
+      });
+      setTotalSummary({
+        ...totalSummary,
+        grandTotal: get(cart, "totalSummary.grandTotal"),
+        cartTotal: get(cart, "totalSummary.cartTotal"),
+        totalShipping: get(cart, "totalSummary.totalShipping"),
+        totalTax: get(cart, "totalSummary.totalTax"),
+        mrpTotal: get(cart, "totalSummary.mrpTotal"),
+        discountTotal: get(cart, "totalSummary.discountTotal"),
+      });
+      setCartItems([...cartItemsArray]);
+      setCartLoading(false);
+    };
+    getProducts();
+  }, [allProducts, get(cart, "cartItems")]);
+
+  const updateCartProductQuantity = (item, updatedQuantity) => {
+    const isQuantityIncreased = cartItems?.find(
+      (cartItem) =>{
+    let cartItemId = get(cartItem, '_id')
+    let cartItemVariantId = get(cartItem, 'variantId');
+    let itemId = get(item, '_id');
+    let itemVariantId = get(item, 'variantId');
+    let itemProductQuantity = get(item, 'productQuantity');
+    return (
+        ((cartItemId === itemId && cartItemVariantId === itemVariantId) ||
+        (cartItemId === itemId && !cartItemVariantId === itemVariantId)) &&
+        itemProductQuantity >= updatedQuantity
+    );
+  }
+    );
+    if (isQuantityIncreased) {
+      let updatedCartItems = cartItems?.map((cartItem) => ({
+        ...cartItem,
+        quantity:
+          cartItem?._id === item?._id &&
+          (cartItem?.variantId === item?.variantId ||
+            (!cartItem?.variantId && !item?.variantId))
+            ? updatedQuantity
+            : cartItem?.quantity,
+      }));
+      setCartItems([...updatedCartItems]);
+      if ("authenticated" !== session?.status) {
+        dispatch(
+          increaseQuantity(
+            item?._id,
+            item?.productQuantity,
+            item?.variantId,
+            updatedQuantity
+          )
+        );
+        dispatch(calculateUnauthenticatedCart(updatedCartItems));
+        setIsQuantityBtnLoading(false);
+      } else {
+        let id = get(session, "data.user.accessToken.customer._id");
+        let variables = {
+          userId: id,
+          productId: get(item, "_id"),
+          qty: updatedQuantity,
+        };
+        dispatch(changeQty(variables))
+          .then((res) => {
+            if (get(res, "data.changeQty.success")) {
+              dispatch(calculateUserCart(id));
+            }
+            setIsQuantityBtnLoading(false);
+          })
+          .catch((error) => {
+            setIsQuantityBtnLoading(false);
+          });
+      }
+    } else {
+      if (item?.productQuantity) {
+        notify(`Only ${item?.productQuantity} Unit(s) available in stock `);
+      }
+    }
+  };
+  // Function to remove an item from the cart
+  const removeToCart = async (item) => {
+    let productId = get(item, "_id", "");
+    if ("authenticated" === session?.status) {
+      let id = get(session, "data.user.accessToken.customer._id");
+      let variables = {
+        userId: id,
+        productId: item?._id,
+        variantId: get(item, "variantId", ""),
+      };
+
+      mutation(DELETE_CART_PRODUCTS, variables)
+        .then((res) => {
+          if (get(res, "data.deleteCartProduct.success")) {
+            dispatch(calculateUserCart(id));
+          }
+        })
+        .catch((error) => {
+          handleError(error, dispatch);
+        });
+    } else {
+      
+      let cartItemsfilter = cartItems?.filter(
+        (cartItem) =>
+          cartItem?._id !== productId ||
+          (cartItem?._id === productId && cartItem?.variantId !== item?.variantId)
+      );
+      let variables = {
+        id: productId,
+        variantId: get(item, "variantId", ""),
+      };
+
+      dispatch(removeCartItemAction(variables));
+      dispatch(calculateUnauthenticatedCart(cartItemsfilter));
+      setCartItems(cartItemsfilter);
+    }
+  };
+
   useEffect(() => {
     const currencyStoreOptions = get(
       settings,
@@ -162,9 +336,13 @@ export const CheckOut = () => {
       const userSession = await getSession();
       if ("authenticated" === session?.status || null !== userSession) {
         setIsLogin(true);
+        let cartItemsProduct=get(carts, "cartItems", [])
         // If the cart is empty, redirect the user to the home page
-        if (get(carts, "cartItems", [])?.length <= 0) {
+        if (cartItemsProduct?.length <= 0) {
           router.push("/");
+        }
+        if(isAnyProductOutOfStock(cartItemsProduct)){
+          router.push("/shopcart");
         }
       }
     };
@@ -187,7 +365,7 @@ export const CheckOut = () => {
     // Scroll to the top when the form step changes
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [formStep]);
-  
+
   const {
     register,
     handleSubmit,
@@ -213,25 +391,25 @@ export const CheckOut = () => {
         addressLine1,
         addressLine2,
         phone,
-        company,
         email,
         lastName,
         firstName,
+        addressType,
         country,
       } = defaultAddress;
       let defaultAddressInfo = {
-        zip: pincode,
-        state: state,
-        city: city,
-        address: addressLine1 + ", " + addressLine2,
-        addressLine2: addressLine2,
-        addressLine1: addressLine1,
-        phone: phone,
-        company: company,
-        email: email,
-        lastname: lastName,
-        firstname: firstName,
-        country: country,
+        zip: pincode || "",
+        state: state || "",
+        city: city || "",
+        address: addressLine1 + (addressLine2 ? ", " + addressLine2 : "") || "",
+        addressLine2: addressLine2 || "",
+        addressLine1: addressLine1 || "",
+        phone: phone || "",
+        addressType:addressType||'',
+        email: email || "",
+        lastname: lastName || "",
+        firstname: firstName || "",
+        country: country || "",
       };
       checkCode(get(defaultAddressInfo, "zip"));
       return defaultAddressInfo;
@@ -268,16 +446,7 @@ export const CheckOut = () => {
       dispatch(calculateUserCart(customerId));
     }
   };
-  const handleBillingInfo = (e) => {
-    let { name, value } = get(e, "target");
-    if (!shippingAdd && name !== "paymentMethod") {
-      setShippingInfo({
-        ...shippingInfo,
-        [name]: value,
-      });
-    }
-    setBillingInfo({ ...billingInfo, [name]: value });
-  };
+  
   const checkCode = async (code) => {
     try {
       let variable = { zipcode: code.toString() };
@@ -297,6 +466,7 @@ export const CheckOut = () => {
         [name]: value,
       });
     }
+    
     setBillingInfo({ ...billingInfo, [name]: value });
 
     checkCode(value);
@@ -309,12 +479,41 @@ export const CheckOut = () => {
   const getOrderDetailsData = (val) => {
     setBillingDetails({ ...billingDetails, ...val });
   };
-  const handleShippingChange = (e) => {
-    let { name, value } = get(e, "target");
-    setShippingInfo({
-      ...shippingInfo,
-      [name.slice(8)]: value,
-    });
+
+  const handleBillingInfo = (e, nm) => {
+    if(nm === 'addressType'){
+      if (!shippingAdd ) {
+        setShippingInfo({
+          ...shippingInfo,
+          [nm]: e
+        });
+      }
+      setBillingInfo({ ...billingInfo, [nm]: e });
+    } else{
+      let { name, value } = get(e, "target");
+      if (!shippingAdd && name !== "paymentMethod") {
+        setShippingInfo({
+          ...shippingInfo,
+          [name]: value,
+        });
+      }
+      setBillingInfo({ ...billingInfo, [name]: value });
+    }
+  };
+  const handleShippingChange = (e, nm) => {
+    if(nm === 'addressType'){
+      setShippingInfo({
+        ...shippingInfo,
+        [nm]: e,
+      });
+      setBillingInfo({ ...billingInfo, [nm]: e });
+    } else{
+      let { name, value } = get(e, "target");
+      setShippingInfo({
+        ...shippingInfo,
+        [name.slice(8)]: value,
+      });
+    }
   };
   const handlePhoneInput = (name, value) => {
     if (!shippingAdd) {
@@ -349,19 +548,22 @@ export const CheckOut = () => {
     setShippingAdd(e?.target?.checked);
   };
   const SelectAddressBook = (address) => {
+    const { addressLine1, addressLine2 } = address;
     let commonFields = {
-      zip: address?.pincode,
-      state: address?.state,
+      zip: address?.pincode|| "",
+      state: address?.state|| "",
       city: address?.city,
-      address: address?.addressLine1 + ", " + address?.addressLine2,
-      addressLine2: address?.addressLine2,
-      addressLine1: address?.addressLine1,
-      phone: address?.phone,
-      company: address?.company,
-      email: address?.email,
-      lastname: address?.lastName,
-      firstname: address?.firstName,
-      country: address?.country,
+      address:  addressLine1 + (addressLine2 ? ", " + addressLine2 : "") || "",
+      addressLine2: address?.addressLine2|| "",
+      addressLine1: address?.addressLine1|| "",
+      phone: address?.phone|| "",
+      email: address?.email|| "",
+      lastname: address?.lastName|| "",
+      firstname: address?.firstName|| "",
+      country: address?.country|| "",
+      addressType: address?.addressType || 'Home Address',
+      id: address?._id|| ""
+
     };
     let shipping = commonFields;
     let billing = {
@@ -421,16 +623,25 @@ export const CheckOut = () => {
   };
   const handlePlacedOrder = async (e) => {
     let paymentMethod = get(billingDetails, "billing.paymentMethod");
-  let paymentMode=get(settings,'setting.payment.razorpay.test_mode','')
-    let razorpayKey=''
-    if(paymentMode){
-      razorpayKey=  get(settings,'setting.payment.razorpay.sandbox_client_id','')}else{
-        razorpayKey=  get(settings,'setting.payment.razorpay.live_client_id','')
+    let paymentMode = get(settings, "setting.payment.razorpay.test_mode", "");
+    let razorpayKey = "";
+    if (paymentMode) {
+      razorpayKey = get(
+        settings,
+        "setting.payment.razorpay.sandbox_client_id",
+        ""
+      );
+    } else {
+      razorpayKey = get(
+        settings,
+        "setting.payment.razorpay.live_client_id",
+        ""
+      );
     }
     e.preventDefault();
     if (paymentMethod === PAYPAL) {
       setPaymentMethod(paymentMethod);
-    }else {
+    } else {
       handleOrderPlaced(
         customerId,
         session,
@@ -489,15 +700,19 @@ export const CheckOut = () => {
 
                         <button
                           type="submit"
-                          className="btn btn-success primary-btn-color checkout-first-continue-btn"
+                          className="btn btn-success primary-btn-color checkout-continue-btn"
                         >
-                          Continue
+                          Next
                         </button>
                       </form>
                     </div>
                     <div className="cupon-cart">
                       <OrderSummary
+                        cartLoading={cartLoading}
+                        cartItems={cartItems}
+                        removeToCart={removeToCart}
                         totalSummary={totalSummary}
+                        updateCartProductQuantity={updateCartProductQuantity}
                         removeCoupon={removeCoupon}
                         currencyOption={currencyOption}
                         currency={currency}
@@ -534,15 +749,19 @@ export const CheckOut = () => {
                         billingInfo={billingInfo}
                       />
                       <button
-                        className="btn btn-success primary-btn-color second-continue-btn"
+                        className="btn btn-success primary-btn-color checkout-continue-btn"
                         onClick={nextFormStep}
                       >
-                        Continue
+                        Next
                       </button>
                     </div>
 
                     <div className="checkout-order-summary-container">
                       <OrderSummary
+                        cartLoading={cartLoading}
+                        cartItems={cartItems}
+                        removeToCart={removeToCart}
+                        updateCartProductQuantity={updateCartProductQuantity}
                         totalSummary={totalSummary}
                         removeCoupon={removeCoupon}
                         currencyOption={currencyOption}
@@ -590,7 +809,6 @@ export const CheckOut = () => {
                           billingInfo={billingInfo}
                         />
                         {loading && <Loading />}
-                        <h5>Your Order Summary</h5>
                         <Orderdetail
                           settings={settings}
                           currency={currency}
@@ -602,16 +820,20 @@ export const CheckOut = () => {
                         />
                         <button
                           type="submit"
-                          className="btn btn-success primary-btn-color place-order-container"
+                          className="btn btn-success primary-btn-color checkout-continue-btn"
                           onClick={handlePlacedOrder}
                           disabled={!billingInfo.paymentMethod}
                         >
-                          Continue{" "}
+                          Place Order{" "}
                         </button>
                       </div>
                       <div className="checkout-order-summary-container">
                         <OrderSummary
+                          cartLoading={cartLoading}
+                          cartItems={cartItems}
+                          removeToCart={removeToCart}
                           totalSummary={totalSummary}
+                          updateCartProductQuantity={updateCartProductQuantity}
                           removeCoupon={removeCoupon}
                           currencyOption={currencyOption}
                           currency={currency}

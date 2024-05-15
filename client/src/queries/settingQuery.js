@@ -151,7 +151,9 @@ const SETTING_TILE_DATA = gql`
         }
         add_section_web {
           label
-
+          section_img
+          url
+          display_type
           visible
           category
         }
@@ -161,6 +163,7 @@ const SETTING_TILE_DATA = gql`
         playstore
         appstore
         logo
+        placeholder_image
       }
       mobile {
         slider {
@@ -173,6 +176,7 @@ const SETTING_TILE_DATA = gql`
           section_img
           visible
           url
+          display_type
           category
         }
       }
@@ -570,8 +574,8 @@ const ADD_ZIPCODE = gql`
 `;
 
 const UPDATE_ZIPCODE = gql`
-  mutation ($zip: String) {
-    updateZipcode(zip: $zip) {
+  mutation ($id: ID!, $zipcode: String!) {
+    updateZipcode(id: $id, zipcode: $zipcode) {
       message
       success
     }
@@ -599,16 +603,20 @@ const UPDATE_APPEARANCE_THEME = gql`
   mutation (
     $primary_color: String
     $new_logo: Upload
+    $new_placeholder_image: Upload
     $playstore: String
     $appstore: String
     $logo: String
+    $placeholder_image: String
   ) {
     updateAppeanranceTheme(
       primary_color: $primary_color
       new_logo: $new_logo
+      new_placeholder_image: $new_placeholder_image
       playstore: $playstore
       appstore: $appstore
       logo: $logo
+      placeholder_image: $placeholder_image
     ) {
       ...SettingTile
     }

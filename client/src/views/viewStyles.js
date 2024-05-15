@@ -662,6 +662,14 @@ const viewStyles = makeStyles((theme) => ({
   },
   SocialCloseIcon:{
     margin:"20px"
+  },
+  discountAmount: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noImage:{
+    width:'50px'
   }
 }));
 

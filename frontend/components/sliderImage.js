@@ -32,6 +32,7 @@ const GalleryImageSlider = ({ galleryImages, variantSelect, comboData }) => {
     infinite: true,
     speed: 500,
     slidesToShow: 1,
+    vertical: true,
     slidesToScroll: 1,
     touchMove: false,
   };
