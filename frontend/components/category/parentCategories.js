@@ -35,7 +35,7 @@ const ParentCategories = ({ categories, categoryName }) => {
                         <CategoryCard
                           key={i}
                           name={get(subCategory, "name")}
-                          image={get(subCategory, ""thumbnail_image"")}
+                          image={get(subCategory, "thumbnail_image")}
                         />
                       </a>
                     </CategoryLink>
