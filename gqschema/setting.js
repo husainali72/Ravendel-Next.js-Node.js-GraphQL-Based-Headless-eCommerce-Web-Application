@@ -99,8 +99,6 @@ module.exports = `
     notifications: INVENTORY_NOTIFICATIONS
     notification_recipients: String
     low_stock_threshold: Int
-    out_of_stock_threshold: Int
-    out_of_stock_visibility: Boolean
     stock_display_format: String
     left_quantity: Int
   }
@@ -364,8 +362,6 @@ module.exports = `
       notifications: inventory_notification
       notification_recipients: String
       low_stock_threshold: Int
-      out_of_stock_threshold: Int
-      out_of_stock_visibility: Boolean
       stock_display_format: String
       left_quantity: Int
     ): Setting
