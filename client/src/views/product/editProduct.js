@@ -305,7 +305,7 @@ const EditProductComponent = ({ params }) => {
         acc.push(filteredCategory);
       }
 
-      if (category?.children && category?.children?.length > 0) {
+     else if (category?.children && category?.children?.length > 0) {
         filteredCategory.children = filterTreeData(category?.children);
         if (filteredCategory.children.length > 0) {
           acc.push(filteredCategory);
