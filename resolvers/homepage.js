@@ -105,7 +105,7 @@ module.exports = {
                 ];
                 
                 let data = await productCategory.aggregate(pipeline);    
-                console.log(data)
+
                 output_section.name = data[0].name
                 output_section.products = data[0].products
 
