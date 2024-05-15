@@ -1169,7 +1169,7 @@ const EditProductComponent = ({ params }) => {
                                           >
                                             <FormControl
                                               className={classes.cstmSelect}
-                                              variant="outlined"
+                                              variant="standard"
                                             >
                                               <InputLabel id="key">
                                                 Key
@@ -1217,7 +1217,7 @@ const EditProductComponent = ({ params }) => {
                                             </FormControl>
                                             <FormControl
                                               className={classes.cstmSelect}
-                                              variant="outlined"
+                                              variant="standard"
                                             >
                                               <InputLabel id="value">
                                                 Value
