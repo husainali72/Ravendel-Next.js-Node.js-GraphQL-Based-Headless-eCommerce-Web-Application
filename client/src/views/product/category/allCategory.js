@@ -39,7 +39,7 @@ var categoryObject = {
   description: "",
   url: "",
   feature_image: null,
-  thumbnail: null,
+  thumbnail_cat_image: null,
   meta: {
     title: "",
     description: "",
@@ -116,13 +116,13 @@ const AllCategoryComponent = () => {
     setSingleCategory({
       ...singleCategory,
       feature_image: null,
-      thumbnail: null,
+      thumbnail_cat_image: null,
     });
     setSingleCategory({
       ...singleCategory,
       ...cat,
       feature_image: getImage(cat?.image),
-      thumbnail: getImage(cat?.thumbnail),
+      thumbnail_cat_image: getImage(cat?.thumbnail_image),
     });
   };
   const handleChange = (e) => {
@@ -148,8 +148,8 @@ const AllCategoryComponent = () => {
       if (singleCategory?.feature_image) {
         delete singleCategory?.feature_image;
       }
-      if (singleCategory?.thumbnail) {
-        delete singleCategory?.thumbnail;
+      if (singleCategory?.thumbnail_cat_image) {
+        delete singleCategory?.thumbnail_cat_image;
       }
       dispatch(categoryUpdateAction(singleCategory));
       setEditmode(false);
@@ -171,8 +171,8 @@ const AllCategoryComponent = () => {
       if (singleCategory?.feature_image) {
         delete singleCategory?.feature_image;
       }
-      if (singleCategory?.thumbnail) {
-        delete singleCategory?.thumbnail;
+      if (singleCategory?.thumbnail_cat_image) {
+        delete singleCategory?.thumbnail_cat_image;
       }
       dispatch(categoryAddAction(singleCategory));
     }
@@ -358,12 +358,12 @@ const AllCategoryComponent = () => {
                 <Box component="span">
                   <CardBlocks title="Change Thumbnail Image">
                     <FeaturedImageComponent
-                      image={get(singleCategory, "thumbnail")}
+                      image={get(singleCategory, "thumbnail_cat_image")}
                       feautedImageChange={(e) =>
-                        handleFileChange(e, "thumbnail_image")
+                        handleFileChange(e, "upload_thumbnail_image")
                       }
                       text="Thumbnail"
-                      name="thumbnail"
+                      name="thumbnail_cat_image"
                       id="thumnail-image"
                     />
                   </CardBlocks>
@@ -375,13 +375,13 @@ const AllCategoryComponent = () => {
                     className={classes.flex1}
                   >
                     <FeaturedImageComponent
-                      image={get(singleCategory, "thumbnail")}
+                      image={get(singleCategory, "thumbnail_cat_image")}
                       feautedImageChange={(e) =>
                         handleFileChange(e, "thumbnail_image")
                       }
                       // style={{marginBottom: '200px'}}
                       id="thumnail-image"
-                      name="thumbnail"
+                      name="thumbnail_cat_image"
                       text="Thumbnail"
                     />
                   </CardBlocks>

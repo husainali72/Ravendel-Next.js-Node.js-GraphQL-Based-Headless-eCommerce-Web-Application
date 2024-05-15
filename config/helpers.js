@@ -464,8 +464,6 @@ const imageUnlink = async (imgObject) => {
       fs.unlink(imgObject, (err) => {
         if (err) {
           console.error('Error deleting image:', err);
-        } else {
-          console.log('Image deleted successfully');
         }
       });
     }

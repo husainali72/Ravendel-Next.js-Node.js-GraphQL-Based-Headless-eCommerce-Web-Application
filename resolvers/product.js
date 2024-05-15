@@ -229,11 +229,6 @@ module.exports = {
             },
           },
           {
-            $addFields: {
-              "thumbnail_image": "$image"
-            }
-          },
-          {
             $project: {
               _id: 1,
               name: 1,
@@ -247,11 +242,13 @@ module.exports = {
               "parentCategory.name": 1,
               "parentCategory.url": 1,
               "parentCategory.image": 1,
-
+              "parentCategory.thumbnail_image": 1,
+              
               "subCategories._id": 1,
               "subCategories.name": 1,
               "subCategories.url": 1,
               "subCategories.image": 1,
+              "subCategories.thumbnail_image": 1,
             },
           },
         ];
@@ -1312,8 +1309,8 @@ module.exports = {
         url: await validateAndSetUrl(args.url || args.name, ProductCat),
         // url: args.url,
         description: args.description,
-        image: args.image,
-        thumbnail_image: args.thumbnail_image,
+        upload_image: args.image,
+        upload_thumbnail_image: args.thumbnail_image,
         meta: args.meta,
       };
 
@@ -1338,7 +1335,8 @@ module.exports = {
         parentId: args.parentId || null,
         url: await validateAndSetUrl(args.url || args.name, ProductCat, args.id),
         description: args.description,
-        image: args.image,
+        update_image: args.update_image,
+        upload_thumbnail_image: args.upload_thumbnail_image,
         meta: args.meta,
       };
 
@@ -1364,27 +1362,24 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "Product Category", false);
       }
       try {
-        const cat = await ProductCat.deleteOne({_id:args.id});
-
-        if (cat) {
-          // if (cat.image) {
-          //   imageUnlink(cat.image);
-          // }
-
-          if (cat.image) {
-            imageUnlink(cat.image);
-
-          }
-          let _id = args.id;
-          const product = await Product.updateMany(
-            {},
-            { $pull: { categoryId: { $in: [_id] } } },
-            { multi: true }
-          );
-          return MESSAGE_RESPONSE("DELETE", "Product Category", true);
+        const cat = await ProductCat.findByIdAndDelete(args.id);
+        if (cat.image) {
+          imageUnlink(cat.image);
         }
+        if (cat.thumbnail_image) {
+          imageUnlink(cat.thumbnail_image)
+        }
+
+        let _id = args.id;
+        const product = await Product.updateMany(
+          {},
+          { $pull: { categoryId: { $in: [_id] } } },
+          { multi: true }
+        );
+        return MESSAGE_RESPONSE("DELETE", "Product Category", true);
         return MESSAGE_RESPONSE("NOT_EXIST", "Product Category", false);
-      } catch (error) {
+      }
+      catch (error) {
         return MESSAGE_RESPONSE("DELETE_ERROR", "Product Category", false);
       }
     },

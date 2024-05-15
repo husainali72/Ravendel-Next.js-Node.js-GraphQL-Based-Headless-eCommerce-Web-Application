@@ -18,7 +18,7 @@ const ParentCategories = ({ categories }) => {
                   <RoundCard
                     key={i}
                     name={get(subCategory, "name")}
-                    image={get(subCategory, "image")}
+                    image={get(subCategory, "thumbnail_image")}
                   />
                 </a>
               </CategoryLink>

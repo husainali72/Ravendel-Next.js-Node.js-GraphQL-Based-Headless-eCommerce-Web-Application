@@ -41,6 +41,7 @@ module.exports = `
     url: String
     description: String
     image: String
+    thumbnail_image: String
     meta: customObject
     date: Date
     updated: Date
@@ -273,7 +274,8 @@ module.exports = `
       parentId: ID
       url: String
       description: String
-      update_image: Upload
+      upload_image: Upload
+      upload_thumbnail_image: Upload
       meta: customObject
     ): statusSchema
     deleteProductCategory(id: ID!): statusSchema
