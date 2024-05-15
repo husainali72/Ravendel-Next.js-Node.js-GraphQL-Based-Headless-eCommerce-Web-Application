@@ -7,6 +7,7 @@ import {
 import Price from '../priceWithCurrency';
 import { useRouter } from 'next/router';
 import { isAnyProductOutOfStock } from '../../utills/helpers';
+import Link from 'next/link';
 const CartTotalDetails=({totalSummary,cartItems})=>{
   const router=useRouter()
   
@@ -66,15 +67,11 @@ const CartTotalDetails=({totalSummary,cartItems})=>{
           </div>
 
             <button className="card-btons text-align-center primary-btn-color" onClick={handlePlaceOrder}>
-              <i className="fas fa-archive"></i>
               <span className="text-align-center">Checkout</span>
             </button>
- 
-        </div>
-        <div className="cart-action text-end">
-            <a className="card-btons primary-btn-color">
-              <i className="fas fa-shopping-bag"></i> Continue Shopping
-            </a>
+            <div className='card-btons text-align-center outline'>
+              <Link href='/'> Go to home</Link>
+            </div>
         </div>
       </div>
     )

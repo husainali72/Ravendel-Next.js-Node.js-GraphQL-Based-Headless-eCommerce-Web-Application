@@ -260,7 +260,6 @@ const EditProductComponent = ({ params }) => {
               }
             }
           }
-          console.log(get(productState, "product.categoryTree", []))
           setProduct({
             ...product,
             ...productState.product,

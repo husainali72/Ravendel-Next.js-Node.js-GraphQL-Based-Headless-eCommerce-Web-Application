@@ -26,7 +26,6 @@ const CustomerReviews = ({ productId }) => {
     } catch (e) {}
   };
   const handlePageChange = ({ selected }) => {
-    console.log(selected)
     setCurrentPage(selected);
   };
   useEffect(() => {

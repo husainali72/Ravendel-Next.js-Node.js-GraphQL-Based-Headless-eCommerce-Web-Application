@@ -1,8 +1,7 @@
-/* eslint-disable react/jsx-key */
-/* eslint-disable react/prop-types */
 import { get} from "lodash";
 import Link from "next/link";
 import React from "react";
+import PropTypes from "prop-types";
 import CloseIcon from "@mui/icons-material/Close";
 import CartTotalDetails from "./cartTotal";
 import Price from "../priceWithCurrency";
@@ -123,9 +122,10 @@ const CartTable = (props) => {
                     {product?.available ? (
                       <RemaningQuantity quantity={get(product,'productQuantity',0)} />
                     ) : (
-                      <div className="itemComponents-base-lowUnitCount">
-                        OUT OF STOCK
-                      </div>
+                      <></>
+                      // <div className="itemComponents-base-lowUnitCount">
+                      //   OUT OF STOCK
+                      // </div>
                     )}
                   </div>
                 </div>
@@ -143,3 +143,11 @@ const CartTable = (props) => {
 };
 
 export default CartTable;
+
+CartTable.propTypes = {
+  cartItems: PropTypes.array.isRequired,
+  clearAllCartItems: PropTypes.func,
+  removeToCart: PropTypes.func,
+  updateCartProductQuantity: PropTypes.func,
+  totalSummary: PropTypes.any,
+};
