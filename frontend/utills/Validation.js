@@ -1,7 +1,8 @@
 import { isValidPhoneNumber } from "react-phone-number-input";
 
 const PASSWORD_REGEX = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,}$/;
-const EMAIL_REGEX = /^[\w-]+(\.[\w-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$/;
+const EMAIL_REGEX = /^[\w-+]+(\.[\w-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$/;
+
 // messages.js
 
 const emailErrorMessage = "Please enter a valid email";

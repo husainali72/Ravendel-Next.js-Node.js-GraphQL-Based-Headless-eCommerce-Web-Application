@@ -2,10 +2,11 @@ import React from 'react'
 import PropTypes from "prop-types";
 import Price from './priceWithCurrency'
 import { isCouponAppliedAndNotFreeShipping, isPriceZero } from '../utills/helpers'
+import { get } from 'lodash';
 
 const TotalSummary = ({totalSummary, couponCartDetail}) => {
   const {mrpTotal, discountTotal, totalTax, totalShipping, grandTotal} = totalSummary;
-  const {couponApplied, couponDiscountTotal} = couponCartDetail;
+  const {couponApplied} = couponCartDetail;
   return (
     <div className="cart-totals">
           <div className="table-responsive">
@@ -68,7 +69,7 @@ const TotalSummary = ({totalSummary, couponCartDetail}) => {
                     >
                       <i className="ti-gift mr-5"></i>
                       <Price
-                        price={couponDiscountTotal || 0}
+                        price={get(totalSummary,'couponDiscountTotal',0)}
                       />
                     </td>
                   </tr>
