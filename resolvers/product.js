@@ -19,7 +19,8 @@ const {
   toObjectID,
   validateAndSetUrl,
   getBreadcrumb,
-  addCategoryAttributes
+  addCategoryAttributes,
+  productScript
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -1411,6 +1412,15 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    productCategoryUpdateScript: async (root, args) => {
+      // const query = {_id: toObjectID(["6641bca3fb7a278d29017721", "6641bda8fb7a278d29017da7"])}
+      const query = {categoryId: "6641bce6fb7a278d29017a27"}
+
+      const allProducts = await Product.find().select("categoryTree specifications name")
+      await productScript(allProducts)
+
+      return allProducts
+    }
   },
   Product: {
     categoryId: async (root, args) => {

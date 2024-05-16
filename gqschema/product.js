@@ -259,6 +259,7 @@ module.exports = `
     onSaleProducts: [Product]
     additionalDetails(productId: ID!): customArray
     parentCategories: productCategoriesRES
+    productCategoryUpdateScript: customArray
   }
 
   extend type Mutation {
