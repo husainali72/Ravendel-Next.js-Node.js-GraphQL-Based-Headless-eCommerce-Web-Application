@@ -12,7 +12,8 @@ import {
 import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
 import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import ProductImage from "./imageComponent";
 
 export default function Footer() {
   const [Address, setAddress] = useState({
@@ -26,6 +27,7 @@ export default function Footer() {
     socialMedia: [],
   });
   const dispatch = useDispatch();
+  const settings = useSelector((state) => state.setting);
   const LogOutUser = async () => {
     await logout();
     removeItemFromLocalStorage("cart");
@@ -80,9 +82,15 @@ export default function Footer() {
               <div className="row mt-5">
                 <div className="col-lg-4 col-md-6 mb-4 mt-2">
                   <div className="app-logo-container">
-                    <Link href="/">
-                      <a className="app-logo">Ravendel</a>
-                    </Link>
+                  <Link href="/">
+                    <a className="app-logo">
+                      <ProductImage
+                        src={get(settings, "setting.appearance.theme.logo")}
+                        className="logo-image"
+                        alt=""
+                      />
+                    </a>
+                  </Link>
                   </div>
                   <div className="address">
                   

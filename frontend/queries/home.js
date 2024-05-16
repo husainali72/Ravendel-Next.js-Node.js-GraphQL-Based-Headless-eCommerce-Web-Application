@@ -39,8 +39,6 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           }
           notification_recipients
           low_stock_threshold
-          out_of_stock_threshold
-          out_of_stock_visibility
           stock_display_format
           left_quantity
         }
