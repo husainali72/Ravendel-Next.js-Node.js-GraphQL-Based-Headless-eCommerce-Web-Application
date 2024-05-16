@@ -199,7 +199,7 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
                 </div>
             </Box>
             {searchState || startDate || endDate || shippingstatus || paymentstatus ?
-                <Button color='error' onClick={removeAllFilter} className={classes.removefilter}>remove </Button> : null}
+                <Button color='error' onClick={removeAllFilter} className={classes.removefilter}>Clear All </Button> : null}
         </div>
     );
 }

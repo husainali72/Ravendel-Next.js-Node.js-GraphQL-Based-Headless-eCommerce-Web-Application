@@ -129,7 +129,7 @@ const AddUserComponent = () => {
                   <Box component="div">
                     <SelectComponent
                       label="Role"
-                      onSelecteChange={(val) =>
+                      onSelectChange={(val) =>
                         setuser({ ...user, ["role"]: val })
                       }
                       items={[

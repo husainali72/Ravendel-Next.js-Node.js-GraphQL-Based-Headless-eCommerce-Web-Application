@@ -34,6 +34,7 @@ const BillingDetails = (props) => {
     shippingInfo,
     handlePhoneInput,
     handleBillingInfo,
+    setZipMessage
   } = props;
   const addressTypeOptions = [
     { value: "homeAddress", label: "Home Address" },
@@ -291,6 +292,13 @@ const BillingDetails = (props) => {
                 handleBlur={(e) => {
                   if (!shippingAdd && billingInfo?.zip) {
                     checkCode(billingInfo.zip);
+                  }else{
+                    if(!shippingAdd){
+                    setZipMessage({
+                      ...ZipMessage,
+                      zipMessage: "",
+                      zipSuccess: false,
+                    });}
                   }
                 }}
                 placeholder="Zip *"
@@ -639,6 +647,12 @@ const BillingDetails = (props) => {
                       handleBlur={(e) => {
                         if (shippingInfo?.zip) {
                           checkCode(shippingInfo?.zip);
+                        }else{
+                          setZipMessage({
+                            ...ZipMessage,
+                            zipMessage: "",
+                            zipSuccess: false,
+                          });
                         }
                       }}
                       {...registerRef("shippingzip", {

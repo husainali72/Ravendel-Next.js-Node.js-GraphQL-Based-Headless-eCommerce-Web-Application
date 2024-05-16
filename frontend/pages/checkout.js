@@ -787,6 +787,7 @@ export const CheckOut = () => {
                       <form onSubmit={handleSubmit(onSubmit)}>
                         <BillingDetails
                         checkCode={checkCode}
+                        setZipMessage={setZipMessage}
                           control={control}
                           ZipMessage={ZipMessage}
                           handleZipCode={handleZipCode}
@@ -990,6 +991,7 @@ export const CheckOut = () => {
                       <h5>Billing Details</h5>
                       <BillingDetails
                         control={control}
+                        setZipMessage={setZipMessage}
                         checkCode={checkCode}
                         ZipMessage={ZipMessage}
                         handleZipCode={handleZipCode}
