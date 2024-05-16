@@ -42,6 +42,7 @@ export const GET_CUOPONS_QUERY = gql`
         excludeProducts
         categories
         excludeCategories
+        categoryTree
         date
         updated
       }
@@ -70,6 +71,7 @@ export const GET_COUPON_BY_ID = gql`
         excludeProducts
         categories
         excludeCategories
+        categoryTree
         date
         updated
       }

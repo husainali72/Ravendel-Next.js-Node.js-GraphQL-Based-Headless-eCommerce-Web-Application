@@ -23,7 +23,7 @@ const EditCategoriesComponent = ({
   }, []);
   const updateCategoryData = (categoriesData, selectedCategoyTree) => {
     categoriesData.forEach((category) => {
-      const matchingCategory = selectedCategoyTree.find((cat) => {
+      const matchingCategory = selectedCategoyTree?.find((cat) => {
         return cat.name === category.name;
       });
       if (matchingCategory) {
