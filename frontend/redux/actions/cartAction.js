@@ -106,7 +106,7 @@ export const changeQty = (variables) => (dispatch) => {
     .then((response) => {
       const { success, message } = get(response, "data.changeQty");
       if (!success) {
-        notify(message, success);
+        notify(message);
       }
       return response;
     })

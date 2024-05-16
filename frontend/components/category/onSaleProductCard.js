@@ -1,8 +1,6 @@
 /* eslint-disable no-unused-vars */
 import Link from "next/link";
-import { Container} from "react-bootstrap";
-import { isDiscount } from "../../utills/helpers";
-import calculateDiscount from "../../utills/calculateDiscount";
+import { Container } from "react-bootstrap";
 import { capitalize, get } from "lodash";
 import ClearIcon from "@mui/icons-material/Clear";
 import Price from "../priceWithCurrency";
@@ -18,7 +16,7 @@ const OnSaleProductCard = ({
   showRemoveButton,
   removeButton,
   display_type,
-  showcaseType
+  showcaseType,
 }) => {
   const [showWishListButton, setShowWishListButton] = useState(-1);
   const [isProductInWistList, setIsProductInWistList] = useState(-1);
@@ -29,7 +27,7 @@ const OnSaleProductCard = ({
   const slideRight = () => {
     slider.current.scrollLeft = get(slider, "current.scrollLeft") + 500;
   };
-  
+
   const toggleWishlistState = (i) => {
     setIsProductInWistList((prevState) => !prevState);
     setShowWishListButton(i);
@@ -42,7 +40,6 @@ const OnSaleProductCard = ({
   };
   return (
     <section className="product-cart-section">
-      
       <Container>
         {!hideTitle ? (
           <div>
@@ -52,8 +49,8 @@ const OnSaleProductCard = ({
           </div>
         ) : null}
         <div>
-          {
-            (display_type && display_type === "SLIDER" || showcaseType === 'slider') ?
+          {(display_type && display_type === "SLIDER") ||
+          showcaseType === "slider" ? (
             <section className="product-cart-section home-page">
               <Container className="container">
                 <MdChevronLeft
@@ -64,8 +61,8 @@ const OnSaleProductCard = ({
                 <div>
                   <div
                     className={
-                        "category pro-cat"
-                        // : " pro-cat category categoryShow "
+                      "category pro-cat"
+                      // : " pro-cat category categoryShow "
                     }
                     ref={slider}
                   >
@@ -74,39 +71,38 @@ const OnSaleProductCard = ({
                         return (
                           <>
                             <Link
-                          href={`/product/[singleproduct]?url=${product.url}`}
-                          as={`/product/${product.url}`}
-                        >
-                          <div
-                            className="on-sale-product-card"
-                            key={i}
-                            onMouseEnter={() => toggleWishlistState(i)}
-                            onMouseLeave={() => setShowWishListButton(null)}
-                          >
-                            {showRemoveButton && (
-                              <button
-                                onClick={(e) => {
-                                  removeButton(e);
-                                }}
-                                className="cross-button"
+                              href={`/product/[singleproduct]?url=${product.url}`}
+                              as={`/product/${product.url}`}
+                            >
+                              <div
+                                className="on-sale-product-card"
+                                key={i}
+                                onMouseEnter={() => toggleWishlistState(i)}
+                                onMouseLeave={() => setShowWishListButton(null)}
                               >
-                                <ClearIcon className="clear-icon" />
-                              </button>
-                            )}
-                            <div className="on-sale-image-wrapper">
-                              <ProductImage
-                                src={get(product, "feature_image", "")}
-                                alt={product?.name}
-                                className="img-on-sale"
-                              />
-                              {
-                                get(product, "rating", 0) > 0 &&
-                                <div className="card-rating">
-                                  <span>{get(product, "rating", 0)}</span>
-                                  <i className="fa-solid fa-star" />
-                                </div>
-                              }
-                                {/* <OverlayTrigger
+                                {showRemoveButton && (
+                                  <button
+                                    onClick={(e) => {
+                                      removeButton(e);
+                                    }}
+                                    className="cross-button"
+                                  >
+                                    <ClearIcon className="clear-icon" />
+                                  </button>
+                                )}
+                                <div className="on-sale-image-wrapper">
+                                  <ProductImage
+                                    src={get(product, "feature_image", "")}
+                                    alt={product?.name}
+                                    className="img-on-sale"
+                                  />
+                                  {get(product, "rating", 0) > 0 && (
+                                    <div className="card-rating">
+                                      <span>{get(product, "rating", 0)}</span>
+                                      <i className="fa-solid fa-star" />
+                                    </div>
+                                  )}
+                                  {/* <OverlayTrigger
                                   className="on-sale-product-tooltip"
                                   placement="top"
                                   overlay={
@@ -131,58 +127,65 @@ const OnSaleProductCard = ({
                                     </div>
                                   </Link>
                                 </OverlayTrigger> */}
-                            </div>
-                            <div className="on-sale-product-card-body">
-                              <div className="card-price">
-                                <div>
-                                  {product.name}
                                 </div>
-                                <RemainingQuantity quantity={get(product,'quantity',0)}/>
-                                {!product?.quantity > 0 && (
-                                  <p className="out-of-stock-card">
-                                    Out Of Stock
-                                  </p>
-                                )}
-                              </div>
-
-                              <div className="on-sale-product-detail">
-                                <div className="product-price">
-                                  <span className="no-wrap">
-                                    <strong className="sale-price">
-                                      <Price
-                                        price={
-                                          getSalePrice(product) ||
-                                          getProductPrice(product)
-                                        }
-                                      />
-                                    </strong>
-                                  </span>
-                                  {getSalePrice(product) &&
-                                  getSalePrice(product) <
-                                  getProductPrice(product) ? (
-                                    <span
-                                    className={
-                                        product?.pricing.sellprice
-                                        ? "has-sale-price"
-                                        : ""
-                                      }
-                                      >
-                                      <Price price={getProductPrice(product)} />
-                                    </span>
-                                  ) : null}
-                                </div>
-                                {isDiscount(product) ? (
-                                  <span className="percantage-save">
-                                    {calculateDiscount(
-                                      getProductPrice(product),
-                                      getSalePrice(product)
+                                <div className="on-sale-product-card-body">
+                                  <div className="card-price">
+                                    <div>{product.name}</div>
+                                    <RemainingQuantity
+                                      quantity={get(product, "quantity", 0)}
+                                    />
+                                    {!product?.quantity > 0 && (
+                                      <p className="out-of-stock-card">
+                                        Out Of Stock
+                                      </p>
                                     )}
-                                  </span>
-                                ) : null}
+                                  </div>
+
+                                  <div className="on-sale-product-detail">
+                                    <div className="product-price">
+                                      <span className="no-wrap">
+                                        <strong className="sale-price">
+                                          <Price
+                                            price={
+                                              getSalePrice(product) ||
+                                              getProductPrice(product)
+                                            }
+                                          />
+                                        </strong>
+                                      </span>
+                                      {getSalePrice(product) &&
+                                      getSalePrice(product) <
+                                        getProductPrice(product) ? (
+                                        <span
+                                          className={
+                                            product?.pricing.sellprice
+                                              ? "has-sale-price"
+                                              : ""
+                                          }
+                                        >
+                                          <Price
+                                            price={getProductPrice(product)}
+                                          />
+                                        </span>
+                                      ) : null}
+                                    </div>
+                                    {get(
+                                      product,
+                                      "pricing.discountPercentage"
+                                    ) > 0 ? (
+                                      <span className="percantage-save">
+                                        {get(
+                                          product,
+                                          "pricing.discountPercentage",
+                                          0
+                                        )}{" "}
+                                        % OFF
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        </Link>
+                            </Link>
                           </>
                         );
                       })
@@ -198,7 +201,7 @@ const OnSaleProductCard = ({
                 />
               </Container>
             </section>
-            :
+          ) : (
             <div className="on-sale-product">
               {onSaleProduct && onSaleProduct?.length > 0 ? (
                 <>
@@ -231,14 +234,13 @@ const OnSaleProductCard = ({
                                 alt={product?.name}
                                 className="img-on-sale"
                               />
-                              {
-                                get(product, "rating", 0) > 0 &&
+                              {get(product, "rating", 0) > 0 && (
                                 <div className="card-rating">
                                   <span>{get(product, "rating", 0)}</span>
                                   <i className="fa-solid fa-star" />
                                 </div>
-                              }
-                                {/* <OverlayTrigger
+                              )}
+                              {/* <OverlayTrigger
                                   className="on-sale-product-tooltip"
                                   placement="top"
                                   overlay={
@@ -266,10 +268,10 @@ const OnSaleProductCard = ({
                             </div>
                             <div className="on-sale-product-card-body">
                               <div className="card-price">
-                                <div>
-                                  {product.name}
-                                </div>
-                                <RemainingQuantity quantity={get(product,'quantity',0)}/>
+                                <div>{product.name}</div>
+                                <RemainingQuantity
+                                  quantity={get(product, "quantity", 0)}
+                                />
                                 {!product?.quantity > 0 && (
                                   <p className="out-of-stock-card">
                                     Out Of Stock
@@ -291,24 +293,27 @@ const OnSaleProductCard = ({
                                   </span>
                                   {getSalePrice(product) &&
                                   getSalePrice(product) <
-                                  getProductPrice(product) ? (
+                                    getProductPrice(product) ? (
                                     <span
-                                    className={
+                                      className={
                                         product?.pricing.sellprice
-                                        ? "has-sale-price"
-                                        : ""
+                                          ? "has-sale-price"
+                                          : ""
                                       }
-                                      >
+                                    >
                                       <Price price={getProductPrice(product)} />
                                     </span>
                                   ) : null}
                                 </div>
-                                {isDiscount(product) ? (
+                                {get(product, "pricing.discountPercentage") >
+                                0 ? (
                                   <span className="percantage-save">
-                                    {calculateDiscount(
-                                      getProductPrice(product),
-                                      getSalePrice(product)
-                                    )}
+                                    {get(
+                                      product,
+                                      "pricing.discountPercentage",
+                                      0
+                                    )}{" "}
+                                    % OFF
                                   </span>
                                 ) : null}
                                 {/* {!product?.quantity > 0 && (
@@ -330,7 +335,7 @@ const OnSaleProductCard = ({
                 </div>
               )}
             </div>
-          }
+          )}
         </div>
       </Container>
     </section>
