@@ -9,7 +9,10 @@ const Search = () => {
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       // Redirect to search page with the search query in the URL
-      router.push(`/search?query=${encodeURIComponent(searchQuery)}`);
+      const trimmedQuery = searchQuery?.trim();
+      if(trimmedQuery){
+      router.push(`/search?query=${encodeURIComponent(trimmedQuery)}`);
+    }
     }
   };
 

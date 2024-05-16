@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { SEARCH_PRODUCTS_QUERY } from "../queries/productquery";
 import { queryWithoutToken } from "../utills/helpers";
-import { get } from "lodash";
+import { capitalize, get } from "lodash";
 import OnSaleProductCard from "../components/category/onSaleProductCard";
 import Pagination from "../components/pagination";
 
@@ -12,9 +12,8 @@ const SearchResult = () => {
   const limit = 10;
   const [currentPage, setCurrentPage] = useState(1); // Start from page 1
   const [totalPages, setTotalPages] = useState(0);
-
+  const { query } = router.query;
   useEffect(() => {
-    const { query } = router.query;
     if (query) {
       const variables = {
         searchTerm: query,
@@ -49,6 +48,9 @@ const SearchResult = () => {
 
   return (
     <div>
+      <h5 className="search-page-title">
+        {capitalize(query)}- {products?.length?`${products?.length} Products`:`No results found for ${query}`}
+      </h5>
       <OnSaleProductCard onSaleProduct={products} hideTitle={true} />
       {totalPages > 1 && (
         <Pagination

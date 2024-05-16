@@ -11,8 +11,9 @@ const InputField = ( {
   name,
   registerRef,
   onChange,
+  handleBlur,
   disabled,
-  ...rest
+  // ...rest
 } ) => {
   return (
     <>
@@ -21,12 +22,13 @@ const InputField = ( {
         className={className}
         id={id}
         placeholder={placeholder}
+        onBlur={handleBlur}
         value={value}
         name={name}
         {...registerRef}
         onChange={( e ) => onChange( e, type )}
         disabled={disabled||false}
-        {...rest}
+        // {...rest}
       />
       {
         errors &&
@@ -47,6 +49,7 @@ InputField.propTypes = {
   name: PropTypes.string.isRequired,
   registerRef: PropTypes.object,
   onChange: PropTypes.func.isRequired,
+  handleBlur: PropTypes.func,
   disabled: PropTypes.bool,
 };
 

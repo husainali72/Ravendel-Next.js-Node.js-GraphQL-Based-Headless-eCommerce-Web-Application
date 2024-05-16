@@ -6695,3 +6695,7 @@ margin-bottom: 4px !important;
 .clear-filters-btn:hover{
   background-color: #DCF0EF;
 }
+.search-page-title{
+  text-align: center;
+  color: var(--primary-color);
+}
