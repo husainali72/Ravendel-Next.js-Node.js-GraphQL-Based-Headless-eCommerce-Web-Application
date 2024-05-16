@@ -2056,3 +2056,23 @@ const addCategoryAttributes = async (categories, specifications, modal) => {
   await modal.bulkWrite(bulkWriteQuery)
 }
 module.exports.addCategoryAttributes = addCategoryAttributes
+
+const getParentChildren = (category, parentChildren, checkedCategoryIDs) => {
+
+  category.forEach(cat => {
+    if(cat.checked) {
+      checkedCategoryIDs.push(cat.id)
+    }
+    if(cat.children.length) {
+      parentChildren[cat.id] = cat.children.map(catChild => catChild.id)
+
+      getParentChildren(cat.children, parentChildren, checkedCategoryIDs)
+    }
+  });
+
+  return {
+    parentChildren,
+    checkedCategoryIDs
+  }
+}
+module.exports.getParentChildren = getParentChildren
