@@ -143,11 +143,11 @@ export async function getStaticProps({ params }) {
     );
     outOfStockThreshold = get(
       homepagedata,
-      "getSettings.store.inventory.out_of_stock_threshold"
+      "getSettings.store.inventory"
     );
     outOfStockVisibility = get(
       homepagedata,
-      "getSettings.store.inventory.out_of_stock_visibility"
+      "getSettings.store.inventory"
     );
   } catch (e) {}
 
