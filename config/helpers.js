@@ -2035,29 +2035,14 @@ function getBreadcrumb(data) {
 module.exports.getBreadcrumb = getBreadcrumb
 
 const addCategoryAttributes = async (categoryTree, specifications, modal) => {
-  const parentChildren = {}
-  const checkedCategoryIDs = []
-
   // get parent categories with their children
   // get checked category of the product
-  const getParentChildren = (category) => {
-    category.forEach(cat => {
-      if(cat.checked) {
-        checkedCategoryIDs.push(cat.id)
-      }
-      if(cat.children.length) {
-        parentChildren[cat.id] = cat.children.map(catChild => catChild.id)
-        
-        getParentChildren(cat.children)
-      }
-    });
-  }
-  getParentChildren(categoryTree)
+  const { parentChildren, checkedCategoryIDs } = getParentChildren(categoryTree, {}, [])
 
   const checkedCategories = await ProductCat.find({_id: toObjectID(checkedCategoryIDs)}).select("attributes")
 
   // populate data for product attributes
-  // and update category attributes accordingly
+  // and update checked category attributes accordingly
   for(let cat of checkedCategories) {
     const productAttributes = cat.attributes
 
@@ -2107,41 +2092,62 @@ const addCategoryAttributes = async (categoryTree, specifications, modal) => {
   const parentIDs = Object.keys(parentChildren).reverse()
   for(const parentID of parentIDs) {
     const parentChildrenData = await ProductCat.find({parentId: toObjectID(parentID)}).select("attributes")
+    const categoryAttributes = [];
+    let attributeCountMap = new Map();
+    let totalCategories = parentChildrenData.length;
 
-    const commonAttributes = {};
+    // Collecting attributes and their counts
+    parentChildrenData.forEach((cat) => {
+      cat.attributes.forEach((attribute) => {
+        if (!attributeCountMap.has(attribute.attributeId)) {
+          attributeCountMap.set(attribute.attributeId, {
+            attributeId: attribute.attributeId,
+            name: attribute.name,
+            values: [],
+            count: 0
+          });
+        }
+        let attributeData = attributeCountMap.get(attribute.attributeId);
+        attributeData.values.push(...attribute.values);
+        attributeData.count++;
+      });
+    });
 
-    for (const obj of parentChildrenData) {
-      for (const attribute of obj.attributes) {
-        const { attributeId, name, values } = attribute;
-        
-        if (!commonAttributes[attributeId]) {
-          // Add attribute to common attributes object
-          commonAttributes[attributeId] = { attributeId, name, values: [] };
-        }
-        
-        // Add distinct values to the attribute in common attributes object
-        for (const value of values) {
-          if (!commonAttributes[attributeId].values.some(v => v.value === value.value)) {
-            commonAttributes[attributeId].values.push(value);
-          }
-        }
+    // Filtering attributes present in all objects
+    attributeCountMap.forEach((attribute) => {
+      if (attribute.count === totalCategories) {
+        // Remove duplicates if needed
+        const uniqueValues = [...new Map(attribute.values.map(item => [item.attributeValueId, item])).values()];
+
+        categoryAttributes.push({
+          attributeId: attribute.attributeId,
+          name: attribute.name,
+          values: uniqueValues
+        });
       }
-    }
+    });
 
-    const commonAttributesArray = Object.values(commonAttributes);
-    console.log(JSON.stringify(commonAttributesArray), parentID)
-    
+    await ProductCat.findByIdAndUpdate(parentID, {$set: {attributes: categoryAttributes}})
   }
 }
 module.exports.addCategoryAttributes = addCategoryAttributes
 
-const productScript = async (products) => {
-  console.log(products.length)
-  for(let product of products) {
-    console.log(product.name)
-    await addCategoryAttributes(product.categoryTree, product.specifications, ProductCat)
+const getParentChildren = (category, parentChildren, checkedCategoryIDs) => {
 
-    await product.save()
+  category.forEach(cat => {
+    if(cat.checked) {
+      checkedCategoryIDs.push(cat.id)
+    }
+    if(cat.children.length) {
+      parentChildren[cat.id] = cat.children.map(catChild => catChild.id)
+
+      getParentChildren(cat.children, parentChildren, checkedCategoryIDs)
+    }
+  });
+
+  return {
+    parentChildren,
+    checkedCategoryIDs
   }
 }
-module.exports.productScript = productScript
+module.exports.getParentChildren = getParentChildren
