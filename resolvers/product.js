@@ -235,6 +235,7 @@ module.exports = {
               url: 1,
               description: 1,
               thumbnail_image: 1,
+              meta: 1,
               image: 1,
               parentId: 1,
         
@@ -243,12 +244,14 @@ module.exports = {
               "parentCategory.url": 1,
               "parentCategory.image": 1,
               "parentCategory.thumbnail_image": 1,
+              "parentCategory.meta": 1,
               
               "subCategories._id": 1,
               "subCategories.name": 1,
               "subCategories.url": 1,
               "subCategories.image": 1,
               "subCategories.thumbnail_image": 1,
+              "subCategories.meta": 1,
             },
           },
         ];
