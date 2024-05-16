@@ -171,16 +171,17 @@ const EditUserComponent = ({ params }) => {
                     <SelectComponent
                       label="Role"
                       value={user.role}
-                      onSelecteChange={(val) =>
-                        setuser({ ...user, ["role"]: val })
+                      onSelectChange={(e) =>
+                        setuser({ ...user, [e.target.name]: e.target.value })
                       }
                       items={[
-                        "SUBSCRIBER",
-                        "MANAGER",
-                        "EDITOR",
-                        "AUTHOR",
-                        "USER",
-                      ]}
+                        { label: "SUBSCRIBER", value: "SUBSCRIBER" },
+                        { label: "MANAGER", value: "MANAGER" },
+                        { label: "EDITOR", value: "EDITOR" },
+                        { label: "AUTHOR", value: "AUTHOR" },
+                        { label: "USER", value: "USER" },
+                      ]
+                      }
                       name="role"
                     />
                   </Box>

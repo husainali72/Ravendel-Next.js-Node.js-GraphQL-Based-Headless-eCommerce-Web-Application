@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Grid, Typography, Divider } from "@mui/material";
 import viewStyles from "../viewStyles";
 import {
-  currencySetter,
-  getPrice,
   isCouponAppliedAndNotFreeShipping,
   isPriceZero,
 } from "./CurrencyFormat";
 import { get } from "lodash";
 import clsx from "clsx";
+import Price from "../settings/components/priceWithCurrency";
+
 const TotalSummaryComponent = ({
   totalSummary,
   currency,
@@ -26,9 +26,15 @@ const TotalSummaryComponent = ({
     const isCouponApplied =
       get(couponCard, "couponApplied") &&
       isCouponAppliedAndNotFreeShipping(couponCard);
-    const couponDiscount = get(couponCard, "appliedCouponDiscount");
+    const couponDiscount = get(totalSummary, "couponDiscountTotal");
     const summaryItems = [
-      { label: "Cart Total", value: totalSummary?.cartTotal, type: "price" },
+      { label: "Total MRP", value: totalSummary?.mrpTotal, type: "price" },
+      {
+        label: "Discount on MRP",
+        value: totalSummary?.discountTotal,
+        type: "price",
+        name: "discount",
+      },
       !isFreeTax && {
         label: "Total Tax",
         value: totalSummary?.totalTax,
@@ -46,7 +52,7 @@ const TotalSummaryComponent = ({
         name: "coupon",
       },
       {
-        label: "Grand Total",
+        label: "Total amount",
         value: totalSummary?.grandTotal,
         type: "price",
         name: "grandTotal",
@@ -86,8 +92,8 @@ const TotalSummaryComponent = ({
                             item?.name === "coupon" ? "text-success" : null
                           )}
                         >
-                          {currencySetter(currency, "12px")}
-                          {getPrice(item?.value, decimal)}
+                          {item?.name === "discount" && "-"}{" "}
+                          <Price price={get(item, "value", 0)} />
                         </Typography>
                       </Grid>
                     </Grid>
