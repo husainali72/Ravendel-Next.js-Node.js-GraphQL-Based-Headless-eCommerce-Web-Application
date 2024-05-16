@@ -46,7 +46,7 @@ const TotalSummaryComponent = ({
         type: isFreeShipping ? "text" : "price",
       },
       isCouponApplied && {
-        label: "Coupon ",
+        label: `Coupon -${get(couponCard, "appliedCouponCode")} `,
         value: couponDiscount,
         type: "price",
         name: "coupon",
