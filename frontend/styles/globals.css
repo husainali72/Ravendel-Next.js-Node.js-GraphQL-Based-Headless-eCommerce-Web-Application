@@ -6661,3 +6661,7 @@ margin-bottom: 4px !important;
   margin-bottom: 12px !important;
   padding-bottom: 8px;
 }
+.search-page-title{
+  text-align: center;
+  color: var(--primary-color);
+}

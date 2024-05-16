@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
-import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
-import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
-import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import CorporateFareOutlinedIcon from "@mui/icons-material/CorporateFareOutlined";
+import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
+import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
+import BusinessCenterOutlinedIcon from "@mui/icons-material/BusinessCenterOutlined";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import PropTypes from "prop-types";
 import { get } from "lodash";
 import { Button } from "react-bootstrap";
@@ -16,6 +16,7 @@ const CustomerDetail = (props) => {
     billingInfo,
     shippingInfo,
     shippingAdd,
+    toggleAddNewAddressForm,
   } = props;
   useEffect(() => {
     let billingData = billingInfo;
@@ -23,11 +24,11 @@ const CustomerDetail = (props) => {
 
     billingData = {
       ...billingData,
-      addressType: billingInfo?.addressType?.value
+      addressType: billingInfo?.addressType?.value,
     };
     shippingData = {
       ...shippingData,
-      addressType: shippingData?.addressType?.value
+      addressType: shippingData?.addressType?.value,
     };
     var allData = {
       billing: billingData,
@@ -37,59 +38,71 @@ const CustomerDetail = (props) => {
     getBillingInfo(allData);
   }, [shippingInfo, billingInfo, shippingAdd]);
 
-
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
-        <h5 style={{marginBottom: 0}}>Customer Details</h5>
-        <button className="add-btn"><span><AddRoundedIcon/></span> Add a New Address</button>
+        {addressBook && addressBook?.length > 0 && (
+          <h5 style={{ marginBottom: 0 }}>Customer Details</h5>
+        )}
+        <button className="add-btn" onClick={toggleAddNewAddressForm}>
+          <span>
+            <AddRoundedIcon />
+          </span>{" "}
+          Add a New Address
+        </button>
       </div>
       <div>
         <div className="customer-detail">
-          {addressBook && addressBook?.length > 0 ? (
+          {addressBook && addressBook?.length > 0 && (
             <>
               <div className="cust-detail-container">
-                
-                  {addressBook?.map((address, i) =>
-                    i < 5 ? (
-                      <>
-                        <div
-                          className={`address-card ${billingInfo?.id && address._id === billingInfo?.id ? 'active' : ''}`}
-                          key={i}
-                          onClick={(e) => SelectAddressBook(address, e)}
-                        >
-                          <span className="radio-check"></span>
-                          <Button className="edit-btn" variant="link"><CreateOutlinedIcon/></Button>
-                          <div className="content">
-                            <b>
-                              {
-                                (!get(address, 'addressType') || get(address, 'addressType') === "Home Address") ?
-                                <HomeOutlinedIcon/>
-                                : get(address, 'addressType') === "Office Address" ?
-                                <CorporateFareOutlinedIcon />
-                                : get(address, 'addressType') === "Work Address" ?
-                                <BusinessCenterOutlinedIcon />
-                                : get(address, 'addressType') === "Shop Address" ?
-                                <StorefrontOutlinedIcon />
-                                : ''
-                              }
-                              {get(address, 'firstName') || 'Home Address'}
-                            </b>
-                            <div className="d-flex">
-                              <p>{get(address, 'firstName')} {" "} {get(address, 'lastName')}</p>
-                              <p>{get(address, 'phone')}</p>
-                            </div>
-                            <p>{get(address, 'addressLine1')}</p>
-                            <p>{get(address, 'addressLine2')}</p>
-                          </div>
+                {addressBook?.map((address, i) => (
+                  <>
+                    <div
+                      className={`address-card ${
+                        billingInfo?.id && address._id === billingInfo?.id
+                          ? "active"
+                          : ""
+                      }`}
+                      key={i}
+                      onClick={(e) => SelectAddressBook(address, e)}
+                    >
+                      <span className="radio-check"></span>
+                      <Button className="edit-btn" variant="link">
+                        <CreateOutlinedIcon />
+                      </Button>
+                      <div className="content">
+                        <b>
+                          {!get(address, "addressType") ||
+                          get(address, "addressType") === "Home Address" ? (
+                            <HomeOutlinedIcon />
+                          ) : get(address, "addressType") ===
+                            "Office Address" ? (
+                            <CorporateFareOutlinedIcon />
+                          ) : get(address, "addressType") === "Work Address" ? (
+                            <BusinessCenterOutlinedIcon />
+                          ) : get(address, "addressType") === "Shop Address" ? (
+                            <StorefrontOutlinedIcon />
+                          ) : (
+                            ""
+                          )}
+                          {get(address, "firstName") || "Home Address"}
+                        </b>
+                        <div className="d-flex">
+                          <p>
+                            {get(address, "firstName")}{" "}
+                            {get(address, "lastName")}
+                          </p>
+                          <p>{get(address, "phone")}</p>
                         </div>
-                      </>
-                    ) : null
-                  )}
+                        <p>{get(address, "addressLine1")}</p>
+                        <p>{get(address, "addressLine2")}</p>
+                      </div>
+                    </div>
+                  </>
+                ))}
               </div>
             </>
-          ) : (
-            "No data"
           )}
         </div>
       </div>
@@ -103,5 +116,6 @@ CustomerDetail.propTypes = {
   billingInfo: PropTypes.object,
   shippingInfo: PropTypes.object,
   shippingAdd: PropTypes.object,
+  toggleAddNewAddressForm: PropTypes.func,
 };
 export default CustomerDetail;

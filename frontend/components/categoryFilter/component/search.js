@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { FaTimes } from "react-icons/fa"; // Import the cross icon from react-icons/fa
 import { CiSearch } from "react-icons/ci";
@@ -7,18 +7,21 @@ import InputField from "../../inputField";
 const Search = ({ searchData, onSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
+  useEffect(() => {
+    // Filter data based on searchQuery when searchData or searchQuery changes
+    const filtered = searchData.filter((data) =>
+      data?.label?.toLowerCase()?.includes(searchQuery?.toLowerCase())
+    );
+    onSearch(filtered);
+  }, [searchData, searchQuery]);
+
   const handleInputChange = (e) => {
     const { value } = e.target;
     setSearchQuery(value);
-    const filteredData = searchData.filter((data) =>
-      data?.label?.toLowerCase()?.includes(value?.toLowerCase())
-    );
-    onSearch(filteredData);
   };
 
   const clearSearch = () => {
     setSearchQuery("");
-    onSearch(searchData);
   };
 
   return (
