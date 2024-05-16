@@ -19,7 +19,8 @@ const {
   toObjectID,
   validateAndSetUrl,
   getBreadcrumb,
-  addCategoryAttributes
+  addCategoryAttributes,
+  productScript
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -235,6 +236,7 @@ module.exports = {
               url: 1,
               description: 1,
               thumbnail_image: 1,
+              meta: 1,
               image: 1,
               parentId: 1,
         
@@ -243,12 +245,14 @@ module.exports = {
               "parentCategory.url": 1,
               "parentCategory.image": 1,
               "parentCategory.thumbnail_image": 1,
+              "parentCategory.meta": 1,
               
               "subCategories._id": 1,
               "subCategories.name": 1,
               "subCategories.url": 1,
               "subCategories.image": 1,
               "subCategories.thumbnail_image": 1,
+              "subCategories.meta": 1,
             },
           },
         ];
@@ -1411,6 +1415,15 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    productCategoryUpdateScript: async (root, args) => {
+      // const query = {_id: toObjectID(["6641bca3fb7a278d29017721", "6641bda8fb7a278d29017da7"])}
+      const query = {categoryId: "6641bce6fb7a278d29017a27"}
+
+      const allProducts = await Product.find().select("categoryTree specifications name")
+      await productScript(allProducts)
+
+      return allProducts
+    }
   },
   Product: {
     categoryId: async (root, args) => {

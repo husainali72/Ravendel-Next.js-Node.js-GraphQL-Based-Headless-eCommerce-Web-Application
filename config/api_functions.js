@@ -396,40 +396,40 @@ const UPDATE_FUNC = async (
           if (args.updatedImage || args.update_image || args.upload_image) {
             imageUnlink(response.image);
             data.image = imgObject.data || imgObject;
-          } 
-          if (args.upload_thumbnail_image){
+          }
+          if (args.upload_thumbnail_image) {
             imageUnlink(response.thumbnail_image);
-            data.thumbnail_image = imgObject2.data || imgObject
+            data.thumbnail_image = imgObject2.data || imgObject;
           }
-          if (args.feature_image){
+          if (args.feature_image) {
             imageUnlink(response.feature_image);
-            data.feature_image = imgObject.data || imgObject; 
+            data.feature_image = imgObject.data || imgObject;
           }
         }
-        for (const [key, value] of Object.entries(data)) {
-          response[key] = value;
-        }
-
-        if (data.password) {
-          response.password = await bcrypt.hash(data.password, 10);
-        }
-
-        if (data.gender === "" && data.gender === null) {
-          return {
-            message: "Invalid gender",
-            success: false,
-          };
-        }
-        if (name !== "Page" && name !== "Product Attribute") response.updated = Date.now();
-
-        response = await modal.findByIdAndUpdate({ _id: response._id }, { ...response });
-        await response.save();
-        // update average rating of product related to reviews
-        if (name === "Review") {
-          await prodAvgRating(data.productId, modal, modal2);
-        }
-        return MESSAGE_RESPONSE("UpdateSuccess", name, true);
       }
+      for (const [key, value] of Object.entries(data)) {
+        response[key] = value;
+      }
+
+      if (data.password) {
+        response.password = await bcrypt.hash(data.password, 10);
+      }
+
+      if (data.gender === "" && data.gender === null) {
+        return {
+          message: "Invalid gender",
+          success: false,
+        };
+      }
+      if (name !== "Page" && name !== "Product Attribute") response.updated = Date.now();
+
+      response = await modal.findByIdAndUpdate({ _id: response._id }, { ...response });
+      await response.save();
+      // update average rating of product related to reviews
+      if (name === "Review") {
+        await prodAvgRating(data.productId, modal, modal2);
+      }
+      return MESSAGE_RESPONSE("UpdateSuccess", name, true);
     }
     return MESSAGE_RESPONSE("NOT_EXIST", name, false);
   } catch (error) {
