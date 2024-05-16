@@ -293,11 +293,12 @@ const BillingDetails = (props) => {
                   if (!shippingAdd && billingInfo?.zip) {
                     checkCode(billingInfo.zip);
                   }else{
+                    if(!shippingAdd){
                     setZipMessage({
                       ...ZipMessage,
                       zipMessage: "",
                       zipSuccess: false,
-                    });
+                    });}
                   }
                 }}
                 placeholder="Zip *"
