@@ -1,11 +1,12 @@
-const cron = require("node-cron")
-const Product = require("../models/Product")
-const Setting = require("../models/Setting")
-const Cart = require("../models/Cart")
-const Customer = require("../models/Customer")
-const APP_KEYS = require('./keys')
-const { sendEmail } = require("./helpers") 
+const cron = require("node-cron");
+const Product = require("../models/Product");
+const Setting = require("../models/Setting");
+const Cart = require("../models/Cart");
+const Customer = require("../models/Customer");
+const APP_KEYS = require("./keys");
+const { sendEmail, sendEmailTemplate } = require("./helpers");
 
+/*
 // updateAdminProductLowStock everyday at 12am
 const updateAdminProductLowStock = (app) => {
     cron.schedule("0 0 * * *", async() => {
@@ -30,20 +31,58 @@ const updateAdminProductLowStock = (app) => {
     })
 }
 module.exports.updateAdminProductLowStock = updateAdminProductLowStock
+*/
 
-// updateCustomerCheckoutCart every 10 days
-const updateCustomerCheckoutCart = (app) => {
-    cron.schedule("0 0 */10 * *", async() => {
-        const allCarts = await Cart.find()
-        for(let cart of allCarts){
-            let customer = await Customer.findById(cart.userId)
-            const mailData = {
-                subject: "Checkout Cart!",
-                mailTemplate: "template",
-                cart: cart
-            }
-            sendEmail(mailData, APP_KEYS.smptUser, customer.email)
+// updateCustomerCheckoutCart every day At 10:00
+const abandonedCartsNotification = (app) => {
+  cron.schedule("0 10 * * *", async () => {
+    try {
+      const pipeline = [
+        {
+          $lookup: {
+            from: "customers", // Ensure this matches the actual collection name in your database
+            localField: "userId", // Corrected typo
+            foreignField: "_id",
+            as: "customerInfo",
+            pipeline: [
+              {
+                $project: {
+                  firstName: 1,
+                  email: 1,
+                },
+              },
+            ],
+          },
+        },
+      ];
+
+      const cartsData = await Cart.aggregate(pipeline);
+
+      let currentDate = new Date();
+      let oldDate = new Date(currentDate.getTime());
+      oldDate.setDate(oldDate.getDate() - 7);
+
+
+      for (let unit of cartsData) {
+        if (unit.products.length != 0 && unit.customerInfo.length != 0) {
+
+          let unitDateTimestamp = unit.date.getTime();
+          let oldDateTimestamp = oldDate.getTime();
+
+          if (unitDateTimestamp < oldDateTimestamp) {
+            console.log(unit.date, unit.customerInfo[0].firstName);
+          }
+          let data = {
+            email : unit.customerInfo[0].email,
+            products : unit.products
+          }
+          sendEmailTemplate("CART_REMAINDER", data)
+
         }
-    })
-}
-module.exports.updateCustomerCheckoutCart = updateCustomerCheckoutCart
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  });
+};
+module.exports.abandonedCartsNotification = abandonedCartsNotification;
