@@ -1,14 +1,10 @@
-/* eslint-disable no-unused-vars */
-
 import React, { useState, useEffect } from "react";
-import PageTitle from "../../components/PageTitle";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { get } from "lodash";
 import { getFilteredProductsAction } from "../../redux/actions/productAction";
 import { ARRAY, CHOICE, LIMIT } from "../../components/categoryFilter/constant";
 import SubCategoryProducts from "../../components/category/subCategories";
-import Meta from "../../components/Meta";
 import ParentCategories from "../../components/category/parentCategories";
 
 const SingleCategoryProduct = () => {
@@ -78,8 +74,8 @@ const SingleCategoryProduct = () => {
     });
 
     // Destructure the "data" field from each object
-    filteredData = filteredData.map((item) => {
-      const { data, ...rest } = item;
+    filteredData = filteredData?.map((item) => {
+      const { ...rest } = item;
       return rest;
     });
     setFilterPayload({ ...filterPayload, filters: filteredData });
@@ -97,16 +93,29 @@ const SingleCategoryProduct = () => {
   if (router.isFallback) {
     return <div>loading...</div>;
   }
+  const clearFilter=()=>{
+    const { category } = get(router, "query");
+    let variable = {
+      mainFilter: {
+        categoryUrl: category,
+      },
+      pageNo: 1,
+      limit: LIMIT,
+    };
+    setFilterPayload({ ...variable });
+  }
   return (
     <div>
       {/* <Meta title={singlecategory?.meta?.title} description={singlecategory?.meta?.description} keywords={singlecategory?.meta?.keywords}/> */}
-      <PageTitle title={"category"} />
+      {/* <PageTitle title={"Collection"} /> */}
       {get(filteredProductData, "isMostParentCategory") ? (
         <ParentCategories
           categories={get(filteredProductData, "mostParentCategoryData", {})}
+          categoryName={get(router, 'query.category', '')}
         />
       ) : (
         <SubCategoryProducts
+        clearFilter={clearFilter}
           filteredProductData={filteredProductData}
           handleFilter={handleFilter}
           handleScroll={handleScroll}

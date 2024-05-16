@@ -248,3 +248,29 @@ export const calculateDiscount = (price, sellPrice) => {
   }
 return 0;
 };
+
+export const filterTreeData = (data) => {
+  return data.reduce((acc, category) => {
+    const filteredCategory = {
+      id: category?.id,
+      name: category.name,
+      checked: category.checked,
+    };
+    if (category?.children && category?.children?.length > 0) {
+      filteredCategory.children = category?.children;
+    }
+
+    if (category?.checked) {
+      acc.push(filteredCategory);
+    }
+
+   else if (category?.children && category?.children?.length > 0) {
+      filteredCategory.children = filterTreeData(category?.children);
+      if (filteredCategory.children.length > 0) {
+        acc.push(filteredCategory);
+      }
+    }
+
+    return acc;
+  }, []);
+};

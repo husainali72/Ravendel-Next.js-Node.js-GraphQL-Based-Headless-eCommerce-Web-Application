@@ -56,6 +56,12 @@ module.exports = `
     customer(id: ID!): CustomerById
   }
 
+  type registerSchema {
+    success: Boolean
+    message: String
+    token: String
+  }
+
   extend type Mutation {
     addCustomer(
       firstName: String
@@ -64,7 +70,7 @@ module.exports = `
       company: String
       phone: String
       password: String
-    ): statusSchema
+    ): registerSchema
     updateCustomer(
       id: ID!
       firstName: String
@@ -113,6 +119,13 @@ module.exports = `
     resetPassword(
       email: String
       oldPassword: String
+      newPassword: String
+    ): statusSchema
+    sendForgetPasswordEmail(
+      email: String
+    ): statusSchema
+    verifyForgetPasswordToken(
+      token: String
       newPassword: String
     ): statusSchema
   }

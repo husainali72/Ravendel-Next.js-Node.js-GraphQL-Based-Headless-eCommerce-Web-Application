@@ -73,13 +73,14 @@ export const ShopCart = () => {
 
     }
 
-    return <h5>Coming Soon...</h5>;
+    // return <h5>Coming Soon...</h5>;
 
     return (
         <>
 
             {!loading && cart && cart?.length > 0 ? (
                 <div>
+                    <b>{cart?.length} Item{cart?.length > 1 ? 's' : ''} in your cart</b>
                     {cart.map((item, i) =>
                         <div key={i} style={{ display: "flex", marginBottom: "1rem", backgroundColor: "#fff" }}>
                             <div className="shopping-cart-img td-flex">
@@ -104,7 +105,7 @@ export const ShopCart = () => {
                                                 }}
                                             ></h5>) : <h5>{item.name}</h5>}</h5>
                                 </Link>
-                                <h3><span>{item.quantity} × </span>{currency} {item.pricing?.sellprice ? item.pricing?.sellprice.toFixed(2) : item.pricing?.price.toFixed(2)}</h3>
+                                <h3><span>{item.quantity} × </span>{currency} {item.pricing?.sellprice ? item.pricing?.sellprice.toFixed(2) : item.pricing?.price?.toFixed(2)}</h3>
                             </div>
                             <div className="shopping-cart-delete">
                                 <a onClick={() => removeToCart(item)}><i className="fas fa-times"></i></a>

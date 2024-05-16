@@ -12,42 +12,45 @@ const SubCategoryProducts = ({
   handleFilter,
   handleScroll,
   handleSorting,
+  clearFilter
 }) => {
 
   return (
     <section className="product-cart-section">
       <Container>
         <div className="single-category-page">
-          <div className="category-option">
-            <SubCategoryList
-              categoryTree={get(filteredProductData, "categoryTree", {})}
-              name={"Category"}
-            />
-            {get(filteredProductData, "filterData", [])?.length > 0 && (
-              <div className="primary-sidebar sticky-sidebar category-shop-cart my-3">
-                <div className="theiaStickySidebar category-box-filler">
-                  <CategoryFilter
-                    filterCategoryData={get(
-                      filteredProductData,
-                      "filterData",
-                      []
-                    )}
-                    handleFilter={(data) => handleFilter(data)}
-                  />
+          {get(filteredProductData, "filterData", [])?.length > 0 && (
+            <div className="category-option">
+              <h4 className="category-section-title">Filters</h4>
+              <SubCategoryList
+                categoryTree={get(filteredProductData, "categoryTree", {})}
+                name={"Category"}
+              />
+                <div className="primary-sidebar sticky-sidebar category-shop-cart my-1">
+                  <div className="theiaStickySidebar category-box-filler">
+                    <CategoryFilter
+                    clearFilter={clearFilter}
+                      filterCategoryData={get(
+                        filteredProductData,
+                        "filterData",
+                        []
+                      )}
+                      handleFilter={(data) => handleFilter(data)}
+                    />
+                  </div>
                 </div>
-              </div>
+            </div>
             )}
-          </div>
           <div className="shop-product-container ">
             {get(filteredProductData, "productData.products")?.length > 0 ? (
               <div className="shop-product-list ">
                 <div className="totall-product ">
-                  <p className="totalcount-text">
+                  {/* <p className="totalcount-text">
                     Showing 1 –{" "}
                     {get(filteredProductData, "productData.products")?.length}{" "}
                     products of {get(filteredProductData, "productData.count")}{" "}
                     products
-                  </p>
+                  </p> */}
                 </div>
                 <div className="totall-product ">
                   <CategorySorting
@@ -92,5 +95,6 @@ SubCategoryProducts.propTypes = {
   handleFilter: PropTypes.func.isRequired,
   handleSorting: PropTypes.func.isRequired,
   handleScroll: PropTypes.func.isRequired,
+  clearFilter: PropTypes.func.isRequired,
 };
 export default SubCategoryProducts;

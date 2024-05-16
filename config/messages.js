@@ -62,5 +62,7 @@ module.exports = {
     "Only lv, mp4, 3gp, QuickTime, x-msvideo, x-ms-wmv files are allowed to upload",
   OutOfStock: "Only :item available in stock",
   PaymentNotConfigured: "Currently we are not accepting payment from :item, please choose any other payment mode",
-  PaymentUnpaid: "Payment is not completed"
+  PaymentUnpaid: "Payment is not completed",
+  SentEmail: "Email sent successfully",
+  Custom: ":item"
 };

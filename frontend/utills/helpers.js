@@ -11,7 +11,7 @@ import NoImagePlaceHolder from "../components/images/NoImagePlaceHolder.png";
 import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
 import moment from "moment";
-import { CASH_ON_DELIVERY, PAYPAL, RAZORPAY, STRIPE } from "./constant";
+import { BANKTRANSFER, CASH_ON_DELIVERY, PAYPAL, RAZORPAY, STRIPE } from "./constant";
 import notify from "./notifyToast";
 import { outOfStockMessage } from "../components/validationMessages";
 /* -------------------------------image funtion ------------------------------- */
@@ -122,7 +122,7 @@ export const logoutAndClearData = async (dispatch) => {
   const data = await signOut({ redirect: false, callbackUrl: "/" });
   await removeItemFromLocalStorage("cart");
   await dispatch(logoutDispatch());
-  window.location.pathname = "/account";
+  window.location.pathname = "/login";
 };
 
 // autoFocus next input
@@ -157,10 +157,10 @@ export const currencySetter = (settings, setCurrency) => {
   const currency = get(settings, "currency", "usd") || settings;
   const currencySymbols = {
     usd: "$",
-    eur: <i className="fas fa-euro-sign"></i>,
-    gbp: <i className="fas fa-pound-sign"></i>,
+    eur: '€',
+    gbp: '£',
     cad: "CA$",
-    inr: <i className="fas fa-rupee-sign"></i>,
+    inr: '₹',
   };
   const selectedSymbol = currencySymbols[currency];
   if (selectedSymbol) setCurrency(selectedSymbol);
@@ -346,9 +346,17 @@ export const getPaymentMethodLabel = (paymentMethod) => {
       return "Paypal";
     case RAZORPAY:
       return "Razor Pay";
+    case BANKTRANSFER:
+      return "Bank Transfer";
     default:
       return "Cash On Delivery";
   }
+};
+
+
+export const isCurrentCategory = (url,router) => {
+  const { category } = router.query;
+  return category === url;
 };
 
 export const isAnyProductOutOfStock = (products) => {
@@ -358,4 +366,5 @@ export const isAnyProductOutOfStock = (products) => {
   }
   return outOfStockProduct; 
 };
+
 

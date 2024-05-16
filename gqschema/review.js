@@ -33,7 +33,7 @@ module.exports = `
   }
   type productwisereviewResponse {
     count: Int
-    reviews: customArray
+    reviews: [Review]
   }
   extend type Query {
     reviews: ReviewRES

@@ -4,7 +4,8 @@ const {
   checkError,
   MESSAGE_RESPONSE,
   _validate,
-  duplicateData
+  duplicateData,
+  sendEmailTemplate
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -15,7 +16,10 @@ const {
   UPDATE_FUNC,
   UPDATE_PASSWORD_FUNC,
 } = require("../config/api_functions");
-
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const APP_KEYS = require("../config/keys");
+const { CustomerProfiles } = require("aws-sdk");
 module.exports = {
   Query: {
     customers: async (root, args) => {
@@ -43,29 +47,57 @@ module.exports = {
   },
   Mutation: {
     addCustomer: async (root, args, { id }) => {
-      let data = {
-        ///////////////////////////////
-        queryName: "addCustomer",
-        ///////////////////////////////
-        firstName: args.firstName,
-        lastName: args.lastName,
-        email: args.email,
-        company: args.company || "",
-        phone: args.phone || "",
-        password: args.password,
-      };
-      let validation = ["firstName", "lastName", "email", "password"];
-      const duplicate = await duplicateData({email: args.email}, Customer)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
-      return await CREATE_FUNC(
-        id,
-        "Customer",
-        Customer,
-        data,
-        args,
-        "",
-        validation
-      );
+      try {
+        let data = {
+          ...args,
+          queryName: "addCustomer"
+        }
+
+        let validation = ["firstName", "lastName", "email", "password"];
+        const duplicate = await duplicateData({ email: args.email }, Customer);
+
+        if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
+        const errors = _validate(validation, data);
+
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        data.password = await bcrypt.hash(data.password, 10);
+        let customerData = await Customer.create(data);
+
+        sendEmailTemplate("WELCOME", customerData);
+
+        const payload = {
+          id: customerData._id,
+          firstName: customerData.firstName,
+          lastName: customerData.lastName,
+          email: customerData.email,
+          role: "customer",
+        };
+
+        const tokenExpiresIn = 36000;
+
+        let expiry = new Date();
+        expiry.setSeconds(expiry.getSeconds() + tokenExpiresIn);
+
+        const token = jwt.sign(payload, APP_KEYS.jwtSecret, {
+          expiresIn: tokenExpiresIn,
+        });
+
+        return {
+          success: true,
+          message: "Customer added successfully",
+          token: token,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message: "Error in adding Customer",
+        };
+      }
     },
     updateCustomer: async (root, args, { id }) => {
       let data = {
@@ -264,29 +296,106 @@ module.exports = {
         return MESSAGE_RESPONSE("DeleteSuccess", "Address", true);
       },
     resetPassword: async (root, args, { id }) => {
-      const bcrypt = require("bcryptjs");
-      const pattern = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,}$/;
+      try {
+        const pattern = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,}$/;
 
-      const customer = await Customer.findOne({ email: args.email });
-      if (!customer) {
-        return MESSAGE_RESPONSE("NOT_FOUND", "User", false);
+        const customer = await Customer.findOne({ email: args.email });
+        if (!customer) {
+          return MESSAGE_RESPONSE("NOT_FOUND", "User", false);
+        }
+
+        let match = await bcrypt.compare(args.oldPassword, customer.password);
+
+        if (match) {
+          let isValid = pattern.test(args.newPassword);
+          if (isValid) {
+            customer.password = await bcrypt.hash(args.newPassword, 10);
+            await customer.save();
+          } else {
+            return MESSAGE_RESPONSE("InvalidPassword", null, false);
+          }
+        } else {
+          return MESSAGE_RESPONSE("InvalidOldPassword", null, false);
+        }
+
+        sendEmailTemplate("RESET_PASSWORD", customer)
+        return MESSAGE_RESPONSE("UpdateSuccess", "Password", true);
+      } catch (error) {
+        return MESSAGE_RESPONSE("Custom", error.message, false);
+      }
+    },
+    sendForgetPasswordEmail: async (root, args, { id }) => {
+      try {
+        let email = args.email;
+        if (!email || "") {
+          return MESSAGE_RESPONSE("Required", "Email ", false);
+        }
+
+        let customerData = await Customer.findOne({ email })
+
+        if (!customerData) {
+          return MESSAGE_RESPONSE("NOT_FOUND", "User", false);
+        }
+
+        const token = jwt.sign({ email: customerData.email, userId: customerData._id }, APP_KEYS.jwtSecret, { expiresIn: '15m' });
+        customerData.refreshToken = token;
+        await customerData.save();
+
+        let data = {
+          email: customerData.email,
+          firstName: customerData.firstName,
+          link: token
+        };
+        sendEmailTemplate("FORGET_PASSWORD", data)
+        return MESSAGE_RESPONSE("SentEmail", null, true);
+
+      } catch (error) {
+        return MESSAGE_RESPONSE("Custom", error.message, false);
       }
 
-      let match = await bcrypt.compare(args.oldPassword, customer.password);
+    },
+    verifyForgetPasswordToken: async (root, args, { id }) => {
+      try {
+        let { token, newPassword } = args;
+        let validation = ["token", "newPassword"];
+        const errors = _validate(validation, args);
 
-      if (match) {
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+
+        const pattern = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,}$/;
         let isValid = pattern.test(args.newPassword);
-        if (isValid) {
-          customer.password = await bcrypt.hash(args.newPassword, 10);
-          await customer.save();
-        } else {
+        if (!isValid) {
           return MESSAGE_RESPONSE("InvalidPassword", null, false);
         }
-      } else {
-        return MESSAGE_RESPONSE("InvalidOldPassword", null, false);
-      }
 
-      return MESSAGE_RESPONSE("UpdateSuccess", "Password", true);
-    },
+        let verifiedToken = jwt.verify(args.token, APP_KEYS.jwtSecret);
+
+        let customerData = await Customer.findOne({ email: verifiedToken.email });
+        if (!customerData) {
+          return MESSAGE_RESPONSE("NOT_FOUND", "User", false);
+        }
+
+        if (customerData.refreshToken === token) {
+          customerData.password = await bcrypt.hash(newPassword, 10);
+          customerData.refreshToken = null
+          await customerData.save()
+          return MESSAGE_RESPONSE("UpdateSuccess", "Password", true);
+        } else {
+          return MESSAGE_RESPONSE("Custom", "Something went wrong", false);
+        }
+
+
+      } catch (error) {
+        if (error.message === "jwt expired") {
+          return MESSAGE_RESPONSE("Custom", "Link is expired, please try again", false);
+        }
+        return MESSAGE_RESPONSE("Custom", "Something went wrong", false);
+      }
+    }
   },
 };
