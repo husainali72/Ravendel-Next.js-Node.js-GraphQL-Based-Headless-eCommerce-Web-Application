@@ -795,7 +795,9 @@ background-color:var(--primary-color);
 }
 
 .account-row {
-  margin-top: 80px !important;
+  max-width: 1280px;
+  margin: 0 auto !important;
+  margin-top: 50px !important;
 }
 
 .form-container {
@@ -2070,10 +2072,9 @@ footer .btn:hover a {
 
 .category-section-title {
   position: relative;
-  margin-bottom: 12px !important;
-  padding-bottom: 8px;
   font-size: 16px;
   font-weight: 600;
+  margin-bottom: 0 !important;
 }
 .filter-heading-container{
   border-bottom: 1px solid #e2e9e1;
@@ -2190,6 +2191,7 @@ footer .btn:hover a {
 .slider__range {
   background-color: var(--primary-color);
   z-index: 2;
+  position: absolute;
 }
 
 .slider__left-value,
@@ -2355,6 +2357,7 @@ footer .btn:hover a {
   flex-wrap: wrap;
   margin-top: 24px;
   height: calc(100vh - 200px);
+  margin-bottom: 40px;
 }
 
 .category-option {
@@ -2375,7 +2378,9 @@ footer .btn:hover a {
 .category-option::-webkit-scrollbar-track{
   background-color: unset;
 }
-
+.category-option .filter-head{
+  margin-bottom: 12px;
+}
 .single-category {
   flex: 0 0 auto;
   width: 75%;
@@ -5059,9 +5064,10 @@ text-align: start;
 }
 .cart-product-name{
   font-weight: 600;
-  margin-bottom: 14px ;
+  margin-bottom: 12px ;
   font-size: 15px;
-  max-height: 55px;
+  width: calc(100% - 50px);
+  /* max-height: 55px; */
 }
 .itemContainer-base-item {
   background: #fff;
@@ -5069,6 +5075,8 @@ text-align: start;
   border: 1px solid #eaeaec;
   border-radius: 4px;
   position: relative;
+  align-items: center;
+  gap: 10px;
   padding: 10px ;
   display: flex;
   margin-bottom: 10px;
@@ -5165,6 +5173,9 @@ text-align: start;
   font-size: 14px;
   display: flex;
 }
+.cart-product-base-container .itemContainer-base-price{
+  margin-bottom: 30px;
+}
 .itemComponents-base-price {
   display: inline-block;
   color: #282c3f;
@@ -5200,6 +5211,16 @@ text-align: start;
 }
 .cart-items-list .product-details{
   position: relative;
+}
+.cart-items-list .product-details .itemContainer-base-price{
+  margin-bottom: 40px;
+}
+.cart-items-list .product-details .itemComponents-base-quantity{
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  width: 84px;
+  padding: 5px 8px;
 }
 .cart-items-list .itemContainer-base-sizeAndQty{
   position: absolute;
@@ -5640,7 +5661,7 @@ color: var(--primary-color);
   margin-top: 30px;
 }
 .range-value{
-  padding-top: 10px;
+  padding-top: 20px;
   font-weight: 600;
 }
 .filter-btn{
@@ -5670,7 +5691,7 @@ color: var(--primary-color);
 /* -------------------------------checkout page------------------------------ */
 .first-checkout-page-container{
   padding: 20px;
-  max-width: 700px;
+  width: 60%;
 }
 .checkout-continue-btn{
   margin-top: 12px;
@@ -5714,11 +5735,21 @@ color: var(--primary-color);
   margin-top: 12;
 }
 .checkout-unauthorised-container{
-display: flex;
-justify-content: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+  padding: 60px 0;
+  align-items: center;
+}
+.checkout-unauthorised-container h3{
+  color: #1a1a1a;
+  font-size: 26px;
 }
 .checkout-login-btn{
   margin-top: 12px;
+  padding: 8px 30px !important;
+  text-transform: capitalize;
 }
 
 .payment_method_description{
@@ -6467,6 +6498,7 @@ margin-bottom: 4px !important;
   width: 32%;
   padding-right: 16px;
   border-right: 1px solid #D4D4D4;
+  overflow: hidden;
 }
 .product-review .ratings{
   display: flex;
@@ -6654,10 +6686,12 @@ margin-bottom: 4px !important;
   cursor: pointer;
   color: var(--primary-color);
   font-size: 12px;
-  text-transform: uppercase;
   font-weight: 500;
   border: none;
   background-color: transparent;
-  margin-bottom: 12px !important;
-  padding-bottom: 8px;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+.clear-filters-btn:hover{
+  background-color: #DCF0EF;
 }
