@@ -20,7 +20,8 @@ const {
   validateAndSetUrl,
   getBreadcrumb,
   addCategoryAttributes,
-  getParentChildren
+  getParentChildren,
+  productScript,
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
