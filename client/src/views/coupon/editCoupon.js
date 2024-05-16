@@ -324,6 +324,7 @@ const EditCouponComponent = ({ params }) => {
                     onCategoryChange={(items) => {
                       if (items && items?.length > 0) {
                         const checkedIds = getCheckedIds(items);
+                        console.log(checkedIds,'checkedIds')
                         setCoupon({
                           ...coupon,
                           includeCategories: checkedIds,
@@ -332,7 +333,7 @@ const EditCouponComponent = ({ params }) => {
                       } else {
                         setCoupon({
                           ...coupon,
-                          categoryId: [],
+                          includeCategories: [],
                           categoryTree: [],
                         });
                       }

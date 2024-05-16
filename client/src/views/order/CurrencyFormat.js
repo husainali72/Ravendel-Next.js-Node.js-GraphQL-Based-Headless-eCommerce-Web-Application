@@ -18,13 +18,27 @@ export const currencySetter = (currency, fontSize) => {
   if (currency === "inr")
     return <CurrencyRupeeIcon sx={{ fontSize: fontSize }} />;
 };
-export const getPrice = (price, decimal) => {
-  if (typeof price === "string")
-    return parseInt(price)
-      ?.toFixed(decimal)
-      .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-  else return price?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+export const formattedPrice = (value, currencyOptions) => {
+  const decimal = get(currencyOptions, "number_of_decimals", "2");
+  const thousandSeparator = get(currencyOptions, "thousand_separator", ",");
+  const decimalSeparator = get(currencyOptions, "decimal_separator", ".");
+  return value
+    .toFixed(decimal)
+    .replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator)
+
+    .replace(".", decimalSeparator);
 };
+export const getPrice = (price, currencyOptions) => {
+  let fixed = 3;
+  if (typeof price === "string") {
+    return formattedPrice(parseFloat(price), currencyOptions);
+  } else if (typeof price === "number") {
+    return formattedPrice(price, currencyOptions);
+  }
+
+  return "0.00";
+};
+export const formatNumber = (value) => (value && !isNaN(value) ? value : "0");
 export const isPriceZero = (price) => {
   if (price === 0) return true;
   else return false;

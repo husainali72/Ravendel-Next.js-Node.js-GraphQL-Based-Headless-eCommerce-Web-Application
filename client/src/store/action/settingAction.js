@@ -42,7 +42,11 @@ export const getDatesAction = () => (dispatch) => {
         payload: get(response,'data.getDateformat'),
       });
     }
-  });
+  }).catch((error)=>{
+    dispatch({
+      type: SETTING_FAIL,
+    });
+  })
 };
 
 export const getSettings = () => (dispatch) => {
@@ -51,11 +55,22 @@ export const getSettings = () => (dispatch) => {
   });
   query(GET_SETTINGS).then((response) => {
     if (response) {
+      dispatch({
+        type: LOADING_FALSE,
+      });
       return dispatch({
         type: SETTING_SUCCESS,
         payload: get(response,'data.getSettings'),
       });
     }
+  }).catch((error)=>{
+    dispatch({
+      type: SETTING_FAIL,
+    });
+    return dispatch({
+      type: ALERT_SUCCESS,
+      payload: { boolean: false, message: error, error: true },
+    });
   });
 };
 export const getZipCode = (id) => (dispatch) => {
@@ -73,7 +88,14 @@ export const getZipCode = (id) => (dispatch) => {
       }
     })
     .catch((error) => {
-      console.log("error", error);
+      
+      dispatch({
+        type: SETTING_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: error, error: true },
+      });
     });
 };
 export const generalUpdateAction = (object) => (dispatch) => {

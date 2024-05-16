@@ -25,6 +25,7 @@ import LoadingCartTable from "../components/cardcomponent/LoadingCard";
 import { get } from "lodash";
 import Loading from "../components/loadingComponent";
 import notify from "../utills/notifyToast";
+import { Toaster } from "react-hot-toast";
 const YourCard = () => {
   const session = useSession();
   const cart = useSelector((state) => state.cart);
@@ -121,15 +122,14 @@ const YourCard = () => {
     //     itemProductQuantity >= updatedQuantity
     //   );
     // });
-    let updatedCartItems = cartItems?.map((cartItem) => ({
-      ...cartItem,
-      quantity:
-        cartItem?._id === item?._id &&
-        (cartItem?.variantId === item?.variantId ||
-          (!cartItem?.variantId && !item?.variantId))
-          ? updatedQuantity
-          : cartItem?.quantity,
-    }));
+    let prevQuantity = null;
+    let updatedCartItems = cartItems?.map((cartItem) => {
+      if (cartItem?._id === item?._id) {
+        prevQuantity = cartItem?.quantity; // Store previous quantity
+        return { ...cartItem, quantity: updatedQuantity };
+      }
+      return cartItem;
+    });
     setCartItems([...updatedCartItems]);
     if ("authenticated" !== session?.status) {
       dispatch(
@@ -153,6 +153,14 @@ const YourCard = () => {
         .then((res) => {
           if (get(res, "data.changeQty.success")) {
             dispatch(calculateUserCart(id));
+          } else {
+            let revertedCartItems = cartItems?.map((cartItem) => {
+              if (cartItem?._id === item?._id) {
+                return { ...cartItem, quantity: prevQuantity };
+              }
+              return cartItem;
+            });
+            setCartItems([...revertedCartItems]);
           }
           setIsQuantityBtnLoading(false);
         })
@@ -205,7 +213,7 @@ const YourCard = () => {
         <section className="shopcart-table loading-table">
           <Container>
             <div className="row">
-                <LoadingCartTable />
+              <LoadingCartTable />
             </div>
           </Container>
         </section>
@@ -215,6 +223,7 @@ const YourCard = () => {
     return (
       <>
         <BreadCrumb title={"Cart"} />
+        <Toaster />
         <section className="shopcart-table">
           <Container>
             {isQuantityBtnLoading && <Loading />}
