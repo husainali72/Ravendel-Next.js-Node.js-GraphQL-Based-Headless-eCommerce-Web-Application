@@ -144,7 +144,7 @@ const AddProduct = () => {
     setProduct({
       ...product,
       meta: {
-        ...product.meta,
+        ...product?.meta,
         [e.target.name]: e.target.value,
       },
     });
@@ -458,7 +458,7 @@ const AddProduct = () => {
               <Grid container spacing={isSmall ? 1 : 2}>
                 <Grid item md={6} xs={12}>
                   <TextInput
-                    value={product.meta.title}
+                    value={product?.meta?.title}
                     label='Meta Title'
                     name='title'
                     onInputChange={onMetaChange}
@@ -467,7 +467,7 @@ const AddProduct = () => {
 
                 <Grid item md={6} xs={12}>
                   <TextInput
-                    value={product.meta.keywords}
+                    value={product?.meta?.keywords}
                     label='Meta Keywords'
                     name='keywords'
                     onInputChange={onMetaChange}
@@ -476,7 +476,7 @@ const AddProduct = () => {
 
                 <Grid item xs={12}>
                   <TextInput
-                    value={product.meta.description}
+                    value={product?.meta?.description}
                     label='Meta Description'
                     name='description'
                     onInputChange={onMetaChange}

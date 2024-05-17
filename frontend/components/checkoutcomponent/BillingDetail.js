@@ -39,8 +39,8 @@ const BillingDetails = (props) => {
     selectAddressList
   } = props;
   const addressTypeOptions = [
-    { value: "Home Address", label: "Home Address" },
-    { value: "Office Address", label: "Office Address" },
+    { value: "Home", label: "Home" },
+    { value: "Office", label: "Office" },
   ];
 
   const customStyles = {
