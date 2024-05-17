@@ -48,24 +48,22 @@ module.exports = {
       }
     },
     // API is not ready, more work is needed
-    getCartQty: async (root, args, { id }) => {
+    getCartDetails: async (root, args, { id }) => {
       try {
         const {userId} = args;
-        let cartData = await Cart.findOne({userId : new mongoose.Types.ObjectId(userId)})
-        if(!cartData){
-          return { success:false, message:'Cart not found'};
-        }
-        let count = cartData.products.length;
+
+        let cartData = await calculateCart(userId, null)
 
         let data = {
-          totalQty : cartData.products.length,
-          products : cartData.products,
+          totalQuantity : cartData.cartItems.length,
+          cartItems : cartData.cartItems,
+          totalSummary : cartData.totalSummary
         };
 
         let response = {
           success: true,
           message: "Cart item count fetched successfully",
-          data: {data}
+          data: data
         }
 
         return response;

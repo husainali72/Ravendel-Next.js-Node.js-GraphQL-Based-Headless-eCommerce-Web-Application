@@ -154,7 +154,7 @@ module.exports = `
     #calculateCoupon(couponCode: String,cartItem: [couponCartProducts], totalShipping : String
       #totalTax : String,grandTotal:String,cartTotal:String): calculateCoupon
     calculateCoupon(userId: ID, cartItems: [calculateCartProducts], couponCode: String!): Cart
-    getCartQty(userId: ID): statusDataSchema
+    getCartDetails(userId: ID): statusDataSchema
   }
 
   extend type Mutation {
