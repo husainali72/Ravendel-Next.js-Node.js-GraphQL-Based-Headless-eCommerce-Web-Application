@@ -14,6 +14,11 @@ module.exports = `
     gender: String
   }
 
+  enum ADDRESS_TYPE {
+    homeAddress
+    officeAddress
+  }
+
   type AddressBook {
     id: ID
     _id: ID
@@ -23,6 +28,7 @@ module.exports = `
     phone: String
     addressLine1: String
     addressLine2: String
+    addressType: ADDRESS_TYPE
     city: String
     country: String
     state: String
@@ -94,6 +100,7 @@ module.exports = `
       phone: String
       addressLine1: String
       addressLine2: String
+      addressType: ADDRESS_TYPE
       city: String
       country: String
       state: String
@@ -109,6 +116,7 @@ module.exports = `
       phone: String
       addressLine1: String
       addressLine2: String
+      addressType: ADDRESS_TYPE
       city: String
       country: String
       state: String
