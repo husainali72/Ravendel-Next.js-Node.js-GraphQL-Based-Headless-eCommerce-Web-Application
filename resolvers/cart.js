@@ -12,7 +12,8 @@ const {
   checkToken,
   MESSAGE_RESPONSE,
   againCalculateCart,
-  _validate, getdate, addCart, calculateCart, calculateCoupon
+  _validate, getdate, addCart, calculateCart, calculateCoupon,
+  toObjectID
 } = require("../config/helpers");
 const validate = require("../validations/cart");
 
@@ -49,6 +50,31 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+
+    validateCartProducts: async (root, args, { id }) => {
+      const { products } = args
+
+      const response = []
+      const productDetails = await Product.find({_id: {$in: toObjectID(products.map(product => product.productId))}}).select("name quantity")
+      productDetails.map(prod => {
+        const product = products.find(product => product.productId === prod._id.toString())
+        if((prod.quantity - product.qty) < 0) {
+          if(prod.quantity === 0) {
+            response.push({
+              productTitle: product.productTitle,
+              message: "Product out of stock."
+            })
+          } else {
+            response.push({
+              productTitle: product.productTitle,
+              message: `Only ${prod.quantity} left in stock.`
+            })
+          }
+        }
+      })      
+
+      return response || []
+    }
 
 
 
