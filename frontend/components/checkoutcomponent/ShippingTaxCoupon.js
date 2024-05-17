@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button, Form, FormCheck, FormGroup } from "react-bootstrap";
 import { capitalize } from "lodash";
 import DetailsCard from "../cardcomponent/DetailsCard";
-
+import { IoMdArrowRoundBack } from "react-icons/io";
 const ShippingTaxCoupon = (props) => {
   const {
     currency,
@@ -17,6 +17,9 @@ const ShippingTaxCoupon = (props) => {
   return (
     <>
       <div className="checkout-Details-shipping">
+        <button className="back-btn"onClick={prevFormStep}>
+        <IoMdArrowRoundBack />
+        </button>
         <DetailsCard
           title="Billing details"
           info={billingInfo}

@@ -1,9 +1,7 @@
 import { useEffect } from "react";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import CorporateFareOutlinedIcon from "@mui/icons-material/CorporateFareOutlined";
-import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
-import BusinessCenterOutlinedIcon from "@mui/icons-material/BusinessCenterOutlined";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import PropTypes from "prop-types";
 import { get } from "lodash";
@@ -74,19 +72,15 @@ const CustomerDetail = (props) => {
                       <div className="content">
                         <b>
                           {!get(address, "addressType") ||
-                          get(address, "addressType") === "Home Address" ? (
+                          get(address, "addressType") === "Home" ? (
                             <HomeOutlinedIcon />
                           ) : get(address, "addressType") ===
-                            "Office Address" ? (
+                            "Office" ? (
                             <CorporateFareOutlinedIcon />
-                          ) : get(address, "addressType") === "Work Address" ? (
-                            <BusinessCenterOutlinedIcon />
-                          ) : get(address, "addressType") === "Shop Address" ? (
-                            <StorefrontOutlinedIcon />
                           ) : (
                             ""
                           )}
-                          {get(address, "firstName") || "Home Address"}
+                          {get(address, "addressType") || "Home"}
                         </b>
                         <div className="d-flex">
                           <p>

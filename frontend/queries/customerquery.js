@@ -93,6 +93,7 @@ export const ADD_ADDRESSBOOK = gql`
     ) {
       message
       success
+      data
     }
   }
 `;
