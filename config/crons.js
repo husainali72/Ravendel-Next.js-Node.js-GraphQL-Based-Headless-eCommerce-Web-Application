@@ -40,8 +40,8 @@ const abandonedCartsNotification = (app) => {
       const pipeline = [
         {
           $lookup: {
-            from: "customers", // Ensure this matches the actual collection name in your database
-            localField: "userId", // Corrected typo
+            from: "customers",
+            localField: "userId",
             foreignField: "_id",
             as: "customerInfo",
             pipeline: [
