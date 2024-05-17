@@ -5,7 +5,6 @@ import ProductImage from "../imageComponent"
 import { get } from "lodash"
 import Price from "../priceWithCurrency"
 import { CircularProgress } from "@mui/material";
-import RemainingQuantity from '../remainingQuantity';
 
 const CartItemsDisplay = ({cartItems, removeToCart, updateCartProductQuantity, cartLoading}) => {
   return (
@@ -51,18 +50,23 @@ const CartItemsDisplay = ({cartItems, removeToCart, updateCartProductQuantity, c
                         )}
                         </div>
 
-                        {product?.available ? (
-                            <div className="itemContainer-base-sizeAndQtyContainer">
-                        
-                                <RemainingQuantity quantity={get(product,'productQuantity',0)} />
-                            </div>
+                        {/* {product?.available ? (
+                            <>
+                                {
+                                    get(product,'productQuantity') > 0 &&
+                                    <div className="itemContainer-base-sizeAndQtyContainer">
+                                
+                                        <RemainingQuantity quantity={get(product,'productQuantity',0)} />
+                                    </div>
+                                }
+                            </>
                         ) : (
                             <div className="itemContainer-base-sizeAndQtyContainer">
                                 <div className="itemComponents-base-lowUnitCount">
                                     OUT OF STOCK
                                 </div>
                             </div>
-                        )}
+                        )} */}
                         <div className="itemContainer-base-price">
                             <div className="itemComponents-base-price itemComponents-base-bold ">
                                 <div>

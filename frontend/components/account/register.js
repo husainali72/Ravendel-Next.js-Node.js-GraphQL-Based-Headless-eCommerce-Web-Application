@@ -174,7 +174,7 @@ const Register = () => {
               className="register-top-space"
               errors={errors}
             />
-            <InputField
+            {/* <InputField
               type="text"
               className="form-control register-top-space"
               id="text"
@@ -182,7 +182,7 @@ const Register = () => {
               name="company"
               value={company}
               onChange={(e, type) => handleChange(e, type)}
-            />
+            /> */}
             <PasswordField
               type="password"
               className="form-control register-top-space"
@@ -203,10 +203,30 @@ const Register = () => {
               onChange={(e, type) => handleChange(e, type)}
             />
 
+            <PasswordField
+              type="password"
+              className="form-control register-top-space"
+              id="confirm-password"
+              placeholder="Confirm Password"
+              value={password}
+              name="confirmPassword"
+              registerRef={register("confirmPassword", {
+                required: {
+                  value: !password,
+                  message: passwordErrorMessage,
+                },
+                validate: () => {
+                  return passwordValidation(password);
+                },
+              })}
+              errors={errors}
+              onChange={(e, type) => handleChange(e, type)}
+            />
+
             <div className="form-check register-top-space">
               <Link href="/abouts/terms&condition">
                 <label className="form-check-label">
-                  I agree to terms & Policy.
+                  I agree to terms & policies.
                 </label>
               </Link>
               <InputField

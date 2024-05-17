@@ -266,9 +266,11 @@ const Header = ({ setOpenMenu }) => {
                         <HiOutlineUserCircle/>
                       </a>
                       <div className="dropdown-content">
-                        <Link href='/account'>My Account</Link>
                         {data?.status === "authenticated" ? (
-                          <a onClick={logOutUser}>Logout</a>
+                          <>
+                            <Link href='/account'>My Account</Link>
+                            <a onClick={logOutUser}>Logout</a>
+                          </>
                           ):(
                             <Link href='/login'>Login/Signup</Link>
                           )

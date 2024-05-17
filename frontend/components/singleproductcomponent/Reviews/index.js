@@ -12,7 +12,7 @@ const Reviews = ({ product }) => {
   const { rating, ratingCount, levelWiseRating } = product;
 
   return (
-    <div className="product-review">
+    <div className="product-review" style={ratingCount <= 0 ? {width: 0, padding: 0, border: 'unset', height: 0} : {}}>
       <CustomerRating
         rating={rating}
         ratingCount={ratingCount}

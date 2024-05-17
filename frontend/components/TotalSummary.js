@@ -6,7 +6,7 @@ import { get } from 'lodash';
 
 const TotalSummary = ({totalSummary, couponCartDetail}) => {
   const {mrpTotal, discountTotal, totalTax, totalShipping, grandTotal} = totalSummary;
-  const {couponApplied} = couponCartDetail;
+  const {couponApplied} = couponCartDetail || {};
   return (
     <div className="cart-totals">
           <div className="table-responsive">

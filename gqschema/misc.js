@@ -5,6 +5,11 @@ module.exports = `
     message: String
     success: Boolean
   }
+  type statusDataSchema {
+    message: String
+    success: Boolean
+    data: customArray
+  }
   type dashboardDataRES {
     productCount: Int
     userCount: Int

@@ -348,6 +348,7 @@ export const CheckOut = () => {
     formState: { errors },
     control,
   } = useForm({ mode: "onSubmit" });
+  
   const onSubmit = (data) => {
     if (ZipMessage && ZipMessage?.zipSuccess) {
       let isAddressAlready = get(billingDetails, "billing.id") ? true : false;
@@ -433,13 +434,23 @@ export const CheckOut = () => {
   const checkCode = async (code) => {
     try {
       let variable = { zipcode: code.toString() };
-      const { data: result } = await queryWithoutToken(CHECK_ZIPCODE, variable);
-      setZipMessage({
-        ...ZipMessage,
-        shipping: shippingAdd,
-        zipMessage: get(result, "checkZipcode.message"),
-        zipSuccess: get(result, "checkZipcode.success"),
-      });
+
+      if (code) {
+        const { data: result } = await queryWithoutToken(
+          CHECK_ZIPCODE,
+          variable
+        );
+        notify(
+          get(result, "checkZipcode.message"),
+          get(result, "checkZipcode.success")
+        );
+        setZipMessage({
+          ...ZipMessage,
+          shipping: shippingAdd,
+          zipMessage: get(result, "checkZipcode.message"),
+          zipSuccess: get(result, "checkZipcode.success"),
+        });
+      }
     } catch (e) {}
   };
   const handleZipCode = (e) => {
@@ -485,9 +496,9 @@ export const CheckOut = () => {
     if (nm === "addressType") {
       setShippingInfo({
         ...shippingInfo,
-        [nm]: e,
+        [nm]: e?.value,
       });
-      setBillingInfo({ ...billingInfo, [nm]: e });
+      setBillingInfo({ ...billingInfo, [nm]: e?.value });
     } else {
       let { name, value } = get(e, "target");
       setShippingInfo({
@@ -529,9 +540,7 @@ export const CheckOut = () => {
         zipSuccess: false,
       });
     } else {
-      if (billingInfo?.zip) {
-        checkCode(billingInfo?.zip);
-      }
+      checkCode(billingInfo?.zip);
       setShippingInfo(billingInfo);
     }
 
@@ -540,7 +549,7 @@ export const CheckOut = () => {
   const SelectAddressBook = async (address) => {
     const userSession = await getSession();
     let customer = get(userSession, "user.accessToken.customer");
-
+    setIsAddNewAddressForm(false);
     let commonFields = {
       zip: address?.pincode || "",
       state: address?.state || "",
@@ -552,7 +561,7 @@ export const CheckOut = () => {
       lastname: address?.lastName || "",
       firstname: address?.firstName || "",
       country: address?.country || "",
-      addressType: address?.addressType || "homeAddress",
+      addressType: address?.addressType || "",
       id: address?._id || "",
     };
     let shipping = commonFields;
@@ -664,8 +673,10 @@ export const CheckOut = () => {
       .then(async (response) => {
         const success = get(response, "data.addAddressBook.success");
         const message = get(response, "data.addAddressBook.message");
+        const data = get(response, "data.addAddressBook.data");
         if (success) {
           // setAddress(addressObject)
+          setBillingInfo({ ...billingInfo, id: data?._id });
           setIsAddNewAddressForm(false);
           nextFormStep();
           await getAddress();
@@ -732,7 +743,6 @@ export const CheckOut = () => {
               <BreadCrumb title={"checkout"} />
               <section className="checkout-section">
                 <Container>
-                  <Stepper activeStep={formStep} steps={steps} />
                   <div className="col-lg-12 first-checkout-page">
                     <div className="first-checkout-page-container">
                       <CustomerDetail
@@ -745,13 +755,10 @@ export const CheckOut = () => {
                         shippingAdd={shippingAdd}
                         getBillingInfo={getBillingData}
                       />
-                      {
-                        <h5>
-                          {!isAddNewAddressForm
-                            ? "Billing Details"
-                            : "Add New Address"}
-                        </h5>
-                      }
+                      {isAddNewAddressForm ||
+                        (selectAddressList?.length === 0 && (
+                          <h5>Add New Address</h5>
+                        ))}
                       <form onSubmit={handleSubmit(onSubmit)}>
                         <BillingDetails
                           checkCode={checkCode}
@@ -771,15 +778,16 @@ export const CheckOut = () => {
                           registerRef={register}
                           errorRef={errors}
                           getBillingInfo={getBillingData}
+                          isAddNewAddressForm={isAddNewAddressForm}
+                          selectAddressList={selectAddressList}
                         />
-
-                        <button
-                          type="submit"
-                          className="btn btn-success primary-btn-color checkout-continue-btn"
-                        >
-                          Next
-                        </button>
-                      </form>
+                          <button
+                            type="submit"
+                            className="btn btn-success primary-btn-color checkout-continue-btn"
+                          >
+                            Next
+                          </button>
+                        </form>
                     </div>
                     <div className="cupon-cart">
                       <OrderSummary
@@ -805,65 +813,16 @@ export const CheckOut = () => {
             </div>
           </>
         );
+
       case 2:
         return (
           <>
             <Toaster />
-            <div>
-              <BreadCrumb title={"checkout"} />
-              <section className="checkout-section">
-                <Container>
-                  <Stepper activeStep={formStep} steps={steps} />
-                  <div className="col-lg-12 checkout-second-page-container">
-                    <div className="second-container">
-                      <ShippingTaxCoupon
-                        currency={currency}
-                        shippingInfo={shippingInfo}
-                        prevFormStep={prevFormStep}
-                        shippingAdd={shippingAdd}
-                        billingInfo={billingInfo}
-                      />
-                      <button
-                        className="btn btn-success primary-btn-color checkout-continue-btn"
-                        onClick={nextFormStep}
-                      >
-                        Next
-                      </button>
-                    </div>
 
-                    <div className="checkout-order-summary-container">
-                      <OrderSummary
-                        cartLoading={cartLoading}
-                        cartItems={cartItems}
-                        removeToCart={removeToCart}
-                        updateCartProductQuantity={updateCartProductQuantity}
-                        totalSummary={totalSummary}
-                        removeCoupon={removeCoupon}
-                        currencyOption={currencyOption}
-                        currency={currency}
-                        couponCartDetail={couponCartDetail}
-                        CouponLoading={CouponLoading}
-                        Data
-                        doApplyCouponCode={doApplyCouponCode}
-                        couponCode={couponCode}
-                        setCouponCode={setCouponCode}
-                      />
-                    </div>
-                  </div>
-                </Container>
-              </section>
-            </div>
-          </>
-        );
-      case 3:
-        return (
-          <>
-            <Toaster />
             <div>
               <BreadCrumb title={"checkout"} />
               <section className="checkout-section">
                 <Container>
-                  <Stepper activeStep={formStep} steps={steps} />
                   {paymentMethod === PAYPAL ? (
                     <Paypal
                       customerId={customerId}
