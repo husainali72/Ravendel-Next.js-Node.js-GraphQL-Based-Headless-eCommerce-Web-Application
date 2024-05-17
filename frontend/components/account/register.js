@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { ADD_CUSTOMER } from "../../queries/customerquery";
 import Link from "next/link";
-import { mutation } from "../../utills/helpers";
+import { loginCustomer, mutation } from "../../utills/helpers";
 import toast, { Toaster } from "react-hot-toast";
 import { validateEmail, passwordValidation } from "../../utills/Validation";
 import { get } from "lodash";
@@ -18,6 +18,8 @@ import {
 import PhoneInputField from "../phoneInput";
 import PasswordField from "../passwordField";
 import CustomButton from "../button";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/router";
 const registerObject = {
   queryName: "addCustomer",
   firstName: "",
@@ -38,6 +40,9 @@ const notify = (message, success) => {
 const Register = () => {
   const [registerUser, setRegisterUser] = useState(registerObject);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const dispatch = useDispatch();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -49,19 +54,35 @@ const Register = () => {
     const { conditions, ...variable } = registerUser;
     mutation(ADD_CUSTOMER, variable)
       .then((res) => {
-        if (get(res, "data.addCustomer")) {
-          notify(
-            get(res, "data.addCustomer.message"),
-            get(res, "data.addCustomer.success")
-          );
-        }
         setLoading(false);
+        const addCustomerResponse = get(res, "data.addCustomer");
+        if (addCustomerResponse) {
+          const { message, success } = addCustomerResponse;
+          notify(message, success);
+          if (success) {
+            setRegisterUser({ ...registerObject });
+            let loginUser = {
+              email: registerUser?.email,
+              password: registerUser?.password,
+            };
+            loginCustomer(loginUser, setLoading, dispatch, router, setError);
+          }
+        } else {
+          // Handle the case where data is null or success is false
+          if (registerUser) {
+            setRegisterUser({ ...registerUser });
+          } else {
+            setRegisterUser({ ...registerObject });
+          }
+        }
       })
       .catch((error) => {
         setLoading(false);
-      })
-      .finally(() => {
-        setRegisterUser({ ...registerObject });
+        if (registerUser) {
+          setRegisterUser({ ...registerUser });
+        } else {
+          setRegisterUser({ ...registerObject });
+        }
       });
   };
   const handleChange = (e, type) => {

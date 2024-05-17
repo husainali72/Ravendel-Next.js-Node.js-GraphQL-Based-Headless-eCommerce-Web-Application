@@ -12,6 +12,7 @@ import PhoneInputField from "../../phoneInput";
 import { confirmPasswordValidation, passwordValidation, validateEmail } from "../../../utills/Validation";
 import PasswordField from "../../passwordField";
 import { get } from "lodash";
+import { useRouter } from "next/router";
 var accountDetailObject = {
   firstName: "",
   lastName: "",
@@ -22,6 +23,7 @@ var accountDetailObject = {
 };
 const AccountSettings = ({accountDetailInfo, setToggleEdit, getcustomer }) => {
   const dispatch=useDispatch()
+  const router=useRouter()
   const [accountDetails, setAccountDetails] = useState(accountDetailObject);
   const {
     register,
@@ -38,7 +40,7 @@ const AccountSettings = ({accountDetailInfo, setToggleEdit, getcustomer }) => {
         }
       }
     ).catch((error)=>{
-      handleError(error,dispatch)
+      handleError(error,dispatch,router)
     })
   };
 
