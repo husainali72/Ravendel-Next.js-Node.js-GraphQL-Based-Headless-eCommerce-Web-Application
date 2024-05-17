@@ -1913,7 +1913,6 @@ module.exports = {
           if(matchedProduct && matchedProduct._id != args.id){
             isSku = true;
           } */
-          console.log("updateImage",product.update_feature_image)
           let imgObject = "";
           if (args.update_feature_image) {
             imgObject = await imageUpload(

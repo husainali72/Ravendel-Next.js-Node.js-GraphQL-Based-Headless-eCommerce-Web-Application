@@ -2138,10 +2138,11 @@ const getParentChildren = (category, parentChildren, checkedCategoryIDs) => {
     if(cat.checked) {
       checkedCategoryIDs.push(cat.id)
     }
-    if(cat.children.length) {
-      parentChildren[cat.id] = cat.children.map(catChild => catChild.id)
-
-      getParentChildren(cat.children, parentChildren, checkedCategoryIDs)
+    if(cat.children){
+      if(cat?.children.length != 0) {
+        parentChildren[cat.id] = cat.children.map(catChild => catChild.id)
+        getParentChildren(cat.children, parentChildren, checkedCategoryIDs)
+      }
     }
   });
 
