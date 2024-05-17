@@ -373,11 +373,10 @@ export const CheckOut = () => {
     formState: { errors },
     control,
   } = useForm({ mode: "onSubmit" });
+  
   const onSubmit = (data) => {
-    console.log(ZipMessage)
     if (ZipMessage && ZipMessage?.zipSuccess) {
       let isAddressAlready = get(billingDetails, "billing.id") ? true : false;
-      console.log(isAddressAlready,'isAddressAlready')
       if (!isAddressAlready) {
         addNewAddress();
       } else {
@@ -689,7 +688,6 @@ export const CheckOut = () => {
       addressType,
       defaultAddress,
     };
-    console.log('fdkjghfjkdg')
     mutation(ADD_ADDRESSBOOK, payload)
       .then(async (response) => {
         const success = get(response, "data.addAddressBook.success");
@@ -720,7 +718,6 @@ export const CheckOut = () => {
   };
   const getCustomerAddresses = async () => {
     let customer = await getAddress();
-    console.log(customer);
     // Get the default address details from the address book
     let defaultAddress = getDefaultAddressDetails(customer);
     // Set default address for billingInfo if not already selected
@@ -780,37 +777,40 @@ export const CheckOut = () => {
                       {
                         <h5>
                           {!isAddNewAddressForm
-                            ? "Billing Details"
+                            ? (!addressList.length > 0 ? "Billing Details" : '')
                             : "Add New Address"}
                         </h5>
                       }
-                      <form onSubmit={handleSubmit(onSubmit)}>
-                        <BillingDetails
-                        checkCode={checkCode}
-                          control={control}
-                          ZipMessage={ZipMessage}
-                          handleZipCode={handleZipCode}
-                          billingInfo={billingInfo}
-                          shippingInfo={shippingInfo}
-                          handlePhoneInput={handlePhoneInput}
-                          handleShippingPhone={handleShippingPhone}
-                          shippingAdd={shippingAdd}
-                          setShippingAdd={setShippingAdd}
-                          handleBillingInfo={handleBillingInfo}
-                          handleShippingChange={handleShippingChange}
-                          shippingAddressToggle={shippingAddressToggle}
-                          registerRef={register}
-                          errorRef={errors}
-                          getBillingInfo={getBillingData}
-                        />
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                        {
+                          (!addressList.length > 0 || isAddNewAddressForm) &&
+                            <BillingDetails
+                            checkCode={checkCode}
+                              control={control}
+                              ZipMessage={ZipMessage}
+                              handleZipCode={handleZipCode}
+                              billingInfo={billingInfo}
+                              shippingInfo={shippingInfo}
+                              handlePhoneInput={handlePhoneInput}
+                              handleShippingPhone={handleShippingPhone}
+                              shippingAdd={shippingAdd}
+                              setShippingAdd={setShippingAdd}
+                              handleBillingInfo={handleBillingInfo}
+                              handleShippingChange={handleShippingChange}
+                              shippingAddressToggle={shippingAddressToggle}
+                              registerRef={register}
+                              errorRef={errors}
+                              getBillingInfo={getBillingData}
+                            />
 
-                        <button
-                          type="submit"
-                          className="btn btn-success primary-btn-color checkout-continue-btn"
-                        >
-                          Next
-                        </button>
-                      </form>
+                          }
+                          <button
+                            type="submit"
+                            className="btn btn-success primary-btn-color checkout-continue-btn"
+                          >
+                            Next
+                          </button>
+                        </form>
                     </div>
                     <div className="cupon-cart">
                       <OrderSummary

@@ -271,7 +271,7 @@ const OnSaleProductCard = ({
                                 </div>
                                 <RemainingQuantity quantity={get(product,'quantity',0)}/>
                                 {!product?.quantity > 0 && (
-                                  <p className="out-of-stock-card">
+                                  <p className="itemComponents-base-lowUnitCount">
                                     Out Of Stock
                                   </p>
                                 )}
