@@ -48,7 +48,7 @@ const RazorPayComponent = () => {
                   }
                 />
               }
-              label="Enable RazorPay Standard"
+              label="Enable RazorPay"
             />
           </Box>
           {get(razorPayInfo, "enable") && (
