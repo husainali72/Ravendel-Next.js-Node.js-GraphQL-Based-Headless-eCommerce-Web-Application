@@ -106,7 +106,7 @@ module.exports = `
       state: String
       pincode: String
       defaultAddress: Boolean
-    ): statusSchema
+    ): statusDataSchema
     updateAddressBook(
       id: ID!
       _id: ID!

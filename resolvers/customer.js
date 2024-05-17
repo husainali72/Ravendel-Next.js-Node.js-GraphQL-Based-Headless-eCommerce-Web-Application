@@ -178,8 +178,13 @@ module.exports = {
         delete args.id;
         customer.addressBook.push(args);
         customer.updated = Date.now();
-        await customer.save();
-        return MESSAGE_RESPONSE("AddSuccess", "Address", true);
+       const customerData= await customer.save();
+       let address=customerData?.addressBook[customerData?.addressBook?.length-1]
+        let data={
+          ...MESSAGE_RESPONSE("UpdateSuccess", "Address", true),
+          data: address
+        }
+        return data
       } catch (error) {
         error = checkError(error);
         return MESSAGE_RESPONSE("CREATE_ERROR", "Address", false);

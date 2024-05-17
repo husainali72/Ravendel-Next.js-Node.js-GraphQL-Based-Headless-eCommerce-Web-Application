@@ -34,7 +34,9 @@ const BillingDetails = (props) => {
     shippingInfo,
     handlePhoneInput,
     handleBillingInfo,
-    setZipMessage
+    setZipMessage,
+    isAddNewAddressForm,
+    selectAddressList
   } = props;
   const addressTypeOptions = [
     { value: "homeAddress", label: "Home Address" },
@@ -77,6 +79,8 @@ const BillingDetails = (props) => {
     <>
       <div className="billing-container">
         <div>
+        {isAddNewAddressForm ||
+                        selectAddressList?.length === 0 ? (<>
           <div className="twoRows">
             <div className="col-lg-6 col-md-12 col-md-5half">
               <InputField
@@ -361,7 +365,7 @@ const BillingDetails = (props) => {
                 </small>
               </p>
             </div>
-          </div>
+          </div></>):null}
           <div className="ship_detail">
             <div className="form-group">
               <div className="chek-form custome-checkbox">
@@ -450,7 +454,7 @@ const BillingDetails = (props) => {
                       rules={{
                         required: {
                           value: shippingAdd
-                            ? get(billingInfo, "phone")
+                            ? get(shippingInfo, "phone")
                               ? false
                               : true
                             : false,
@@ -458,7 +462,7 @@ const BillingDetails = (props) => {
                         },
                         validate: () => {
                           const cleanedPhoneNumber = get(
-                            billingInfo,
+                            shippingInfo,
                             "phone",
                             ""
                           )?.replace(/\D/g, "");
