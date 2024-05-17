@@ -20,7 +20,8 @@ const {
   validateAndSetUrl,
   getBreadcrumb,
   addCategoryAttributes,
-  productScript
+  getParentChildren,
+  productScript,
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -1365,43 +1366,157 @@ module.exports = {
     },
     additionalDetails: async (root, args) => {
       const { productId } = args
-      const additionalDetails = []
-      const existingProduct = await Product.findById(productId).select("categoryId")
+      const response = []
+      const existingProduct = await Product.findById(productId).select("categoryTree")
+      const { categoryTree } = existingProduct
+      const { parentChildren, checkedCategoryIDs } = getParentChildren(categoryTree, {}, [])
+      const parentIDs = [...new Set([...checkedCategoryIDs, ...Object.keys(parentChildren).reverse()])]
 
-      const matchStage = {
-        $match: {
-          _id: {
-            $ne: toObjectID(existingProduct._id),
-          },
-          categoryId: {
-            $in: existingProduct.categoryId,
-          },
-        },
-      }
       const sortStage = {
         $sort: {
-          updated: -1
+          date: -1
         }
       }
-      const limitStage = {
-        $limit: 10
+      const facetStage = {
+        $facet: {
+          boughtTogetherProducts: [
+            {
+              $match: {
+                _id: toObjectID(productId)
+              }
+            },
+            {
+              $lookup: {
+                from: "orders",
+                let: { productId: "$_id" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $in: [
+                          "$$productId",
+                          "$products.productId"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    $project: {
+                      filteredProducts: {
+                        $filter: {
+                          input: "$products",
+                          as: "product",
+                          cond: {
+                            $ne: [
+                              "$$product.productId",
+                              "$$productId"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                as: "orders"
+              }
+            },
+            {
+              $unwind: "$orders"
+            },
+            {
+              $sort: {
+                "orders.date": -1
+              }
+            },
+            {
+              $match: {
+                $expr: {
+                  $gt: [
+                    {
+                      $size:
+                        "$orders.filteredProducts"
+                    },
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              $group: {
+                _id: "$_id",
+                allFilteredProducts: {
+                  $push: "$orders.filteredProducts"
+                }
+              }
+            },
+            {
+              $set: {
+                concatenatedFilteredProducts: {
+                  $reduce: {
+                    input: "$allFilteredProducts",
+                    initialValue: [],
+                    in: { $concatArrays: ["$$value", "$$this"] }
+                  }
+                }
+              }
+            },
+            {
+              $project: {
+                boughtTogetherProducts: {
+                  $slice: [{ $setUnion: ["$concatenatedFilteredProducts"] }, 10]
+                },
+              }
+            }
+          ]
+        }
       }
-      const relatedProducts = await Product.aggregate([
-        matchStage,
+      const setStage = {
+        $set: {
+          combinedResults: {
+            $concatArrays: []
+          }
+        }
+      }
+      const projectStage = {
+        $project: {
+          Related_Products: {
+            $slice: ["$combinedResults", 10]
+          },
+          Bought_Together_Products: {
+            $arrayElemAt: [
+              "$boughtTogetherProducts.boughtTogetherProducts",
+              0
+            ]
+          }
+        }
+      }      
+      parentIDs.map(parentID => {
+        facetStage["$facet"][`categoryId_${parentID}`] = [
+          {
+            $match: {
+              categoryId: parentID
+            }
+          },
+          { $sort: { categoryId: 1 } }
+        ]
+        setStage["$set"]["combinedResults"]["$concatArrays"].push(`$categoryId_${parentID}`)
+      })
+      
+      const additionalDetails = await Product.aggregate([
         sortStage,
-        limitStage
+        facetStage,
+        setStage,
+        projectStage
       ])
+      
+      for(const key in additionalDetails[0]) {
+        response.push({
+          title: `${key}`.replace(/_/g, " "),
+          products: additionalDetails[0][key]
+        })
+      }
 
-      additionalDetails.push({
-        title: "Related Products",
-        products: relatedProducts
-      })
-      additionalDetails.push({
-        title: "Similar Products",
-        products: relatedProducts
-      })
-
-      return additionalDetails
+      return response
     },
     parentCategories: async (root, args) => {
       try{
