@@ -718,6 +718,7 @@ export const CheckOut = () => {
       selectAddressList(addressBook);
       return customer;
     } catch (e) {
+      selectAddressList([])
       return [];
     }
   };
@@ -777,10 +778,11 @@ export const CheckOut = () => {
                         shippingAdd={shippingAdd}
                         getBillingInfo={getBillingData}
                       />
-                      {isAddNewAddressForm ||
-                        (selectAddressList?.length === 0 && (
+                     { console.log(isAddNewAddressForm)}
+                      {(isAddNewAddressForm ||
+                        addressList?.length === 0) && (
                           <h5>Add New Address</h5>
-                        ))}
+                        )}
                       <form onSubmit={handleSubmit(onSubmit)}>
                         <BillingDetails
                           checkCode={checkCode}
@@ -801,7 +803,7 @@ export const CheckOut = () => {
                           errorRef={errors}
                           getBillingInfo={getBillingData}
                           isAddNewAddressForm={isAddNewAddressForm}
-                          selectAddressList={selectAddressList}
+                          addressList={addressList}
                         />
 
                         <button
