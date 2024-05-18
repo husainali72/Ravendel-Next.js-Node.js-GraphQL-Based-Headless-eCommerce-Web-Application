@@ -6,12 +6,20 @@ import FilterRadioButtons from "./component/filterRadioButton";
 import FilterCheckbox from "./component/filterCheckbox";
 import { ARRAY, CHOICE, RANGE } from "./constant";
 import AccordionComponent from "../accordian";
+import { applyFiltersFromUrl, updateUrl } from "./component/urlFilter";
+import { useRouter } from "next/router";
 
 const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
   const [filterData, setFilteredData] = useState([]);
+  const router = useRouter();
   useEffect(() => {
-    setFilteredData(filterCategoryData);
-  }, [filterCategoryData]);
+    if (router.isReady) {
+      const initialFilterData = applyFiltersFromUrl(filterCategoryData, router);
+      setFilteredData(initialFilterData);
+      handleFilter(initialFilterData);
+    }
+  }, [router.isReady]);
+
   const handleFilterChange = (value, index, type) => {
     let currentValue = {};
     let updatedSelect = {};
@@ -35,6 +43,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
         };
         setFilteredData(updatedFilterData);
         handleFilter(updatedFilterData);
+        updateUrl(updatedFilterData, router);
         break;
       case RANGE:
         currentValue = filterData[index];
@@ -71,6 +80,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
         };
         setFilteredData(updatedFilterData);
         handleFilter(updatedFilterData);
+        updateUrl(updatedFilterData, router);
         break;
       default:
         break;
@@ -78,72 +88,77 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
   };
   return (
     <div className=" category-filter-container">
-      {filterData?.length > 0 && filterData?.map((filter, index) => (
-        <div key={index} className="filter-section">
-          {(() => {
-            let data = get(filter, "data");
-            switch (get(filter, "type")) {
-              case ARRAY:
-                return (
-                  data?.length > 0 && (
-                    <AccordionComponent
-                      title={get(filter, "heading", "")}
-                      body={
-                        <FilterCheckbox
-                          data={filter}
-                          handleFilterChange={(e) =>
-                            handleFilterChange(e, index, get(filter, "type"))
-                          }
-                        />
-                      }
-                    />
-                  )
-                );
-              case RANGE:
-                return (
-                  data && (
-                    <AccordionComponent
-                      title={get(filter, "heading", "")}
-                      body={
-                        <FilterSlider
-                          data={filter}
-                          onBlur={() => handleFilter(filterData)}
-                          handleFilterChange={(e) =>
-                            handleFilterChange(e, index, get(filter, "type"))
-                          }
-                        />
-                      }
-                    />
-                  )
-                );
-              case CHOICE:
-                return (
-                  data?.length > 0 && (
-                    <AccordionComponent
-                      title={get(filter, "heading", "")}
-                      body={
-                        <FilterRadioButtons
-                          data={filter}
-                          handleFilterChange={(e) =>
-                            handleFilterChange(e, index, get(filter, "type"))
-                          }
-                        />
-                      }
-                    />
-                  )
-                );
-              default:
-                return null;
-            }
-          })()}
-        </div>
-      ))}
+      {filterData?.length > 0 &&
+        filterData?.map((filter, index) => (
+          <div key={index} className="filter-section">
+            {(() => {
+              let data = get(filter, "data");
+              switch (get(filter, "type")) {
+                case ARRAY:
+                  return (
+                    data?.length > 0 && (
+                      <AccordionComponent
+                        title={get(filter, "heading", "")}
+                        body={
+                          <FilterCheckbox
+                            data={filter}
+                            handleFilterChange={(e) =>
+                              handleFilterChange(e, index, get(filter, "type"))
+                            }
+                          />
+                        }
+                      />
+                    )
+                  );
+                case RANGE:
+                  return (
+                    data && (
+                      <AccordionComponent
+                        title={get(filter, "heading", "")}
+                        body={
+                          <FilterSlider
+                            data={filter}
+                            onBlur={() => {
+                              updateUrl(filterData, router);
+                              handleFilter(filterData);
+                            }}
+                            handleFilterChange={(e) =>
+                              handleFilterChange(e, index, get(filter, "type"))
+                            }
+                          />
+                        }
+                      />
+                    )
+                  );
+                case CHOICE:
+                  return (
+                    data?.length > 0 && (
+                      <AccordionComponent
+                        title={get(filter, "heading", "")}
+                        body={
+                          <FilterRadioButtons
+                            data={filter}
+                            handleFilterChange={(e) =>
+                              handleFilterChange(e, index, get(filter, "type"))
+                            }
+                          />
+                        }
+                      />
+                    )
+                  );
+                default:
+                  return null;
+              }
+            })()}
+          </div>
+        ))}
     </div>
   );
 };
 CategoryFilter.propTypes = {
   handleFilter: PropTypes.func.isRequired,
   filterCategoryData: PropTypes.array.isRequired,
+  updateUrl: PropTypes.func.isRequired,
 };
 
 export default CategoryFilter;
