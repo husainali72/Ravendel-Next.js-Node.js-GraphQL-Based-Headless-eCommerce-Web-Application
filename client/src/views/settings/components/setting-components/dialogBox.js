@@ -44,13 +44,9 @@ export default function DialogBox({ open, handleSubmit, errors, register, onSubm
                                     value: (value ? false : true),
                                     message: "zip code is required",
                                 },
-                                minLength: {
-                                    value: 5,
-                                    message: "zip min length is 5",
-                                },
-                                maxLength: {
-                                    value: 10,
-                                    message: "zip Max length is 10",
+                                pattern: {
+                                    value: /^\S{4,}$/,
+                                    message: "Invalid Zipcode",
                                 },
                             })}
                             error={errors.value ? true : false}
@@ -58,9 +54,8 @@ export default function DialogBox({ open, handleSubmit, errors, register, onSubm
                         />
                         <p>
                             <small style={{ color: 'red' }}>
-                                {errors.zip?.type === "required" ? errors.zip?.message : undefined}
-                                {errors.zip?.type === "minLength" ? errors.zip?.message : undefined}
-                                {errors.zip?.type === "maxLength" ? errors.zip?.message : undefined}
+                                {errors.zip?.type === "required" ? errors.zip?.message : ''}
+                                {errors.zip?.type === "pattern" ? errors.zip?.message : ''}
                             </small>
                         </p>
 

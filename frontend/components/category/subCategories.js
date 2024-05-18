@@ -12,6 +12,7 @@ const SubCategoryProducts = ({
   handleFilter,
   handleScroll,
   handleSorting,
+  clearFilter
 }) => {
 
   return (
@@ -20,6 +21,12 @@ const SubCategoryProducts = ({
         <div className="single-category-page">
           {get(filteredProductData, "filterData", [])?.length > 0 && (
             <div className="category-option">
+              <div className="filter-head d-flex align-items-center justify-content-between">
+                <h4 className="category-section-title">Filters</h4>
+                <button className="clear-filters-btn" onClick={clearFilter}>
+                  Clear Filters
+                </button>
+              </div>
               <SubCategoryList
                 categoryTree={get(filteredProductData, "categoryTree", {})}
                 name={"Category"}
@@ -92,5 +99,6 @@ SubCategoryProducts.propTypes = {
   handleFilter: PropTypes.func.isRequired,
   handleSorting: PropTypes.func.isRequired,
   handleScroll: PropTypes.func.isRequired,
+  clearFilter: PropTypes.func.isRequired,
 };
 export default SubCategoryProducts;

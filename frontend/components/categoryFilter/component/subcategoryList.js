@@ -14,7 +14,7 @@ const CategoryName = ({ name, className }) => (
 );
 const CategoryLink = ({ url, name, isSelected, className }) => {
   const router = useRouter();
-  const customClassName = `fw-semibold cursor-pointer mb-1 parent-category ${className} ${
+  const customClassName = `cursor-pointer parent-category ${className} ${
     isSelected ? "active" : ""
   }`;
 
@@ -36,11 +36,11 @@ const CategoryLink = ({ url, name, isSelected, className }) => {
 
 const SubCategoryItem = ({ url, name }) => (
   <Link href={generateCategoryUrl(url)?.href} as={generateCategoryUrl(url)?.as}>
-    <li className="fw-semibold cursor-pointer mb-1 child-categories">{name}</li>
+    <li className="cursor-pointer child-categories">{name}</li>
   </Link>
 );
 
-const SubCategoryList = ({ name, categoryTree }) => {
+const SubCategoryList = ({ categoryTree }) => {
   const [expanded, setExpanded] = useState(true);
   // const [showMore, setShowMore] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState({});
@@ -65,9 +65,9 @@ const SubCategoryList = ({ name, categoryTree }) => {
     <div>
       {categoryTree && Object.keys(categoryTree)?.length > 0 && (
         <div className="primary-sidebar sticky-sidebar category-shop-cart">
-          <div className="theiaStickySidebar category-box-filler">
+          <div className="theiaStickySidebar category-box-filler border-bottom">
             <div className="widget-category">
-              <h4 className="category-section-title">{name}</h4>
+              {/* <h4 className="category-section-title">{name}</h4> */}
               <ul className="categories-shop">
                 <>
                   <li className="fw-semibold cursor-pointer mb-1">

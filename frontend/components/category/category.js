@@ -37,13 +37,13 @@ const Category = ({ category }) => {
           />
         ) : null}
         <div>
-          <h5 className="black-color mt-3">
+          <h5 className="black-color mt-4">
             Products Category
           </h5>
           <div
             className={
               showSlider
-                ? "category pro-cat px-3"
+                ? "category pro-cat"
                 : " pro-cat category categoryShow "
             }
             ref={slider}
@@ -55,7 +55,7 @@ const Category = ({ category }) => {
                     <CategoryLink url={item?.url}>
                       <div className="category-cards" key={i}>
                         <div className="category-card-image">
-                          <ProductImage src={get(item, "image")} />
+                          <ProductImage src={get(item, "thumbnail_image")} />
                         </div>
 
                         <div className="card-body">

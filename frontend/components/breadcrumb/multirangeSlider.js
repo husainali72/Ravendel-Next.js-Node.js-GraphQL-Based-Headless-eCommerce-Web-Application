@@ -1,11 +1,11 @@
-/* eslint-disable react/prop-types */
+
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import classnames from "classnames";
+import PropTypes from "prop-types";
 
-
-const MultiRangeSlider = ({ min, max, onChange,minValue,maxValue }) => {
-    const [minVal, setMinVal] = useState(min);
-    const [maxVal, setMaxVal] = useState(max);
+const MultiRangeSlider = ({ min, max, onChange,minValue,maxValue,onBlur }) => {
+    const [minVal, setMinVal] = useState(minValue); // Use props to initialize minVal
+    const [maxVal, setMaxVal] = useState(maxValue); // Use props to initialize maxVal
     const minValRef = useRef(null);
     const maxValRef = useRef(null);
     const range = useRef(null);
@@ -16,34 +16,41 @@ const MultiRangeSlider = ({ min, max, onChange,minValue,maxValue }) => {
         [min, max]
     );
 
+    // Update minVal and maxVal when props change
+    useEffect(() => {
+        setMinVal(minValue);
+        setMaxVal(maxValue);
+    }, [minValue, maxValue]);
+
     // Set width of the range to decrease from the left side
     useEffect(() => {
         if (maxValRef.current) {
             const minPercent = getPercent(minVal);
-            const maxPercent = getPercent(+maxValRef.current.value); // Preceding with '+' converts the value from type string to type number
+            const maxPercent = getPercent(maxVal);
 
             if (range.current) {
                 range.current.style.left = `${minPercent}%`;
                 range.current.style.width = `${maxPercent - minPercent}%`;
             }
         }
-    }, [minVal, getPercent]);
+    }, [minVal, maxVal, getPercent]);
 
     // Set width of the range to decrease from the right side
     useEffect(() => {
         if (minValRef.current) {
-            const minPercent = getPercent(+minValRef.current.value);
+            const minPercent = getPercent(minVal);
             const maxPercent = getPercent(maxVal);
 
             if (range.current) {
                 range.current.style.width = `${maxPercent - minPercent}%`;
             }
         }
-    }, [maxVal, getPercent]);
+    }, [minVal, maxVal, getPercent]);
     return (
         <div>
             <input
                 type="range"
+                onBlur={onBlur}
                 min={min}
                 max={max}
                 value={minValue}
@@ -62,6 +69,7 @@ const MultiRangeSlider = ({ min, max, onChange,minValue,maxValue }) => {
                 type="range"
                 min={min}
                 max={max}
+                onBlur={onBlur}
                 value={maxValue}
                 ref={maxValRef}
                 onChange={(event) => {
@@ -82,6 +90,13 @@ const MultiRangeSlider = ({ min, max, onChange,minValue,maxValue }) => {
         </div>
     );
 };
-
+MultiRangeSlider.propTypes = {
+    min: PropTypes.number.isRequired,
+    max: PropTypes.number.isRequired,
+    onChange: PropTypes.func.isRequired,
+    minValue: PropTypes.number.isRequired,
+    maxValue: PropTypes.number.isRequired,
+    onBlur: PropTypes.func.isRequired,
+};
 
 export default MultiRangeSlider;

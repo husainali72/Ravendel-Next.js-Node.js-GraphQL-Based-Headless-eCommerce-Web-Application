@@ -67,8 +67,6 @@ const SETTING_TILE_DATA = gql`
         }
         notification_recipients
         low_stock_threshold
-        out_of_stock_threshold
-        out_of_stock_visibility
         stock_display_format
         left_quantity
       }
@@ -338,8 +336,6 @@ const UPDATE_STORE_INVENTORY = gql`
     $notifications: inventory_notification
     $notification_recipients: String
     $low_stock_threshold: Int
-    $out_of_stock_threshold: Int
-    $out_of_stock_visibility: Boolean
     $stock_display_format: String
     $left_quantity: Int
   ) {
@@ -348,8 +344,6 @@ const UPDATE_STORE_INVENTORY = gql`
       notifications: $notifications
       notification_recipients: $notification_recipients
       low_stock_threshold: $low_stock_threshold
-      out_of_stock_threshold: $out_of_stock_threshold
-      out_of_stock_visibility: $out_of_stock_visibility
       stock_display_format: $stock_display_format
       left_quantity: $left_quantity
     ) {

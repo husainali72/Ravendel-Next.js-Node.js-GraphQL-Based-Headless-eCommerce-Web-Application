@@ -140,7 +140,15 @@ export const GET_PRODUCT_REVIEWS = gql`
   query Productwisereview($productId: ID!, $page: Int, $limit: Int) {
     productwisereview(productId: $productId, page: $page, limit: $limit) {
       count
-      reviews
+      reviews {
+        review
+        date
+        rating
+        customerId {
+          firstName
+          lastName
+        }
+      }
     }
   }
 `;

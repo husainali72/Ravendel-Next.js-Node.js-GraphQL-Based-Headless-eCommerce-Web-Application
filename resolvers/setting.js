@@ -213,10 +213,6 @@ module.exports = {
         setting.store.inventory.notification_recipients =
           args.notification_recipients;
         setting.store.inventory.low_stock_threshold = args.low_stock_threshold;
-        setting.store.inventory.out_of_stock_threshold =
-          args.out_of_stock_threshold;
-        setting.store.inventory.out_of_stock_visibility =
-          args.out_of_stock_visibility;
         setting.store.inventory.stock_display_format =
           args.stock_display_format;
         setting.store.inventory.left_quantity = args.left_quantity;

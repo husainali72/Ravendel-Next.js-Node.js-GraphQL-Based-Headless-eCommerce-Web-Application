@@ -48,7 +48,7 @@ const PaypalComponent = () => {
                   }
                 />
               }
-              label="Enable PayPal Standard"
+              label="Enable PayPal"
             />
           </Box>
           {get(paypalInfo, "enable") && (

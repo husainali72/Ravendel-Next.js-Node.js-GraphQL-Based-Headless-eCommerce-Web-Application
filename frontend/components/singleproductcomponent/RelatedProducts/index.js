@@ -26,13 +26,18 @@ const AddionalDetail = ({ singleProduct }) => {
       {additionalDetails?.map((additionalDetail) => {
         return (
           <>
-            {" "}
-            <div>
-              <h4>{get(additionalDetail, "title")}</h4>
-              <OnSaleProductCard
-                onSaleProduct={get(additionalDetail, "products", [])}
-                hideTitle
-              />
+            <div className="related-products-slider">
+              {
+                get(additionalDetail, "products") && get(additionalDetail, "products")?.length > 0 &&
+                <>
+                  <h5>{get(additionalDetail, "title")}</h5>
+                  <OnSaleProductCard
+                    onSaleProduct={get(additionalDetail, "products", [])}
+                    hideTitle
+                    showcaseType='slider'
+                  />
+                </>
+              }
             </div>
           </>
         );

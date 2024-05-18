@@ -28,7 +28,7 @@ const QuantitySelector = ({ changeQuantity, quantity }) => {
       <label>Quantity</label>
       <div>
         <button onClick={handleDecrement}>-</button>
-        <input type="number" value={newQuantity} onChange={handleChange} />
+        <input value={newQuantity} onChange={handleChange} />
         <button onClick={handleIncrement}>+</button>
       </div>
     </div>

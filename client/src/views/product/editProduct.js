@@ -90,7 +90,7 @@ let defaultobj = {
   pricing: {
     price: "",
     sellprice: "",
-    discountPercentage:''
+    discountPercentage: "",
   },
   status: "Draft",
   meta: {
@@ -290,7 +290,31 @@ const EditProductComponent = ({ params }) => {
       setfeatureImage(null);
     }
   }, [get(productState, "product"), productId, baseURl, attributes]);
+  const filterTreeData = (data) => {
+    return data.reduce((acc, category) => {
+      const filteredCategory = {
+        id: category?.id,
+        name: category.name,
+        checked: category.checked,
+      };
+      if (category?.children && category?.children?.length > 0) {
+        filteredCategory.children = category?.children;
+      }
 
+      if (category?.checked) {
+        acc.push(filteredCategory);
+      }
+
+     else if (category?.children && category?.children?.length > 0) {
+        filteredCategory.children = filterTreeData(category?.children);
+        if (filteredCategory.children.length > 0) {
+          acc.push(filteredCategory);
+        }
+      }
+
+      return acc;
+    }, []);
+  };
   const addUpdateProduct = (e) => {
     // product.combinations = combination;
     product.taxClass = taxClass;
@@ -379,42 +403,45 @@ const EditProductComponent = ({ params }) => {
         product?.specifications &&
         !!product?.specifications?.length &&
         product?.specifications.flatMap((spec) => {
-          if(spec?.customFields && !!spec?.customFields?.length){
-          return spec.customFields.map((field) => ({
-            attributeId: field?.attributeId,
-            key: field?.keyLabel, // Assuming you have a mapping for attributeId to key
-            attributeValueId: field?.attributeValueId,
-            value: field?.valueLabel, // Assuming you have a mapping for attributeValueId to value
-            group: spec.group,
-          }));
-        }return []
+          if (spec?.customFields && !!spec?.customFields?.length) {
+            return spec.customFields.map((field) => ({
+              attributeId: field?.attributeId,
+              key: field?.keyLabel, // Assuming you have a mapping for attributeId to key
+              attributeValueId: field?.attributeValueId,
+              value: field?.valueLabel, // Assuming you have a mapping for attributeValueId to value
+              group: spec.group,
+            }));
+          }
+          return [];
         });
       // product.specifications = transformedSpecifications ? transformedSpecifications : product?.specifications
       let price = get(product, "pricing.price");
       let sellprice = get(product, "pricing.sellprice");
       if (price >= sellprice && sellprice <= price) {
+        const filteredData = filterTreeData(get(product, "categoryTree", []));
+        let singleProductPayload = { ...product, categoryTree: filteredData };
         if (productId) {
-          product.update_gallery_image = gallery;
+          singleProductPayload.update_gallery_image = gallery;
           dispatch(
             productUpdateAction(
               {
-                ...product,
+                ...singleProductPayload,
                 specifications: transformedSpecifications
                   ? transformedSpecifications
-                  : product?.specifications,
+                  : singleProductPayload?.specifications,
               },
               navigate
             )
           );
         } else {
-          product.gallery_image = gallery;
+          singleProductPayload.gallery_image = gallery;
           dispatch(
             productAddAction(
               {
-                ...product,
+                ...singleProductPayload,
                 specifications: transformedSpecifications
                   ? transformedSpecifications
-                  : product?.specifications,
+                  : singleProductPayload?.specifications,
               },
               navigate
             )
@@ -520,7 +547,7 @@ const EditProductComponent = ({ params }) => {
     setProduct({
       ...product,
       meta: {
-        ...product.meta,
+        ...product?.meta,
         [e.target.name]: e.target.value,
       },
     });
@@ -717,20 +744,20 @@ const EditProductComponent = ({ params }) => {
 
   const updateUrlOnBlur = async (url) => {
     if (url) {
-      await query(CHECK_VALID_URL, { url: url }).then(res => {
-        if (get(res, 'data.validateUrl.url')) {
-          const newUrl = get(res, 'data.validateUrl.url')
+      await query(CHECK_VALID_URL, { url: url }).then((res) => {
+        if (get(res, "data.validateUrl.url")) {
+          const newUrl = get(res, "data.validateUrl.url");
           setProduct({
             ...product,
             url: newUrl,
           });
-          setIsUrlChanged(true)
+          setIsUrlChanged(true);
         }
       });
-    } 
-  }
+    }
+  };
   const getDiscountPrice = (discountPrice) => {
-    return discountPrice ? `${discountPrice}% OFF` : 'No Discount';
+    return discountPrice ? `${discountPrice}% OFF` : "No Discount";
   };
   return (
     <>
@@ -906,7 +933,9 @@ const EditProductComponent = ({ params }) => {
                     Discount Percentage :
                   </Typography>
                   <Typography fontWeight="400" variant="body1" ml={2}>
-                   { getDiscountPrice(get(product,'pricing.discountPercentage',0))}
+                    {getDiscountPrice(
+                      get(product, "pricing.discountPercentage", 0)
+                    )}
                   </Typography>
                 </Grid>
               </Grid>
@@ -1017,88 +1046,21 @@ const EditProductComponent = ({ params }) => {
                     value={product.sku}
                   />
                 </Grid>
-
-                <Grid item md={4}>
-                  <TextInput
-                    id="quantity"
-                    label="Quantity"
-                    name="quantity"
-                    onChange={handleChange}
-                    type="number"
-                    value={product.quantity}
-                  />
-                </Grid>
+                {get(setting, "settings.store.inventory.manage_stock") && (
+                  <Grid item md={4}>
+                    <TextInput
+                      id="quantity"
+                      label="Quantity"
+                      name="quantity"
+                      onChange={handleChange}
+                      type="number"
+                      value={product.quantity}
+                    />
+                  </Grid>
+                )}
               </Grid>
             </CardBlocks>
-            {/* ===================Attributes=================== */}
-            {/* <CardBlocks title="Attribute selection">
-              <Attributes
-                product={product}
-                productStateChange={({ ...product }) =>
-                  setProduct({
-                    ...product,
-                  })
-                }
-                onCombinationUpdate={(combination) => {
-                  setCombination(combination);
-                }}
-                setting={setting}
-              />
-            </CardBlocks> */}
-            {/* ===================Custom Fields=================== */}
-            {/* <CardBlocks title="Custom Fields">
-              <Grid container spacing={2}>
-                <Grid item md={12} sm={12} xs={12}>
-                  {product.custom_field.map((field, index) => (
-                    <Box
-                      key={index}
-                      display="flex"
-                      justifyContent="flex-start"
-                      alignItems="center"
-                      className={classes.customFieldRow}
-                    >
-                      <TextField
-                        label="Custom Field Name: *"
-                        variant="outlined"
-                        name="key"
-                        className={classes.customFieldInput}
-                        value={field.key}
-                        onChange={(e) => customChange(e, index)}
-                        size="small"
-                      />
-                      <TextField
-                        label="Custom Field Value: *"
-                        variant="outlined"
-                        name="value"
-                        className={classes.customFieldInput}
-                        value={field.value}
-                        onChange={(e) => customChange(e, index)}
-                        size="small"
-                      />
-                      <Tooltip title="Remove Field" aria-label="remove-field">
-                        <Stack direction="row" spacing={1}>
-                          <IconButton
-                            aria-label="delete"
-                            onClick={(e) => removeCustomField(index)}
-                          >
-                            <CloseIcon />
-                          </IconButton>
-                        </Stack>
-                      </Tooltip>
-                    </Box>
-                  ))}
-                </Grid>
-                <Grid item lg={4} md={12}>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    onClick={addCustomField}
-                  >
-                    + Add Custom Fields
-                  </Button>
-                </Grid>
-              </Grid>
-            </CardBlocks> */}
+
 
             {/* ===================Specifications=================== */}
 
@@ -1169,7 +1131,7 @@ const EditProductComponent = ({ params }) => {
                                           >
                                             <FormControl
                                               className={classes.cstmSelect}
-                                              variant="outlined"
+                                              variant="standard"
                                             >
                                               <InputLabel id="key">
                                                 Key
@@ -1217,7 +1179,7 @@ const EditProductComponent = ({ params }) => {
                                             </FormControl>
                                             <FormControl
                                               className={classes.cstmSelect}
-                                              variant="outlined"
+                                              variant="standard"
                                             >
                                               <InputLabel id="value">
                                                 Value
@@ -1337,7 +1299,7 @@ const EditProductComponent = ({ params }) => {
               <Grid container spacing={isSmall ? 1 : 2}>
                 <Grid item md={6} xs={12}>
                   <TextInput
-                    value={product.meta.title}
+                    value={product?.meta?.title}
                     label="Meta Title"
                     name="title"
                     onInputChange={onMetaChange}
@@ -1346,7 +1308,7 @@ const EditProductComponent = ({ params }) => {
 
                 <Grid item md={6} xs={12}>
                   <TextInput
-                    value={product.meta.keywords}
+                    value={product?.meta?.keyword}
                     label="Meta Keywords"
                     name="keywords"
                     onInputChange={onMetaChange}
@@ -1355,7 +1317,7 @@ const EditProductComponent = ({ params }) => {
 
                 <Grid item xs={12}>
                   <TextInput
-                    value={product.meta.description}
+                    value={product?.meta?.descriptio}
                     label="Meta Description"
                     name="description"
                     onInputChange={onMetaChange}
@@ -1453,6 +1415,7 @@ const EditProductComponent = ({ params }) => {
             <Box component="span" m={1}>
               <CardBlocks title="Featured Image">
                 <FeaturedImageComponent
+                name='feature_image'
                   image={featureImage}
                   feautedImageChange={(e) => onFeatureImageChange(e)}
                 />

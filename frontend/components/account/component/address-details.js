@@ -96,7 +96,7 @@ const AddressDetail = (props) => {
                 }
             }
             ).catch((error)=>{
-                handleError(error,dispatch)
+                handleError(error,dispatch,router)
             })
         }
     };
@@ -114,7 +114,7 @@ const AddressDetail = (props) => {
                     notify(message, true);
                 }
             }).catch((error)=>{
-                handleError(error,dispatch)
+                handleError(error,dispatch,router)
             })
         }
     };
@@ -145,7 +145,7 @@ const AddressDetail = (props) => {
                 setAllAddressBook(list)
             }
         }).catch((error)=>{
-            handleError(error,dispatch)
+            handleError(error,dispatch,router)
         })
     };
 

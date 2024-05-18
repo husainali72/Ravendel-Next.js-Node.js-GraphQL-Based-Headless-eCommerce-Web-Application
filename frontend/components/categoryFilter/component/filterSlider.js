@@ -5,11 +5,12 @@ import {  get } from "lodash";
 import PropTypes from "prop-types";
 import MultiRangeSlider from "../../breadcrumb/multirangeSlider";
 import Price from "../../priceWithCurrency";
-const FilterSlider = ({ data, handleFilterChange }) => {
+const FilterSlider = ({ data, handleFilterChange,onBlur }) => {
   return (
     <>
       <div style={{ marginTop: "24px" }}>
         <MultiRangeSlider
+        onBlur={onBlur}
           min={get(data, "data.minPrice")}
           max={get(data, "data.maxPrice")}
           minValue={get(data, "select.minPrice", get(data, "data.minPrice"))}
@@ -44,5 +45,6 @@ const FilterSlider = ({ data, handleFilterChange }) => {
 FilterSlider.propTypes = {
   data: PropTypes.object.isRequired,
   handleFilterChange: PropTypes.func.isRequired,
+  onBlur: PropTypes.func,
 };
 export default FilterSlider;

@@ -27,7 +27,7 @@ import { Alert, Loading, TopBar, TextInput, CardBlocks } from "../components";
 import { TabPanel, a11yProps, couponObj } from "./coupon-components";
 import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
-import { isEmpty, client_app_route_url } from "../../utils/helper";
+import { isEmpty, client_app_route_url, filterTreeData, getCheckedIds } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { useParams, useNavigate } from "react-router-dom";
@@ -124,11 +124,13 @@ const EditCouponComponent = ({ params }) => {
     value === "" || value === null || isNaN(value) ? 0 : value;
   const addUpdateCoupon = () => {
     const { minimumSpend, maximumSpend, includeCategories, code } = coupon;
+    const filteredData = filterTreeData(get(coupon, "categoryTree", []));
     const updatedCoupon = {
       ...coupon,
       minimumSpend: setDefaultValues(minimumSpend),
       maximumSpend: setDefaultValues(maximumSpend),
       category: includeCategories.length > 0,
+      categoryTree:filteredData,
       code: code?.toUpperCase(),
     };
 
@@ -317,19 +319,21 @@ const EditCouponComponent = ({ params }) => {
                 </Box>
                 <CardBlocks title="Categories">
                   <EditCategoriesComponent
-                    selectedCategories={get(coupon, "categoryTree", [])}
+                    selectedCategoriesTree={get(coupon, "categoryTree", [])}
+                    selectedCategories={get(coupon, "categoryId", [])}
                     onCategoryChange={(items) => {
                       if (items && items?.length > 0) {
-                        let categoryId = items?.map((item) => item.id);
+                        const checkedIds = getCheckedIds(items);
+                        console.log(checkedIds,'checkedIds')
                         setCoupon({
                           ...coupon,
-                          includeCategories: categoryId,
+                          includeCategories: checkedIds,
                           categoryTree: items,
                         });
                       } else {
                         setCoupon({
                           ...coupon,
-                          categoryId: [],
+                          includeCategories: [],
                           categoryTree: [],
                         });
                       }

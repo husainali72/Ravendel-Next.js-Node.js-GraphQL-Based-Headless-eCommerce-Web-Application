@@ -10,6 +10,7 @@ const ParentCategories = ({ categories, categoryName }) => {
         <ProductImage className="banner-image" src={get(categories, "image", '')} />
         <h2>{categoryName}</h2>
       </div>
+
       <div className="container">
         <div className="category-disc mt-5">
           {
@@ -34,7 +35,7 @@ const ParentCategories = ({ categories, categoryName }) => {
                         <CategoryCard
                           key={i}
                           name={get(subCategory, "name")}
-                          image={get(subCategory, "image")}
+                          image={get(subCategory, "thumbnail_image")}
                         />
                       </a>
                     </CategoryLink>

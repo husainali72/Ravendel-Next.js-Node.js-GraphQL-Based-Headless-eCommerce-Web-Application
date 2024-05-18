@@ -74,7 +74,7 @@ const SingleCategoryProduct = () => {
     });
 
     // Destructure the "data" field from each object
-    filteredData = filteredData.map((item) => {
+    filteredData = filteredData?.map((item) => {
       const { ...rest } = item;
       return rest;
     });
@@ -93,6 +93,17 @@ const SingleCategoryProduct = () => {
   if (router.isFallback) {
     return <div>loading...</div>;
   }
+  const clearFilter=()=>{
+    const { category } = get(router, "query");
+    let variable = {
+      mainFilter: {
+        categoryUrl: category,
+      },
+      pageNo: 1,
+      limit: LIMIT,
+    };
+    setFilterPayload({ ...variable });
+  }
   return (
     <div>
       {/* <Meta title={singlecategory?.meta?.title} description={singlecategory?.meta?.description} keywords={singlecategory?.meta?.keywords}/> */}
@@ -104,6 +115,7 @@ const SingleCategoryProduct = () => {
         />
       ) : (
         <SubCategoryProducts
+        clearFilter={clearFilter}
           filteredProductData={filteredProductData}
           handleFilter={handleFilter}
           handleScroll={handleScroll}

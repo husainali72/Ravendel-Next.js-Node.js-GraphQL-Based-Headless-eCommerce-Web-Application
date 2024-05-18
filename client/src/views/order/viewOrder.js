@@ -41,7 +41,10 @@ import {
 import "../../App.css";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import viewStyles from "../viewStyles";
-import { client_app_route_url, getPaymentMethodLabel } from "../../utils/helper";
+import {
+  client_app_route_url,
+  getPaymentMethodLabel,
+} from "../../utils/helper";
 import { useSelector, useDispatch } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
@@ -51,9 +54,10 @@ import { validatenested, validateNestedPhone } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { isEmpty } from "../../utils/helper";
 import PhoneNumber from "../components/phoneNumberValidation";
-import { currencySetter, getPrice } from "./CurrencyFormat";
 import TotalSummaryComponent from "./totalSummary";
 import { CASH_ON_DELIVERY } from "../../utils/constant";
+import { SelectComponent } from "../components";
+import Price from "../settings/components/priceWithCurrency";
 
 const ViewOrderComponent = ({ params }) => {
   const ORDERID = params.id || "";
@@ -68,7 +72,7 @@ const ViewOrderComponent = ({ params }) => {
   const [decimal, setdecimal] = useState(2);
   const [loading, setloading] = useState(false);
   const [phoneValue, setPhoneValue] = useState("");
-  const [order, setorder] = useState({
+  const [order, setOrder] = useState({
     billing: {
       firstname: "",
       lastname: "",
@@ -126,7 +130,7 @@ const ViewOrderComponent = ({ params }) => {
   useEffect(() => {
     if (!isEmpty(get(singleOrder, "order"))) {
       const singleorder = get(singleOrder, "order");
-      setorder({ ...order, ...singleorder });
+      setOrder({ ...order, ...singleorder });
       setPhoneValue(singleorder.billing.phone);
     }
   }, [get(singleOrder, "order")]);
@@ -147,7 +151,6 @@ const ViewOrderComponent = ({ params }) => {
         "zip",
         "city",
         "address",
-        "company",
         "lastname",
         "firstname",
       ],
@@ -155,16 +158,7 @@ const ViewOrderComponent = ({ params }) => {
     );
     let Errors = validatenested(
       "shipping",
-      [
-        "state",
-        "country",
-        "zip",
-        "city",
-        "address",
-        "company",
-        "lastname",
-        "firstname",
-      ],
+      ["state", "country", "zip", "city", "address", "lastname", "firstname"],
       order
     );
     let phoneNumberError = validateNestedPhone("billing", ["phone"], order);
@@ -199,17 +193,16 @@ const ViewOrderComponent = ({ params }) => {
       setEditBilling(false);
       setEditShipping(false);
       dispatch(orderUpdateAction(order, navigate));
-      setPhoneValue("");
     }
   };
   const changeBilling = (e) => {
-    setorder({
+    setOrder({
       ...order,
       billing: { ...order.billing, [e.target.name]: e.target.value },
     });
   };
   const changeShipping = (e) => {
-    setorder({
+    setOrder({
       ...order,
       shipping: { ...order.shipping, [e.target.name]: e.target.value },
     });
@@ -253,7 +246,6 @@ const ViewOrderComponent = ({ params }) => {
   const toInputLowercase = (e) => {
     e.target.value = ("" + e.target.value).toLowerCase();
   };
-
   return (
     <>
       <Alerts />
@@ -310,70 +302,61 @@ const ViewOrderComponent = ({ params }) => {
                     </Typography>
                     <Typography variant="body1" mt={2}>
                       Payment via{" "}
-                      {
-                        getPaymentMethodLabel(
-                          get(order, "billing.paymentMethod", CASH_ON_DELIVERY)
-                        )
-                      }{" "}
-                      paid on {convertDateToStringFormat(get(order,'date'),currencyState)}
+                      {getPaymentMethodLabel(
+                        get(order, "billing.paymentMethod", CASH_ON_DELIVERY)
+                      )}{" "}
+                      paid on{" "}
+                      {convertDateToStringFormat(
+                        get(order, "date"),
+                        currencyState
+                      )}
                       {/* Transaction
                       number {order.billing.transaction_id} */}
                     </Typography>
-                    <FormControl className={classes.statusSelect}>
-                      <InputLabel id="status" sx={{ marginTop: "20px" }}>
-                        Payment Status
-                      </InputLabel>
-                      <Select
+                    <Box component="div" className={classes.statusSelect}>
+                      <SelectComponent
                         label="Payment Status"
-                        labelId="paymentStatus
-                        "
-                        id="paymentStatus"
-                        sx={{ marginTop: "20px" }}
-                        value={order.paymentStatus}
+                        labelId="paymentStatus"
+                        onSelectChange={(e) => {
+                          setOrder({
+                            ...order,
+                            [e.target.name]: e.target.value,
+                          });
+                        }}
+                        
+                        items={[
+                          { value: "pending", label: "Pending" },
+                          { value: "failed", label: "Failed" },
+                          { value: "success", label: "Completed" },
+                          { value: "cancelled", label: "Cancelled" },
+                          { value: "processing", label: "Processing" },
+                        ]}
                         name="paymentStatus"
-                        onChange={(e) => {
-                          setorder({
-                            ...order,
-                            [e.target.name]: e.target.value,
-                          });
-                        }}
-                      >
-                        <MenuItem value="pending">Pending </MenuItem>
-                        <MenuItem value="failed">Failed</MenuItem>
-                        <MenuItem value="success">Completed</MenuItem>
-                        <MenuItem value="cancelled">Cancelled</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <FormControl
-                      className={classes.statusSelect}
-                      sx={{ ml: "20px" }}
-                    >
-                      <InputLabel id="status" sx={{ marginTop: "20px" }}>
-                        Shipping Status
-                      </InputLabel>
-                      <Select
+                        value={get(order, "paymentStatus", "")}
+                      />
+                      <SelectComponent
                         label="Shipping Status"
-                        labelId="shippingStatus
-                        "
+                        labelId="shippingStatus"
                         id="shippingStatus"
-                        sx={{ marginTop: "20px" }}
-                        value={order.shippingStatus}
+                        value={get(order, "shippingStatus", "")}
                         name="shippingStatus"
-                        onChange={(e) => {
-                          setorder({
+                        onSelectChange={(e) => {
+                          setOrder({
                             ...order,
                             [e.target.name]: e.target.value,
                           });
                         }}
-                      >
-                        <MenuItem value="inprogress">Inprogress </MenuItem>
-                        <MenuItem value="shipped">Shipped</MenuItem>
-                        <MenuItem value="outfordelivery">
-                          Out For Delivery
-                        </MenuItem>
-                        <MenuItem value="delivered">Delivered</MenuItem>
-                      </Select>
-                    </FormControl>
+                        items={[
+                          { value: "inprogress", label: "In Progress" },
+                          { value: "shipped", label: "Shipped" },
+                          {
+                            value: "outfordelivery",
+                            label: "Out For Delivery",
+                          },
+                          { value: "delivered", label: "Delivered" },
+                        ]}
+                      />
+                    </Box>
                   </CardContent>
                 </Card>
               </Box>
@@ -496,7 +479,7 @@ const ViewOrderComponent = ({ params }) => {
                             " " +
                             order.shipping.lastname}
                         </Typography>
-                        <Typography variant="body1">
+                        <Typography variant="email" className={classes.emailText}>
                           {order.billing.email}
                         </Typography>
                         <Typography variant="body1">
@@ -550,7 +533,7 @@ const ViewOrderComponent = ({ params }) => {
                             <React.Fragment>
                               <Typography
                                 component="span"
-                                variant="body1"
+                                variant="email"
                                 className={classes.dBlock}
                                 color="textPrimary"
                               >
@@ -710,13 +693,10 @@ const ViewOrderComponent = ({ params }) => {
                               Item
                             </TableCell>
                             <TableCell variet="contained" color="primary">
-                              Cost
+                              Price
                             </TableCell>
                             <TableCell variet="contained" color="primary">
                               Qty
-                            </TableCell>
-                            <TableCell variet="contained" color="primary">
-                              Attributes
                             </TableCell>
                             <TableCell variet="contained" color="primary">
                               Total
@@ -728,27 +708,11 @@ const ViewOrderComponent = ({ params }) => {
                             <TableRow key={index}>
                               <TableCell>{product?.productTitle}</TableCell>
                               <TableCell>
-                                {product?.productPrice &&
-                                product?.qty &&
-                                !isNaN(product?.qty) &&
-                                !isNaN(product?.productPrice)
-                                  ? currencyFormat(
-                                      product?.productPrice / product?.qty
-                                    )
-                                  : "0.00"}
+                                <Price price={get(product,'productPrice',0)} />
                               </TableCell>
-                              <TableCell>{product?.qty}</TableCell>
-
+                              <TableCell>{get(product,'qty',1)}</TableCell>
                               <TableCell>
-                                {product?.attributes?.map((attribute) => (
-                                  <div>
-                                    {capitalize(attribute.name)} :{" "}
-                                    {capitalize(attribute.value)}
-                                  </div>
-                                ))}
-                              </TableCell>
-                              <TableCell>
-                                {currencyFormat(product?.productPrice)}
+                                <Price price={get(product,'total',0)}/>
                               </TableCell>
                             </TableRow>
                           ))}

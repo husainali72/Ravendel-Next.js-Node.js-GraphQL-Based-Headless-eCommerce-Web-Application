@@ -19,7 +19,9 @@ const {
   toObjectID,
   validateAndSetUrl,
   getBreadcrumb,
-  addCategoryAttributes
+  addCategoryAttributes,
+  getParentChildren,
+  productScript,
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -234,6 +236,8 @@ module.exports = {
               name: 1,
               url: 1,
               description: 1,
+              thumbnail_image: 1,
+              meta: 1,
               image: 1,
               parentId: 1,
               attributes:1,
@@ -242,11 +246,15 @@ module.exports = {
               "parentCategory.name": 1,
               "parentCategory.url": 1,
               "parentCategory.image": 1,
-
+              "parentCategory.thumbnail_image": 1,
+              "parentCategory.meta": 1,
+              
               "subCategories._id": 1,
               "subCategories.name": 1,
               "subCategories.url": 1,
               "subCategories.image": 1,
+              "subCategories.thumbnail_image": 1,
+              "subCategories.meta": 1,
             },
           },
         ];
@@ -1484,43 +1492,157 @@ module.exports = {
     },
     additionalDetails: async (root, args) => {
       const { productId } = args
-      const additionalDetails = []
-      const existingProduct = await Product.findById(productId).select("categoryId")
+      const response = []
+      const existingProduct = await Product.findById(productId).select("categoryTree")
+      const { categoryTree } = existingProduct
+      const { parentChildren, checkedCategoryIDs } = getParentChildren(categoryTree, {}, [])
+      const parentIDs = [...new Set([...checkedCategoryIDs, ...Object.keys(parentChildren).reverse()])]
 
-      const matchStage = {
-        $match: {
-          _id: {
-            $ne: toObjectID(existingProduct._id),
-          },
-          categoryId: {
-            $in: existingProduct.categoryId,
-          },
-        },
-      }
       const sortStage = {
         $sort: {
-          updated: -1
+          date: -1
         }
       }
-      const limitStage = {
-        $limit: 10
+      const facetStage = {
+        $facet: {
+          boughtTogetherProducts: [
+            {
+              $match: {
+                _id: toObjectID(productId)
+              }
+            },
+            {
+              $lookup: {
+                from: "orders",
+                let: { productId: "$_id" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $in: [
+                          "$$productId",
+                          "$products.productId"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    $project: {
+                      filteredProducts: {
+                        $filter: {
+                          input: "$products",
+                          as: "product",
+                          cond: {
+                            $ne: [
+                              "$$product.productId",
+                              "$$productId"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                as: "orders"
+              }
+            },
+            {
+              $unwind: "$orders"
+            },
+            {
+              $sort: {
+                "orders.date": -1
+              }
+            },
+            {
+              $match: {
+                $expr: {
+                  $gt: [
+                    {
+                      $size:
+                        "$orders.filteredProducts"
+                    },
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              $group: {
+                _id: "$_id",
+                allFilteredProducts: {
+                  $push: "$orders.filteredProducts"
+                }
+              }
+            },
+            {
+              $set: {
+                concatenatedFilteredProducts: {
+                  $reduce: {
+                    input: "$allFilteredProducts",
+                    initialValue: [],
+                    in: { $concatArrays: ["$$value", "$$this"] }
+                  }
+                }
+              }
+            },
+            {
+              $project: {
+                boughtTogetherProducts: {
+                  $slice: [{ $setUnion: ["$concatenatedFilteredProducts"] }, 10]
+                },
+              }
+            }
+          ]
+        }
       }
-      const relatedProducts = await Product.aggregate([
-        matchStage,
+      const setStage = {
+        $set: {
+          combinedResults: {
+            $concatArrays: []
+          }
+        }
+      }
+      const projectStage = {
+        $project: {
+          Related_Products: {
+            $slice: ["$combinedResults", 10]
+          },
+          Bought_Together_Products: {
+            $arrayElemAt: [
+              "$boughtTogetherProducts.boughtTogetherProducts",
+              0
+            ]
+          }
+        }
+      }      
+      parentIDs.map(parentID => {
+        facetStage["$facet"][`categoryId_${parentID}`] = [
+          {
+            $match: {
+              categoryId: parentID
+            }
+          },
+          { $sort: { categoryId: 1 } }
+        ]
+        setStage["$set"]["combinedResults"]["$concatArrays"].push(`$categoryId_${parentID}`)
+      })
+      
+      const additionalDetails = await Product.aggregate([
         sortStage,
-        limitStage
+        facetStage,
+        setStage,
+        projectStage
       ])
+      
+      for(const key in additionalDetails[0]) {
+        response.push({
+          title: `${key}`.replace(/_/g, " "),
+          products: additionalDetails[0][key]
+        })
+      }
 
-      additionalDetails.push({
-        title: "Related Products",
-        products: relatedProducts
-      })
-      additionalDetails.push({
-        title: "Similar Products",
-        products: relatedProducts
-      })
-
-      return additionalDetails
+      return response
     },
     parentCategories: async (root, args) => {
       try{
@@ -1534,6 +1656,15 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    productCategoryUpdateScript: async (root, args) => {
+      // const query = {_id: toObjectID(["6641bca3fb7a278d29017721", "6641bda8fb7a278d29017da7"])}
+      const query = {categoryId: "6641bce6fb7a278d29017a27"}
+
+      const allProducts = await Product.find().select("categoryTree specifications name")
+      await productScript(allProducts)
+
+      return allProducts
+    }
   },
   Product: {
     categoryId: async (root, args) => {
@@ -1662,7 +1793,8 @@ module.exports = {
         url: await validateAndSetUrl(args.url || args.name, ProductCat),
         // url: args.url,
         description: args.description,
-        image: args.image,
+        upload_image: args.image,
+        upload_thumbnail_image: args.thumbnail_image,
         meta: args.meta,
       };
 
@@ -1687,7 +1819,8 @@ module.exports = {
         parentId: args.parentId || null,
         url: await validateAndSetUrl(args.url || args.name, ProductCat, args.id),
         description: args.description,
-        image: args.image,
+        update_image: args.update_image,
+        upload_thumbnail_image: args.upload_thumbnail_image,
         meta: args.meta,
       };
 
@@ -1713,27 +1846,24 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "Product Category", false);
       }
       try {
-        const cat = await ProductCat.deleteOne({_id:args.id});
-
-        if (cat) {
-          // if (cat.image) {
-          //   imageUnlink(cat.image);
-          // }
-
-          if (cat.image) {
-            imageUnlink(cat.image);
-
-          }
-          let _id = args.id;
-          const product = await Product.updateMany(
-            {},
-            { $pull: { categoryId: { $in: [_id] } } },
-            { multi: true }
-          );
-          return MESSAGE_RESPONSE("DELETE", "Product Category", true);
+        const cat = await ProductCat.findByIdAndDelete(args.id);
+        if (cat.image) {
+          imageUnlink(cat.image);
         }
+        if (cat.thumbnail_image) {
+          imageUnlink(cat.thumbnail_image)
+        }
+
+        let _id = args.id;
+        const product = await Product.updateMany(
+          {},
+          { $pull: { categoryId: { $in: [_id] } } },
+          { multi: true }
+        );
+        return MESSAGE_RESPONSE("DELETE", "Product Category", true);
         return MESSAGE_RESPONSE("NOT_EXIST", "Product Category", false);
-      } catch (error) {
+      }
+      catch (error) {
         return MESSAGE_RESPONSE("DELETE_ERROR", "Product Category", false);
       }
     },
@@ -1909,7 +2039,6 @@ module.exports = {
           if(matchedProduct && matchedProduct._id != args.id){
             isSku = true;
           } */
-          console.log("updateImage",product.update_feature_image)
           let imgObject = "";
           if (args.update_feature_image) {
             imgObject = await imageUpload(

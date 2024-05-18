@@ -146,6 +146,11 @@ module.exports = `
     grandTotal: String
   }
 
+  type validateCartProductsResponse {
+    data: customArray
+    message: statusSchema
+  }
+
   extend type Query {
     carts: CartRES
     cart(id: ID!): Cart
@@ -154,6 +159,7 @@ module.exports = `
     #calculateCoupon(couponCode: String,cartItem: [couponCartProducts], totalShipping : String
       #totalTax : String,grandTotal:String,cartTotal:String): calculateCoupon
     calculateCoupon(userId: ID, cartItems: [calculateCartProducts], couponCode: String!): Cart
+    validateCartProducts(products: customArray): customArray
   }
 
   extend type Mutation {

@@ -84,6 +84,7 @@ const GET_CATEGORIES = gql`
         url
         description
         image
+        thumbnail_image
         meta
         date
         updated
@@ -105,6 +106,7 @@ const GET_CATEGORY = gql`
       url
       description
       image
+      thumbnail_image
       meta
       date
       updated
@@ -148,6 +150,7 @@ const ADD_CATEGORY = gql`
     $url: String
     $description: String
     $image: Upload
+    $thumbnail_image: Upload
     $meta: customObject
   ) {
     addProductCategory(
@@ -156,6 +159,7 @@ const ADD_CATEGORY = gql`
       url: $url
       description: $description
       image: $image
+      thumbnail_image: $thumbnail_image
       meta: $meta
     ) {
       message
@@ -202,7 +206,8 @@ const UPDATE_CATEGORY = gql`
     $parentId: ID
     $url: String
     $description: String
-    $update_image: Upload
+    $upload_image: Upload
+    $upload_thumbnail_image: Upload
     $meta: customObject
   ) {
     updateProductCategory(
@@ -211,7 +216,8 @@ const UPDATE_CATEGORY = gql`
       parentId: $parentId
       url: $url
       description: $description
-      update_image: $update_image
+      upload_image: $upload_image
+      upload_thumbnail_image: $upload_thumbnail_image
       meta: $meta
     ) {
       message

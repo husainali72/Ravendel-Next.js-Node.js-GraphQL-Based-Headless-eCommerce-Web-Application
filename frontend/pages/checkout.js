@@ -13,13 +13,27 @@ import { useForm } from "react-hook-form";
 import CustomerDetail from "../components/checkoutcomponent/CustomerDetails";
 import { getSession, useSession } from "next-auth/react";
 import ShippingTaxCoupon from "../components/checkoutcomponent/ShippingTaxCoupon";
-import {isAnyProductOutOfStock, currencySetter, getItemFromLocalStorage, handleError, mutation, query, queryWithoutToken } from "../utills/helpers";
+import {
+  isAnyProductOutOfStock,
+  currencySetter,
+  getItemFromLocalStorage,
+  handleError,
+  mutation,
+  query,
+  queryWithoutToken,
+} from "../utills/helpers";
 import { useRouter } from "next/router";
 import Stripes from "../components/checkoutcomponent/reactstripe/StripeContainer";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
 import OrderSummary from "../components/checkoutcomponent/CheckOutOrderSummary";
 import Stepper from "../components/checkoutcomponent/stepperbar/Stepper";
-import { calculateUnauthenticatedCart, calculateUserCart, changeQty, increaseQuantity, removeCartItemAction } from "../redux/actions/cartAction";
+import {
+  calculateUnauthenticatedCart,
+  calculateUserCart,
+  changeQty,
+  increaseQuantity,
+  removeCartItemAction,
+} from "../redux/actions/cartAction";
 import toast, { Toaster } from "react-hot-toast";
 import { CHECK_ZIPCODE } from "../queries/productquery";
 import { get } from "lodash";
@@ -29,6 +43,9 @@ import { PAYPAL, RAZORPAY } from "../utills/constant";
 import { handleOrderPlaced } from "../components/checkoutcomponent/handleOrder";
 import { getAllProductsAction } from "../redux/actions/productAction";
 import { DELETE_CART_PRODUCTS } from "../queries/cartquery";
+import { ADD_ADDRESSBOOK } from "../../client/src/queries/customerQuery";
+import { GET_CUSTOMER_ORDERS_QUERY } from "../queries/orderquery";
+import { GET_CUSTOMER_QUERY } from "../queries/customerquery";
 
 const notify = (message, success) => {
   if (success) {
@@ -52,7 +69,7 @@ var billingInfoObject = {
   country: "",
   paymentMethod: "",
   transaction_id: "",
-  addressType: ''
+  addressType: "",
 };
 var shippingObject = {
   order_notes: "",
@@ -66,7 +83,7 @@ var shippingObject = {
   lastname: "",
   firstname: "",
   country: "",
-  addressType: ''
+  addressType: "",
 };
 
 var savedShippingInfo;
@@ -102,9 +119,9 @@ export const CheckOut = () => {
   const [loading, setLoading] = useState(false);
   const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false);
   const [cartLoading, setCartLoading] = useState(false);
+  const [isAddNewAddressForm, setIsAddNewAddressForm] = useState(false);
   const cart = useSelector((state) => state.cart);
   const allProducts = useSelector((state) => state.products);
-
   useEffect(() => {
     getUserCartData();
     dispatch(getAllProductsAction());
@@ -175,70 +192,58 @@ export const CheckOut = () => {
   }, [allProducts, get(cart, "cartItems")]);
 
   const updateCartProductQuantity = (item, updatedQuantity) => {
-    const isQuantityIncreased = cartItems?.find(
-      (cartItem) =>{
-    let cartItemId = get(cartItem, '_id')
-    let cartItemVariantId = get(cartItem, 'variantId');
-    let itemId = get(item, '_id');
-    let itemVariantId = get(item, 'variantId');
-    let itemProductQuantity = get(item, 'productQuantity');
-    return (
-        ((cartItemId === itemId && cartItemVariantId === itemVariantId) ||
-        (cartItemId === itemId && !cartItemVariantId === itemVariantId)) &&
-        itemProductQuantity >= updatedQuantity
-    );
-  }
-    );
-    if (isQuantityIncreased) {
-      let updatedCartItems = cartItems?.map((cartItem) => ({
-        ...cartItem,
-        quantity:
-          cartItem?._id === item?._id &&
-          (cartItem?.variantId === item?.variantId ||
-            (!cartItem?.variantId && !item?.variantId))
-            ? updatedQuantity
-            : cartItem?.quantity,
-      }));
-      setCartItems([...updatedCartItems]);
-      if ("authenticated" !== session?.status) {
-        dispatch(
-          increaseQuantity(
-            item?._id,
-            item?.productQuantity,
-            item?.variantId,
-            updatedQuantity
-          )
-        );
-        dispatch(calculateUnauthenticatedCart(updatedCartItems));
-        setIsQuantityBtnLoading(false);
-      } else {
-        let id = get(session, "data.user.accessToken.customer._id");
-        let variables = {
-          userId: id,
-          productId: get(item, "_id"),
-          qty: updatedQuantity,
-        };
-        dispatch(changeQty(variables))
-          .then((res) => {
-            if (get(res, "data.changeQty.success")) {
-              dispatch(calculateUserCart(id));
+    // const isQuantityIncreased = cartItems?.find((cartItem) => {
+    //   let cartItemId = get(cartItem, "_id");
+    //   let cartItemVariantId = get(cartItem, "variantId");
+    //   let itemId = get(item, "_id");
+    //   let itemVariantId = get(item, "variantId");
+    //   let itemProductQuantity = get(item, "productQuantity");
+    //   console.log(itemProductQuantity, "itemProductQuantity", item);
+    //   return (
+    //     ((cartItemId === itemId && cartItemVariantId === itemVariantId) ||
+    //       (cartItemId === itemId && !cartItemVariantId === itemVariantId)) &&
+    //     itemProductQuantity >= updatedQuantity
+    //   );
+    // });
+    let prevQuantity = null;
+    let updatedCartItems = cartItems?.map((cartItem) => {
+      if (cartItem?._id === item?._id) {
+        prevQuantity = cartItem?.quantity; // Store previous quantity
+        return { ...cartItem, quantity: updatedQuantity };
+      }
+      return cartItem;
+    });
+    setCartItems([...updatedCartItems]);
+
+    let id = get(session, "data.user.accessToken.customer._id");
+    let variables = {
+      userId: id,
+      productId: get(item, "_id"),
+      qty: updatedQuantity,
+    };
+    dispatch(changeQty(variables, router))
+      .then((res) => {
+        if (get(res, "data.changeQty.success")) {
+          dispatch(calculateUserCart(id));
+        } else {
+          let revertedCartItems = cartItems?.map((cartItem) => {
+            if (cartItem?._id === item?._id) {
+              return { ...cartItem, quantity: prevQuantity };
             }
-            setIsQuantityBtnLoading(false);
-          })
-          .catch((error) => {
-            setIsQuantityBtnLoading(false);
+            return cartItem;
           });
-      }
-    } else {
-      if (item?.productQuantity) {
-        notify(`Only ${item?.productQuantity} Unit(s) available in stock `);
-      }
-    }
+          setCartItems([...revertedCartItems]);
+        }
+        setIsQuantityBtnLoading(false);
+      })
+      .catch((error) => {
+        setIsQuantityBtnLoading(false);
+      });
   };
   // Function to remove an item from the cart
   const removeToCart = async (item) => {
     let productId = get(item, "_id", "");
-    if ("authenticated" === session?.status) {
+    if (session?.status==="authenticated") {
       let id = get(session, "data.user.accessToken.customer._id");
       let variables = {
         userId: id,
@@ -253,23 +258,8 @@ export const CheckOut = () => {
           }
         })
         .catch((error) => {
-          handleError(error, dispatch);
+          handleError(error, dispatch, router);
         });
-    } else {
-      
-      let cartItemsfilter = cartItems?.filter(
-        (cartItem) =>
-          cartItem?._id !== productId ||
-          (cartItem?._id === productId && cartItem?.variantId !== item?.variantId)
-      );
-      let variables = {
-        id: productId,
-        variantId: get(item, "variantId", ""),
-      };
-
-      dispatch(removeCartItemAction(variables));
-      dispatch(calculateUnauthenticatedCart(cartItemsfilter));
-      setCartItems(cartItemsfilter);
     }
   };
 
@@ -282,25 +272,8 @@ export const CheckOut = () => {
     setCurrencyOption({ ...currencyStoreOptions });
     currencySetter(currencyStoreOptions, setCurrency);
   }, [settings]);
-
   useEffect(() => {
-    if ("authenticated" === session?.status) {
-      // Select the address list from the session data
-      selectAddressList(
-        get(session, "data.user.accessToken.customer.addressBook")
-      );
-      // Get the default address details from the address book
-      let defaultAddress = getDefaultAddressDetails(
-        get(session, "data.user.accessToken.customer.addressBook")
-      );
-      // Set default address for billingInfo if not already selected
-      if (checkIsAddressSelected(billingInfo)) {
-        setBillingInfo({ ...defaultAddress });
-      }
-      // Set default address for shippingInfo if not already selected
-      if (checkIsAddressSelected(shippingInfo)) {
-        setShippingInfo({ ...defaultAddress });
-      }
+    if (session?.status === "authenticated") {
       // Set token and customer ID
       setToken(get(session, "data.user.accessToken.token"));
       setCustomerId(get(session, "data.user.accessToken.customer._id"));
@@ -311,48 +284,50 @@ export const CheckOut = () => {
       setBillingDetails({ ...billingDetails, userId: sessionCustomerID });
     }
   }, [session?.status]);
-
+  useEffect(() => {
+    if (customerId) {
+      getCustomerAddresses();
+    }
+  }, [customerId]);
   useEffect(() => {
     const getProducts = async () => {
       const userSession = await getSession();
-      if ("authenticated" === session?.status || null !== userSession) {
+      if (session?.status === "authenticated" || userSession !== null) {
         setIsLogin(true);
         // get CartItems and Total summary detail
         let cartItemList = prepareCartItemsList(get(carts, "cartItems", []));
         setTotalSummary({ ...get(carts, "totalSummary") });
         setCartItems([...cartItemList]);
+        checkCart()
         setCouponCardDetail({});
       } else {
         setCartItems([]);
         setCouponCardDetail({});
         //If the user is not authenticated Redirect the user to the login page
-        router.push("/account");
+        router.push("/login");
       }
     };
     getProducts();
   }, [carts]);
-  useEffect(() => {
-    const checkCart = async () => {
-      const userSession = await getSession();
-      if ("authenticated" === session?.status || null !== userSession) {
-        setIsLogin(true);
-        let cartItemsProduct=get(carts, "cartItems", [])
-        // If the cart is empty, redirect the user to the home page
-        if (cartItemsProduct?.length <= 0) {
-          router.push("/");
-        }
-        if(isAnyProductOutOfStock(cartItemsProduct)){
-          router.push("/shopcart");
-        }
+  const checkCart = async () => {
+    const userSession = await getSession();
+    if ("authenticated" === session?.status || null !== userSession) {
+      setIsLogin(true);
+      let cartItemsProduct = get(carts, "cartItems", []);
+      // If the cart is empty, redirect the user to the home page
+      if (cartItemsProduct?.length <= 0) {
+        router.push("/");
       }
-    };
+      if (isAnyProductOutOfStock(cartItemsProduct)) {
+        router.push("/shopcart");
+      }
+    }
+  };
+  useEffect(() => {
     checkCart();
   }, []);
   useEffect(() => {
     if ("authenticated" === session?.status) {
-      selectAddressList(
-        get(session, "data.user.accessToken.customer.addressBook")
-      );
       setToken(get(session, "data.user.accessToken.token"));
       setCustomerId(get(session, "data.user.accessToken.customer._id"));
       setIsLogin(true);
@@ -373,12 +348,21 @@ export const CheckOut = () => {
     formState: { errors },
     control,
   } = useForm({ mode: "onSubmit" });
+  
   const onSubmit = (data) => {
     if (ZipMessage && ZipMessage?.zipSuccess) {
-      nextFormStep();
+      let isAddressAlready = get(billingDetails, "billing.id") ? true : false;
+      if (!isAddressAlready) {
+        addNewAddress();
+      } else {
+        setIsAddNewAddressForm(false);
+        nextFormStep();
+      }
     }
   };
-  const getDefaultAddressDetails = (addresses) => {
+
+  const getDefaultAddressDetails = (customer) => {
+    let addresses = get(customer, "addressBook", []);
     if (addresses && 0 < addresses?.length) {
       let defaultAddress = addresses?.find(
         (address) => address?.defaultAddress
@@ -391,25 +375,25 @@ export const CheckOut = () => {
         addressLine1,
         addressLine2,
         phone,
-        email,
         lastName,
         firstName,
         addressType,
         country,
+        _id,
       } = defaultAddress;
       let defaultAddressInfo = {
         zip: pincode || "",
         state: state || "",
         city: city || "",
-        address: addressLine1 + (addressLine2 ? ", " + addressLine2 : "") || "",
         addressLine2: addressLine2 || "",
-        addressLine1: addressLine1 || "",
+        address: addressLine1 || "",
         phone: phone || "",
-        addressType:addressType||'',
-        email: email || "",
+        addressType: addressType || "",
+        email: customer?.email || "",
         lastname: lastName || "",
         firstname: firstName || "",
         country: country || "",
+        id: _id || "",
       };
       checkCode(get(defaultAddressInfo, "zip"));
       return defaultAddressInfo;
@@ -446,16 +430,27 @@ export const CheckOut = () => {
       dispatch(calculateUserCart(customerId));
     }
   };
-  
+
   const checkCode = async (code) => {
     try {
       let variable = { zipcode: code.toString() };
-      const { data: result } = await queryWithoutToken(CHECK_ZIPCODE, variable);
-      setZipMessage({
-        ...ZipMessage,
-        zipMessage: get(result, "checkZipcode.message"),
-        zipSuccess: get(result, "checkZipcode.success"),
-      });
+
+      if (code) {
+        const { data: result } = await queryWithoutToken(
+          CHECK_ZIPCODE,
+          variable
+        );
+        notify(
+          get(result, "checkZipcode.message"),
+          get(result, "checkZipcode.success")
+        );
+        setZipMessage({
+          ...ZipMessage,
+          shipping: shippingAdd,
+          zipMessage: get(result, "checkZipcode.message"),
+          zipSuccess: get(result, "checkZipcode.success"),
+        });
+      }
     } catch (e) {}
   };
   const handleZipCode = (e) => {
@@ -466,10 +461,7 @@ export const CheckOut = () => {
         [name]: value,
       });
     }
-    
     setBillingInfo({ ...billingInfo, [name]: value });
-
-    checkCode(value);
   };
 
   const getBillingData = (val) => {
@@ -481,15 +473,15 @@ export const CheckOut = () => {
   };
 
   const handleBillingInfo = (e, nm) => {
-    if(nm === 'addressType'){
-      if (!shippingAdd ) {
+    if (nm === "addressType") {
+      if (!shippingAdd) {
         setShippingInfo({
           ...shippingInfo,
-          [nm]: e
+          [nm]: e?.value,
         });
       }
-      setBillingInfo({ ...billingInfo, [nm]: e });
-    } else{
+      setBillingInfo({ ...billingInfo, [nm]: e?.value });
+    } else {
       let { name, value } = get(e, "target");
       if (!shippingAdd && name !== "paymentMethod") {
         setShippingInfo({
@@ -501,13 +493,13 @@ export const CheckOut = () => {
     }
   };
   const handleShippingChange = (e, nm) => {
-    if(nm === 'addressType'){
+    if (nm === "addressType") {
       setShippingInfo({
         ...shippingInfo,
-        [nm]: e,
+        [nm]: e?.value,
       });
-      setBillingInfo({ ...billingInfo, [nm]: e });
-    } else{
+      setBillingInfo({ ...billingInfo, [nm]: e?.value });
+    } else {
       let { name, value } = get(e, "target");
       setShippingInfo({
         ...shippingInfo,
@@ -542,52 +534,45 @@ export const CheckOut = () => {
     if (e?.target?.checked) {
       savedShippingInfo = shippingInfo;
       setShippingInfo(shippingObject);
+      setZipMessage({
+        ...ZipMessage,
+        zipMessage: "",
+        zipSuccess: false,
+      });
     } else {
+      checkCode(billingInfo?.zip);
       setShippingInfo(billingInfo);
     }
+
     setShippingAdd(e?.target?.checked);
   };
-  const SelectAddressBook = (address) => {
-    const { addressLine1, addressLine2 } = address;
+  const SelectAddressBook = async (address) => {
+    const userSession = await getSession();
+    let customer = get(userSession, "user.accessToken.customer");
+    setIsAddNewAddressForm(false);
     let commonFields = {
-      zip: address?.pincode|| "",
-      state: address?.state|| "",
+      zip: address?.pincode || "",
+      state: address?.state || "",
       city: address?.city,
-      address:  addressLine1 + (addressLine2 ? ", " + addressLine2 : "") || "",
-      addressLine2: address?.addressLine2|| "",
-      addressLine1: address?.addressLine1|| "",
-      phone: address?.phone|| "",
-      email: address?.email|| "",
-      lastname: address?.lastName|| "",
-      firstname: address?.firstName|| "",
-      country: address?.country|| "",
-      addressType: address?.addressType || 'Home Address',
-      id: address?._id|| ""
-
+      addressLine2: address?.addressLine2 || "",
+      address: address?.addressLine1 || "",
+      phone: address?.phone || "",
+      email: customer?.email || "",
+      lastname: address?.lastName || "",
+      firstname: address?.firstName || "",
+      country: address?.country || "",
+      addressType: address?.addressType || "",
+      id: address?._id || "",
     };
     let shipping = commonFields;
     let billing = {
       ...commonFields,
-      email: address?.email,
       paymentMethod: address?.paymentMethod,
     };
     if (!shippingAdd) {
       setShippingInfo(shipping);
+      checkCode(get(address, "pincode", ""));
     }
-    const checkCode = async () => {
-      try {
-        const { data: result } = await client.query({
-          query: CHECK_ZIPCODE,
-          variables: { zipcode: get(address, "pincode", "").toString() },
-        });
-        setZipMessage({
-          ...ZipMessage,
-          zipMessage: get(result, "checkZipcode.message"),
-          zipSuccess: get(result, "checkZipcode.success"),
-        });
-      } catch (e) {}
-    };
-    checkCode();
     setBillingInfo(billing);
   };
   const doApplyCouponCode = async (e) => {
@@ -655,7 +640,99 @@ export const CheckOut = () => {
       );
     }
   };
-
+  const addNewAddress = async () => {
+    let billingAddress = get(billingDetails, "billing");
+    const {
+      firstname,
+      lastname,
+      address,
+      addressLine2,
+      city,
+      country,
+      state,
+      phone,
+      zip: pincode,
+      addressType,
+      defaultAddress,
+    } = billingAddress;
+    let payload = {
+      id: customerId,
+      firstName: firstname,
+      lastName: lastname,
+      phone,
+      addressLine1: address,
+      addressLine2,
+      city,
+      country,
+      state,
+      pincode,
+      addressType,
+      defaultAddress,
+    };
+    mutation(ADD_ADDRESSBOOK, payload)
+      .then(async (response) => {
+        const success = get(response, "data.addAddressBook.success");
+        const message = get(response, "data.addAddressBook.message");
+        const data = get(response, "data.addAddressBook.data");
+        if (success) {
+          // setAddress(addressObject)
+          setBillingInfo({ ...billingInfo, id: data?._id });
+          setIsAddNewAddressForm(false);
+          nextFormStep();
+          await getAddress();
+        }
+      })
+      .catch((error) => {
+        handleError(error, dispatch, router);
+      });
+  };
+  const getAddress = async () => {
+    try {
+      const { data: customersData } = await query(GET_CUSTOMER_QUERY, {
+        id: customerId,
+      });
+      let customer = get(customersData, "customer.data");
+      let addressBook = get(customer, "addressBook", []);
+      selectAddressList(addressBook);
+      return customer;
+    } catch (e) {
+      return [];
+    }
+  };
+  const getCustomerAddresses = async () => {
+    let customer = await getAddress();
+    // Get the default address details from the address book
+    let defaultAddress = getDefaultAddressDetails(customer);
+    // Set default address for billingInfo if not already selected
+    if (!checkIsAddressSelected(billingInfo) && !isAddNewAddressForm) {
+      setBillingInfo({ ...defaultAddress });
+    }
+    // Set default address for shippingInfo if not already selected
+    if (!checkIsAddressSelected(shippingInfo) && !isAddNewAddressForm) {
+      setShippingInfo({ ...defaultAddress });
+    }
+  };
+  const toggleAddNewAddressForm = () => {
+    setIsAddNewAddressForm(true);
+    if (!shippingAdd) {
+      setShippingInfo({ ...shippingObject });
+    }
+    setBillingInfo({ ...billingInfoObject });
+    setBillingDetails({
+      ...billingDetails,
+      billing: billingInfoObject,
+      shipping: shippingObject,
+    });
+    if (!shippingAdd) {
+      setZipMessage({
+        ...ZipMessage,
+        zipMessage: "",
+        zipSuccess: false,
+      });
+    } else {
+      checkCode(shippingInfo?.zip);
+    }
+  };
   if (islogin) {
     switch (formStep) {
       case 1:
@@ -666,11 +743,11 @@ export const CheckOut = () => {
               <BreadCrumb title={"checkout"} />
               <section className="checkout-section">
                 <Container>
-                  <Stepper activeStep={formStep} steps={steps} />
                   <div className="col-lg-12 first-checkout-page">
                     <div className="first-checkout-page-container">
                       <CustomerDetail
                         addressBook={addressList}
+                        toggleAddNewAddressForm={toggleAddNewAddressForm}
                         setBillingInfo={setBillingInfo}
                         SelectAddressBook={SelectAddressBook}
                         billingInfo={billingInfo}
@@ -678,9 +755,14 @@ export const CheckOut = () => {
                         shippingAdd={shippingAdd}
                         getBillingInfo={getBillingData}
                       />
-                      <h5>Billing Details</h5>
+                      {isAddNewAddressForm ||
+                        (selectAddressList?.length === 0 && (
+                          <h5>Add New Address</h5>
+                        ))}
                       <form onSubmit={handleSubmit(onSubmit)}>
                         <BillingDetails
+                          checkCode={checkCode}
+                          setZipMessage={setZipMessage}
                           control={control}
                           ZipMessage={ZipMessage}
                           handleZipCode={handleZipCode}
@@ -696,15 +778,16 @@ export const CheckOut = () => {
                           registerRef={register}
                           errorRef={errors}
                           getBillingInfo={getBillingData}
+                          isAddNewAddressForm={isAddNewAddressForm}
+                          selectAddressList={selectAddressList}
                         />
-
-                        <button
-                          type="submit"
-                          className="btn btn-success primary-btn-color checkout-continue-btn"
-                        >
-                          Next
-                        </button>
-                      </form>
+                          <button
+                            type="submit"
+                            className="btn btn-success primary-btn-color checkout-continue-btn"
+                          >
+                            Next
+                          </button>
+                        </form>
                     </div>
                     <div className="cupon-cart">
                       <OrderSummary
@@ -730,65 +813,16 @@ export const CheckOut = () => {
             </div>
           </>
         );
+
       case 2:
         return (
           <>
             <Toaster />
-            <div>
-              <BreadCrumb title={"checkout"} />
-              <section className="checkout-section">
-                <Container>
-                  <Stepper activeStep={formStep} steps={steps} />
-                  <div className="col-lg-12 checkout-second-page-container">
-                    <div className="second-container">
-                      <ShippingTaxCoupon
-                        currency={currency}
-                        shippingInfo={shippingInfo}
-                        prevFormStep={prevFormStep}
-                        shippingAdd={shippingAdd}
-                        billingInfo={billingInfo}
-                      />
-                      <button
-                        className="btn btn-success primary-btn-color checkout-continue-btn"
-                        onClick={nextFormStep}
-                      >
-                        Next
-                      </button>
-                    </div>
 
-                    <div className="checkout-order-summary-container">
-                      <OrderSummary
-                        cartLoading={cartLoading}
-                        cartItems={cartItems}
-                        removeToCart={removeToCart}
-                        updateCartProductQuantity={updateCartProductQuantity}
-                        totalSummary={totalSummary}
-                        removeCoupon={removeCoupon}
-                        currencyOption={currencyOption}
-                        currency={currency}
-                        couponCartDetail={couponCartDetail}
-                        CouponLoading={CouponLoading}
-                        Data
-                        doApplyCouponCode={doApplyCouponCode}
-                        couponCode={couponCode}
-                        setCouponCode={setCouponCode}
-                      />
-                    </div>
-                  </div>
-                </Container>
-              </section>
-            </div>
-          </>
-        );
-      case 3:
-        return (
-          <>
-            <Toaster />
             <div>
               <BreadCrumb title={"checkout"} />
               <section className="checkout-section">
                 <Container>
-                  <Stepper activeStep={formStep} steps={steps} />
                   {paymentMethod === PAYPAL ? (
                     <Paypal
                       customerId={customerId}
@@ -868,7 +902,7 @@ export const CheckOut = () => {
                 <div className="toggle-info">
                   <p>
                     <i class="far fa-user"></i> Already have an account ?{" "}
-                    <Link href="/account">
+                    <Link href="/login">
                       <a>Click here to login</a>
                     </Link>
                   </p>
@@ -884,6 +918,8 @@ export const CheckOut = () => {
                       <h5>Billing Details</h5>
                       <BillingDetails
                         control={control}
+                        setZipMessage={setZipMessage}
+                        checkCode={checkCode}
                         ZipMessage={ZipMessage}
                         handleZipCode={handleZipCode}
                         billingInfo={billingInfo}
@@ -931,7 +967,7 @@ export const CheckOut = () => {
               <h3>Please Login First</h3>
             </div>
             <div className="checkout-unauthorised-container">
-              <Link href="/account">
+              <Link href="/login">
                 <button
                   type="button"
                   className="btn btn-success primary-btn-color checkout-login-btn"

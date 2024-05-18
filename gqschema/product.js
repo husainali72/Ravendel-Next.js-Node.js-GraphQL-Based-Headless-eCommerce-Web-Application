@@ -259,6 +259,7 @@ module.exports = `
     onSaleProducts: [Product]
     additionalDetails(productId: ID!): customArray
     parentCategories: productCategoriesRES
+    productCategoryUpdateScript: customArray
   }
 
   extend type Mutation {
@@ -272,6 +273,7 @@ module.exports = `
       url: String
       description: String
       image: Upload
+      thumbnail_image: Upload
       meta: customObject
     ): statusSchema
     updateProductCategory(
@@ -280,7 +282,8 @@ module.exports = `
       parentId: ID
       url: String
       description: String
-      update_image: Upload
+      upload_image: Upload
+      upload_thumbnail_image: Upload
       meta: customObject
     ): statusSchema
     deleteProductCategory(id: ID!): statusSchema

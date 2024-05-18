@@ -51,23 +51,23 @@ const GalleryImagesComponents = (props) => {
   useEffect(() => {
     setSingleproduct({ ...singleproduct });
   }, [singleProducts]);
-  useEffect(() => {
-    const productQuantity = get(singleProducts, "quantity");
-    const isLowStock = singleProducts && productQuantity <= lowStockThreshold;
-    const isOutOfStock =
-      singleProducts && productQuantity <= outOfStockThreshold;
-    const inStock = singleProducts && productQuantity > lowStockThreshold;
-    if (isLowStock && !isOutOfStock) {
-      setStockClass("low-stock");
-      setLable("Low Stock");
-    } else if (isOutOfStock) {
-      setStockClass("out-of-stock");
-      setLable("Out Of Stock");
-    } else if (inStock) {
-      setStockClass("in-stock");
-      setLable("In Stock");
-    }
-  }, [singleProducts?.quantity, lowStockThreshold, outOfStockThreshold]);
+  // useEffect(() => {
+  //   const productQuantity = get(singleProducts, "quantity");
+  //   const isLowStock = singleProducts && productQuantity <= lowStockThreshold;
+  //   const isOutOfStock =
+  //     singleProducts && productQuantity <= outOfStockThreshold;
+  //   const inStock = singleProducts && productQuantity > lowStockThreshold;
+  //   if (isLowStock && !isOutOfStock) {
+  //     setStockClass("low-stock");
+  //     setLable("Low Stock");
+  //   } else if (isOutOfStock) {
+  //     setStockClass("out-of-stock");
+  //     setLable("Out Of Stock");
+  //   } else if (inStock) {
+  //     setStockClass("in-stock");
+  //     setLable("In Stock");
+  //   }
+  // }, [singleProducts?.quantity, lowStockThreshold, outOfStockThreshold]);
   const getSelectedAttributes = (attributes) => {
     setSelectedAttributes(attributes);
   };
@@ -213,6 +213,7 @@ const GalleryImagesComponents = (props) => {
                 cart.
               </p>
             )}
+            {console.log(get(singleproduct, "variations"), get(singleproduct, "attributes"))}
             {
               (get(singleproduct, "variations") && get(singleproduct, "variations")?.length > 0) || (get(singleproduct, "attributes") && get(singleproduct, "attributes")?.length > 0) ?
               <div className="varaint-select">
@@ -244,7 +245,7 @@ const GalleryImagesComponents = (props) => {
                 </div>
               </div> */}
 
-              {Lable !== "Out Of Stock" && (
+              {/* {Lable !== "Out Of Stock" && ( */}
                 <>
                   <CustomButton
                     type="button"
@@ -258,7 +259,7 @@ const GalleryImagesComponents = (props) => {
                     disabled={!available}
                   />
                 </>
-              )}
+              {/* )} */}
               {itemInCart && (
                 <p className="already-in-cart-message">
                   You have this item in your bag and we have increased the

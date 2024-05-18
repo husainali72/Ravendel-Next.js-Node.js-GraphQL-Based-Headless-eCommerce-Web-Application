@@ -3,10 +3,11 @@ import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 const SelectComponent = ({
   label,
-  onSelecteChange,
+  onSelectChange,
   items,
   name,
   value,
+  fullWidth,
   ...rest
 }) => {
   const inputLabel = React.useRef(null);
@@ -25,7 +26,7 @@ const SelectComponent = ({
         label={label}
         labelId={`select-${label}`}
         name={name}
-        onChange={(e) => onSelecteChange(e.target.value)}
+        onChange={(e) => onSelectChange(e)}
         labelWidth={labelWidth}
         value={value}
         multiple={false}
@@ -33,8 +34,8 @@ const SelectComponent = ({
       >
         {items.length > 0
           ? items.map((item, i) => (
-            <MenuItem value={item} key={i}>
-              {item}
+            <MenuItem value={item?.value} key={i}>
+              {item?.label}
             </MenuItem>
           ))
           : null}
