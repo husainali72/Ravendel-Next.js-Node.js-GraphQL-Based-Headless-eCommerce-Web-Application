@@ -165,7 +165,7 @@ module.exports = {
         }
         const customer = await Customer.findById({ _id: args.id });
         if (!customer) {
-          return MESSAGE_RESPONSE("NOT_EXIST", "Address", false);
+          return MESSAGE_RESPONSE("NOT_EXIST", "Customer", false);
         }
 
         if (args.defaultAddress) {
