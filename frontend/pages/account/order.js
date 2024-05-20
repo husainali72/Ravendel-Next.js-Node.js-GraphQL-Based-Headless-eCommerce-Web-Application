@@ -69,8 +69,8 @@ const Order = () => {
     { field: 'shippingStatus', headerName: 'Shipping Status', minWidth: 140, flex: 1, filterable: false, sortable: true },
     { headerName: 'Action', width: 60, filterable: false, sortable: false, renderCell: (params) => (
       <>
-        <IconButton color="primary" aria-label="edit" onClick={() => handleShowDetailsPopup(params.row.id)}>
-          <VisibilityIcon />
+        <IconButton color="tertiary" aria-label="edit" onClick={() => handleShowDetailsPopup(params.row.id)}>
+          <VisibilityIcon style={{fontSize: '20px'}} />
         </IconButton>
       </>
     ),},

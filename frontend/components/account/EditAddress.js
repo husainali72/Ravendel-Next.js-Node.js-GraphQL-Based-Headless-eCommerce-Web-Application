@@ -19,7 +19,9 @@ var addressFieldObject = {
 function EditAddress() {
     const [addressFieldInfo, setAddressFieldInfo] = useState(addressFieldObject);
     const [showChangePassword, setShowChangePassword] = useState(false);
+    // eslint-disable-next-line no-unused-vars
     const [password, setPassword] = useState();
+    // eslint-disable-next-line no-unused-vars
     const [confirmPassowrd, setConfirmPassowrd] = useState();
     const {
         register,

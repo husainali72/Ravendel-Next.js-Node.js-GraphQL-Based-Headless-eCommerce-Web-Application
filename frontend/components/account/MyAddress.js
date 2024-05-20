@@ -495,13 +495,13 @@ const MyAddress = () => {
                                         onClick={() => setIsShowAddAddress(false)}
                                         className="btn btn-danger checkout-continue-btn"
                                     >
-                                        Cancel
+                                        CANCEL
                                     </button>
                                     <button
                                         type="submit"
                                         className="btn btn-success primary-btn-color checkout-continue-btn"
                                     >
-                                        Add Address
+                                        ADD ADDRESS
                                     </button>
                                 </div>
                             </div>
