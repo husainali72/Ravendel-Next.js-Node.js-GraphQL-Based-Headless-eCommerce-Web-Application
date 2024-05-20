@@ -51,21 +51,22 @@ module.exports = {
     // API is not ready, more work is needed
     getCartDetails: async (root, args, { id }) => {
       try {
-        const {userId} = args;
+        const { userId } = args;
 
-        let cartData = await calculateCart(userId, null)
+        let cartData = await calculateCart(userId, null);
 
         let data = {
-          totalQuantity : cartData.cartItems.length,
-          cartItems : cartData.cartItems,
-          totalSummary : cartData.totalSummary
+          totalQuantity: cartData.cartItems.length,
+          cartItems: cartData.cartItems,
+          totalSummary: cartData.totalSummary,
         };
 
         let response = {
           success: true,
           message: "Cart item count fetched successfully",
-          data: data
-        }
+          data: data,
+        };
+
         return response;
       } catch (error) {
         error = checkError(error);
@@ -73,28 +74,30 @@ module.exports = {
       }
     },
     validateCartProducts: async (root, args, { id }) => {
-      const { products } = args
+      const { products } = args;
 
-      const response = []
-      const productDetails = await Product.find({_id: {$in: toObjectID(products.map(product => product.productId))}}).select("name quantity")
-      productDetails.map(prod => {
-        const product = products.find(product => product.productId === prod._id.toString())
-        if((prod.quantity - product.qty) < 0) {
-          if(prod.quantity === 0) {
+      const response = [];
+      const productDetails = await Product.find({
+        _id: { $in: toObjectID(products.map((product) => product.productId)) },
+      }).select("name quantity");
+      productDetails.map((prod) => {
+        const product = products.find((product) => product.productId === prod._id.toString());
+        if (prod.quantity - product.qty < 0) {
+          if (prod.quantity === 0) {
             response.push({
               productTitle: product.productTitle,
-              message: "Product out of stock."
-            })
+              message: "Product out of stock.",
+            });
           } else {
             response.push({
               productTitle: product.productTitle,
-              message: `Only ${prod.quantity} left in stock.`
-            })
+              message: `Only ${prod.quantity} left in stock.`,
+            });
           }
         }
-      })      
+      });
 
-      return response || []
+      return response || [];
     },
     // calculateCart: async (root, args, { id }) => {
     //   try {
