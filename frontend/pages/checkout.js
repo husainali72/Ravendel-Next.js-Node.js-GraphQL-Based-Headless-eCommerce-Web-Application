@@ -243,7 +243,7 @@ export const CheckOut = () => {
   // Function to remove an item from the cart
   const removeToCart = async (item) => {
     let productId = get(item, "_id", "");
-    if (session?.status==="authenticated") {
+    if (session?.status === "authenticated") {
       let id = get(session, "data.user.accessToken.customer._id");
       let variables = {
         userId: id,
@@ -298,7 +298,7 @@ export const CheckOut = () => {
         let cartItemList = prepareCartItemsList(get(carts, "cartItems", []));
         setTotalSummary({ ...get(carts, "totalSummary") });
         setCartItems([...cartItemList]);
-        checkCart()
+        checkCart();
         setCouponCardDetail({});
       } else {
         setCartItems([]);
@@ -348,9 +348,25 @@ export const CheckOut = () => {
     formState: { errors },
     control,
   } = useForm({ mode: "onSubmit" });
-  
+
   const onSubmit = (data) => {
-    if (ZipMessage && ZipMessage?.zipSuccess) {
+    const requiredFields = [
+      "zip",
+      "state",
+      "city",
+      "address",
+      "addressLine2",
+      "phone",
+      "lastname",
+      "firstname",
+      "country",
+      "addressType",
+    ];
+    const hasEmptyField = requiredFields?.some(
+      (field) => !get(billingDetails, `billing.${field}`)
+    );
+
+    if (!hasEmptyField && ZipMessage && ZipMessage?.zipSuccess) {
       let isAddressAlready = get(billingDetails, "billing.id") ? true : false;
       if (!isAddressAlready) {
         addNewAddress();
@@ -362,6 +378,7 @@ export const CheckOut = () => {
   };
 
   const getDefaultAddressDetails = (customer) => {
+    reset();
     let addresses = get(customer, "addressBook", []);
     if (addresses && 0 < addresses?.length) {
       let defaultAddress = addresses?.find(
@@ -465,6 +482,7 @@ export const CheckOut = () => {
   };
 
   const getBillingData = (val) => {
+    console.log(val, "-----------");
     setBillingDetails({ ...billingDetails, ...val });
   };
 
@@ -676,16 +694,15 @@ export const CheckOut = () => {
         const data = get(response, "data.addAddressBook.data");
         if (success) {
           // setAddress(addressObject)
-          notify(message,success)
+          notify(message, success);
           setBillingInfo({ ...billingInfo, id: data?._id });
           setIsAddNewAddressForm(false);
           nextFormStep();
           await getAddress();
         }
         if (!success) {
-          notify(message,success)
+          notify(message, success);
         }
-
       })
       .catch((error) => {
         handleError(error, dispatch, router);
@@ -701,7 +718,7 @@ export const CheckOut = () => {
       selectAddressList(addressBook);
       return customer;
     } catch (e) {
-      selectAddressList([])
+      selectAddressList([]);
       return [];
     }
   };
@@ -761,11 +778,9 @@ export const CheckOut = () => {
                         shippingAdd={shippingAdd}
                         getBillingInfo={getBillingData}
                       />
-                     { console.log(isAddNewAddressForm)}
-                      {(isAddNewAddressForm ||
-                        addressList?.length === 0) && (
-                          <h5>Add New Address</h5>
-                        )}
+                      {(isAddNewAddressForm || addressList?.length === 0) && (
+                        <h5>Add New Address</h5>
+                      )}
                       <form onSubmit={handleSubmit(onSubmit)}>
                         <BillingDetails
                           checkCode={checkCode}
@@ -788,13 +803,13 @@ export const CheckOut = () => {
                           isAddNewAddressForm={isAddNewAddressForm}
                           addressList={addressList}
                         />
-                          <button
-                            type="submit"
-                            className="btn btn-success primary-btn-color checkout-continue-btn"
-                          >
-                            Next
-                          </button>
-                        </form>
+                        <button
+                          type="submit"
+                          className="btn btn-success primary-btn-color checkout-continue-btn"
+                        >
+                          Next
+                        </button>
+                      </form>
                     </div>
                     <div className="cupon-cart">
                       <OrderSummary
