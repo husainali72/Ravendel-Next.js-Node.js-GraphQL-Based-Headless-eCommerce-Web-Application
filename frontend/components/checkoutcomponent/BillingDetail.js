@@ -52,14 +52,13 @@ const BillingDetails = (props) => {
   useEffect(() => {
     let billingData = billingInfo;
     let shippingData = shippingInfo;
-
     billingData = {
       ...billingData,
-      addressType: billingInfo?.addressType?.value,
+      addressType: billingInfo?.addressType,
     };
     shippingData = {
       ...shippingData,
-      addressType: shippingData?.addressType?.value,
+      addressType: shippingData?.addressType,
     };
 
     var allData = {
