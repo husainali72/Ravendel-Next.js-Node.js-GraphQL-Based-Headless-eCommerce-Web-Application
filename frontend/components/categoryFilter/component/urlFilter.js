@@ -83,15 +83,15 @@ export const updateUrl = (filters, router) => {
       }
     }
   });
-
-  router.push(
-    {
-      pathname: `/collection/${category}`,
-      query: searchParams.toString(),
-    },
-    undefined,
-    { shallow: true }
-  );
+  window.history.pushState({}, "", `/collection/${category}?${searchParams.toString()}`);
+  // router.push(
+  //   {
+  //     pathname: `/collection/${category}`,
+  //     query: searchParams.toString(),
+  //   },
+  //   undefined,
+  //   { shallow: true }
+  // );
 };
 
 export const clearAllFilter = (router) => {

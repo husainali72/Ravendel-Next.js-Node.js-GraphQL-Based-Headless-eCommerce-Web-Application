@@ -40,6 +40,7 @@ const SingleCategoryProduct = () => {
     let filteredData = filters?.map((item) => {
       switch (item?.type) {
         case ARRAY:
+          selectedData=[]
           get(item, "data", [])?.map((data) => {
             if (data?.select) {
               selectedData.push(data?.value);
