@@ -676,11 +676,16 @@ export const CheckOut = () => {
         const data = get(response, "data.addAddressBook.data");
         if (success) {
           // setAddress(addressObject)
+          notify(message,success)
           setBillingInfo({ ...billingInfo, id: data?._id });
           setIsAddNewAddressForm(false);
           nextFormStep();
           await getAddress();
         }
+        if (!success) {
+          notify(message,success)
+        }
+
       })
       .catch((error) => {
         handleError(error, dispatch, router);
