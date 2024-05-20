@@ -159,6 +159,7 @@ module.exports = `
     #calculateCoupon(couponCode: String,cartItem: [couponCartProducts], totalShipping : String
       #totalTax : String,grandTotal:String,cartTotal:String): calculateCoupon
     calculateCoupon(userId: ID, cartItems: [calculateCartProducts], couponCode: String!): Cart
+    getCartDetails(userId: ID): statusDataSchema
     validateCartProducts(products: customArray): customArray
   }
 
