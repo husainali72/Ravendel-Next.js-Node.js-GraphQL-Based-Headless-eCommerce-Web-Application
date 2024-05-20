@@ -6,7 +6,7 @@ import { IMAGE_BASE_URL, BUCKET_BASE_URL } from "../config";
 import client from "../apollo-client";
 import { isEmpty } from "./service";
 import axios from "axios";
-import { getSession, signOut } from "next-auth/react";
+import { getSession, signIn, signOut } from "next-auth/react";
 import NoImagePlaceHolder from "../components/images/NoImagePlaceHolder.png";
 import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
@@ -14,6 +14,7 @@ import moment from "moment";
 import { BANKTRANSFER, CASH_ON_DELIVERY, PAYPAL, RAZORPAY, STRIPE } from "./constant";
 import notify from "./notifyToast";
 import { outOfStockMessage } from "../components/validationMessages";
+import { createCart } from "../redux/actions/cartAction";
 /* -------------------------------image funtion ------------------------------- */
 export const imageOnError = (event) => {
   event.target.src = NoImagePlaceHolder.src;
@@ -118,9 +119,11 @@ export const queryWithoutToken = async (query, variables) => {
     return handleGraphQLErrors(error);
   }
 };
-export const logoutAndClearData = async (dispatch) => {
+export const logoutAndClearData = async (dispatch,router) => {
   const data = await signOut({ redirect: false, callbackUrl: "/" });
+  const { pathname } = router || {};
   await removeItemFromLocalStorage("cart");
+  await setItemToLocalStorage("previousPage",pathname);
   await dispatch(logoutDispatch());
   window.location.pathname = "/login";
 };
@@ -279,10 +282,10 @@ export const convertDateToStringFormat = (date, setting) => {
   return convertedDate;
 };
 
-export const handleError = (error, dispatch) => {
+export const handleError = (error, dispatch,router) => {
   const status = get(error, "extensions.code");
   if (status === 401) {
-    logoutAndClearData(dispatch);
+    logoutAndClearData(dispatch,router);
   }
 };
 export const getProductSellPrice = (product) => {
@@ -368,3 +371,65 @@ export const isAnyProductOutOfStock = (products) => {
 };
 
 
+export const loginCustomer = async (loginUser,setLoading,dispatch,router,setError) => {
+  setLoading(true);
+  try {
+    const response = await signIn("credentials", {
+      email: loginUser.email,
+      password: loginUser.password,
+      redirect: false,
+    });
+    const session = await getSession();
+    const error = get(response, "error");
+    const status = get(response, "status");
+    const success = get(response, "ok");
+    if (error) {
+      setLoading(false);
+      setError(
+        status === 401 && error === "Invalid Email or Password"
+          ? error
+          : "Something went wrong"
+      );
+    } else {
+      setLoading(false);
+      setError(null);
+    }
+    if (success) {
+      setLoading(false);
+      const productsInCart = getItemFromLocalStorage("cart");
+      const id = get(session, "user.accessToken.customer._id");
+      const products = productsInCart?.map((product) => {
+        const {
+          _id,
+          name,
+          pricing,
+          feature_image,
+          shippingClass,
+          taxClass,
+          variantId,
+          quantity,
+          attributes,
+        } = product;
+        return {
+          productId: _id,
+          productTitle: name,
+          productPrice: pricing?.toString(),
+          productImage: feature_image,
+          shippingClass: shippingClass,
+          taxClass: taxClass,
+          variantId: variantId,
+          qty: quantity,
+          attributes: attributes,
+        };
+      });
+      dispatch(createCart(id, products));
+    }
+    if (response.ok) {
+      let pathName=getItemFromLocalStorage('previousPage')||'/'
+      await router.push(pathName);
+    }
+  } catch (error) {
+    setLoading(false);
+    setError("Something went wrong");
+  }
+};
