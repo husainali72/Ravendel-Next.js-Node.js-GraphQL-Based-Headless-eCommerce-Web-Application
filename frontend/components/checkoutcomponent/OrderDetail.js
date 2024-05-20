@@ -1,19 +1,8 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { capitalize, get } from "lodash";
-import Price from "../priceWithCurrency";
-import ProductImage from "../imageComponent";
-import CheckBox from "../check";
+import { get } from "lodash";
+// import CheckBox from "../check";
 import PropTypes from "prop-types";
-import {
-  CASH_ON_DELIVERY,
-  CREDIT_CARD,
-  PAYPAL,
-  RAZORPAY,
-  STRIPE,
-} from "../../utills/constant";
-import { getPaymentMethodLabel } from "../../utills/helpers";
+import ProductImage from "../imageComponent";
 const Orderdetail = (props) => {
   const {
     getOrderDetails,
@@ -106,15 +95,45 @@ const Orderdetail = (props) => {
     <>
       <div className="payment-method-container">
         <div className="payment-method">
-          <h5 className="mb-2">Payment Mode</h5>
-          <div className="checkout-shipping-address">
+          <h5 className="mb-4">Payment Mode</h5>
+          <div className="cust-detail-container">
+            {paymentOptions?.map((option, i) => (
+              <>
+                <div
+                  className={`address-card ${
+                    billingInfo?.paymentMethod && option.value === billingInfo?.paymentMethod
+                      ? "active"
+                      : ""
+                  }`}
+                  key={i}
+                  onClick={() => handleBillingInfo(option.value, 'paymentMethod')}
+                >
+                  <span className="radio-check"></span>
+                  <div className="content">
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div>
+                        <b>{get(option, 'label', '')}</b>
+                        <p>{get(option, "description", '')}</p>
+                      </div>
+                      <ProductImage
+                        className="userImg"
+                        src="/assets/razorpay.png"
+                        alt="payment mode"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </>
+            ))}
+          </div>
+          {/* <div className="checkout-shipping-address">
             <CheckBox
               type="radio"
               options={paymentOptions}
               name="paymentMethod"
               onChange={(e) => handleBillingInfo(e)}
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </>

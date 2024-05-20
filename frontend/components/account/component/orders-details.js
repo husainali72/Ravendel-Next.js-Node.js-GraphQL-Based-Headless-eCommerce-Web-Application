@@ -63,7 +63,7 @@ const OrdersDetails = ({
             <div className="order-address">
               <div className="checkout-shipping-method">
                 <div className="checkout-details-title">
-                  <h5>Shipping Method</h5>
+                  <h5>Shipping Details</h5>
                 </div>
                 <div className="checkout-shipping-address ">
                   <div className="checkout-list-content">

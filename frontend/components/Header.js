@@ -31,6 +31,7 @@ const Header = ({ setOpenMenu }) => {
   const [timerId, setTimerId] = useState(null);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const isLogin = data?.status === "authenticated"
   const router=useRouter()
   useEffect(() => {
     checkSessionExpiration();
@@ -266,7 +267,7 @@ const Header = ({ setOpenMenu }) => {
                         <HiOutlineUserCircle/>
                       </a>
                       <div className="dropdown-content">
-                        {data?.status === "authenticated" ? (
+                        {isLogin ? (
                           <>
                             <Link href='/account'>My Account</Link>
                             <a onClick={logOutUser}>Logout</a>

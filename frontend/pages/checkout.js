@@ -491,15 +491,20 @@ export const CheckOut = () => {
   };
 
   const handleBillingInfo = (e, nm) => {
-    if (nm === "addressType") {
-      if (!shippingAdd) {
-        setShippingInfo({
-          ...shippingInfo,
-          [nm]: e?.value,
-        });
-      }
-      setBillingInfo({ ...billingInfo, [nm]: e?.value });
-    } else {
+    if(nm){
+      if (nm === "addressType") {
+        if (!shippingAdd) {
+          setShippingInfo({
+            ...shippingInfo,
+            [nm]: e?.value,
+          });
+        }
+        setBillingInfo({ ...billingInfo, [nm]: e?.value });
+      } else if (nm === "paymentMethod") {
+        setBillingInfo({ ...billingInfo, [nm]: e });
+      }  
+    }
+    else {
       let { name, value } = get(e, "target");
       if (!shippingAdd && name !== "paymentMethod") {
         setShippingInfo({
@@ -803,13 +808,13 @@ export const CheckOut = () => {
                           isAddNewAddressForm={isAddNewAddressForm}
                           addressList={addressList}
                         />
-                        <button
-                          type="submit"
-                          className="btn btn-success primary-btn-color checkout-continue-btn"
-                        >
-                          Next
-                        </button>
-                      </form>
+                          <button
+                            type="submit"
+                            className="btn btn-success primary-btn-color checkout-continue-btn"
+                          >
+                            NEXT
+                          </button>
+                        </form>
                     </div>
                     <div className="cupon-cart">
                       <OrderSummary

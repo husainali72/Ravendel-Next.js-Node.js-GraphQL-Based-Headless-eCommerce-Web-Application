@@ -5,10 +5,10 @@ import CorporateFareOutlinedIcon from "@mui/icons-material/CorporateFareOutlined
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import { Button } from 'react-bootstrap'
 
-const DetailsCard = ({info, btnAction, btnText, title, type}) => {
+const DetailsCard = ({info, btnAction, btnText, title, type, style}) => {
   return (
     <>
-        <div className="checkout-details-title">
+        <div className="checkout-details-title" style={{...style}}>
             <h5>{title}</h5>
         </div>
         <div className="checkout-shipping-address">
@@ -64,4 +64,5 @@ DetailsCard.propTypes = {
     btnText: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
+    style: PropTypes.object.isRequired,
 };
