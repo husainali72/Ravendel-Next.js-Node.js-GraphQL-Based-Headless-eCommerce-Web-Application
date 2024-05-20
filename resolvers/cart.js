@@ -12,13 +12,13 @@ const {
   checkToken,
   MESSAGE_RESPONSE,
   againCalculateCart,
-  _validate, getdate, addCart, calculateCart, calculateCoupon
+  _validate, getdate, addCart, calculateCart, calculateCoupon,
+  toObjectID
 } = require("../config/helpers");
 const validate = require("../validations/cart");
 
 module.exports = {
   Query: {
-
     carts: async (root, args) => {
       return await GET_ALL_FUNC(Cart, "Carts");
     },
@@ -26,7 +26,6 @@ module.exports = {
     cart: async (root, args) => {
       return await GET_SINGLE_FUNC(args.id, Cart, "Cart");
     },
-
 
     calculateCart: async (root, args, { id }) => {
       // if (!id) {
@@ -49,9 +48,57 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    // API is not ready, more work is needed
+    getCartDetails: async (root, args, { id }) => {
+      try {
+        const { userId } = args;
 
+        let cartData = await calculateCart(userId, null);
 
+        let data = {
+          totalQuantity: cartData.cartItems.length,
+          cartItems: cartData.cartItems,
+          totalSummary: cartData.totalSummary,
+        };
 
+        let response = {
+          success: true,
+          message: "Cart item count fetched successfully",
+          data: data,
+        };
+
+        return response;
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    validateCartProducts: async (root, args, { id }) => {
+      const { products } = args;
+
+      const response = [];
+      const productDetails = await Product.find({
+        _id: { $in: toObjectID(products.map((product) => product.productId)) },
+      }).select("name quantity");
+      productDetails.map((prod) => {
+        const product = products.find((product) => product.productId === prod._id.toString());
+        if (prod.quantity - product.qty < 0) {
+          if (prod.quantity === 0) {
+            response.push({
+              productTitle: product.productTitle,
+              message: "Product out of stock.",
+            });
+          } else {
+            response.push({
+              productTitle: product.productTitle,
+              message: `Only ${prod.quantity} left in stock.`,
+            });
+          }
+        }
+      });
+
+      return response || [];
+    },
     // calculateCart: async (root, args, { id }) => {
     //   try {
     //     const shipping = await Shipping.findOne({});
@@ -581,11 +628,9 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
       try {
-
-        console.log('in addToCart');
         let products = [
           {
-            productId:args.productId,
+            productId: args.productId,
             qty: args.qty,
             productTitle: args.productTitle,
             productImage: args.productImage,
@@ -664,8 +709,6 @@ module.exports = {
             globalTax = false;
           }
 
-          console.log('checking global tax', globalTax);
-
           if (!globalTax) {
 
             for (let i in args.products) {
@@ -686,8 +729,6 @@ module.exports = {
 
                   })
 
-
-                  console.log('calculating tax');
                   let tax;
                   if (product.pricing.sellprice > 0) {
 
@@ -712,7 +753,6 @@ module.exports = {
               }
             }
 
-            console.log('assigning total');
             cart.total = carttotal;
             cart.products = args.products;
             cart.updated = Date.now();
@@ -724,7 +764,6 @@ module.exports = {
           else {
 
             for (let i in args.products) {
-
               if (args.products[i].productId) {
                 const product = await Product.findById({ _id: args.products[i].productId });
                 if (product) {
@@ -762,22 +801,22 @@ module.exports = {
       }
       try {
         const cart = await Cart.findOne({ userId: args.userId });
-        if(!cart) {
+        if (!cart) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);
         }
-        
-        let cartProduct = cart.products.find(p => p.productId.toString() === args.productId.toString());
-        if(!cartProduct) {
+
+        let cartProduct = cart.products.find((p) => p.productId.toString() === args.productId.toString());
+        if (!cartProduct) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Cart Product", false);
         }
         let product = await Product.findById(new mongoose.Types.ObjectId(cartProduct.productId));
-        if(!product) {
+        if (!product) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
         }
-        if(product.quantity < args.qty) {
+        if (product.quantity < args.qty) {
           return MESSAGE_RESPONSE("OutOfStock", product.quantity.toString() + " Unit(s)", false);
         }
-        cartProduct.qty = args.qty
+        cartProduct.qty = args.qty;
         await cart.save();
         return MESSAGE_RESPONSE("UpdateSuccess", "Quantity", true);
       } catch (error) {
@@ -793,13 +832,10 @@ module.exports = {
           return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
         }
         const cart = await Cart.deleteOne({ userId: args.userId });
-        console.log('cart', cart);
-        
         if (cart && cart.acknowledged && cart.deletedCount > 0) {
           return MESSAGE_RESPONSE("DeleteSuccess", "Cart", true);
-        }
-        else {
-          return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false); 
+        } else {
+          return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);
         }
       } catch (error) {
         error = checkError(error);
@@ -813,12 +849,12 @@ module.exports = {
           return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
         }
         const cart = await Cart.findOne({ userId: args.userId });
-        if(!cart) {
+        if (!cart) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);
         }
 
-        let product = cart.products.find(p => p.productId.toString() === args.productId.toString());
-        if(!product) {
+        let product = cart.products.find((p) => p.productId.toString() === args.productId.toString());
+        if (!product) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Cart Product", false);
         }
 

@@ -26,6 +26,7 @@ import { get } from "lodash";
 import Loading from "../components/loadingComponent";
 import notify from "../utills/notifyToast";
 import { Toaster } from "react-hot-toast";
+import { useRouter } from "next/router";
 const YourCard = () => {
   const session = useSession();
   const cart = useSelector((state) => state.cart);
@@ -34,6 +35,7 @@ const YourCard = () => {
   const [cartItems, setCartItems] = useState([]);
   const dispatch = useDispatch();
   const [totalSummary, setTotalSummary] = useState({});
+  const router=useRouter()
   // get all products and user cart
   useEffect(() => {
     getUserCartData();
@@ -100,7 +102,7 @@ const YourCard = () => {
     if ("authenticated" === session.status) {
       let id = get(session, "data.user.accessToken.customer._id");
       let variables = { userId: id };
-      dispatch(removeAllCartItemsAction(variables));
+      dispatch(removeAllCartItemsAction(variables,router));
     } else {
       dispatch({
         type: REMOVE_ALL_VALUE,
@@ -149,7 +151,7 @@ const YourCard = () => {
         productId: get(item, "_id"),
         qty: updatedQuantity,
       };
-      dispatch(changeQty(variables))
+      dispatch(changeQty(variables,router))
         .then((res) => {
           if (get(res, "data.changeQty.success")) {
             dispatch(calculateUserCart(id));
@@ -187,7 +189,7 @@ const YourCard = () => {
           }
         })
         .catch((error) => {
-          handleError(error, dispatch);
+          handleError(error, dispatch,router);
         });
     } else {
       let cartItemsfilter = cartItems?.filter(

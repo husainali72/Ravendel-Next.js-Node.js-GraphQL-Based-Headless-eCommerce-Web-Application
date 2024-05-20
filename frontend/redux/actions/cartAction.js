@@ -101,7 +101,7 @@ export const createCart = (id, cart) => (dispatch) => {
   dispatch({ type: CREATE_CART_ON_LOGIN, payload: { id, cart, dispatch } });
 };
 
-export const changeQty = (variables) => (dispatch) => {
+export const changeQty = (variables,router) => (dispatch) => {
   return mutation(CHANGE_QTY, variables)
     .then((response) => {
       const { success, message } = get(response, "data.changeQty");
@@ -111,10 +111,10 @@ export const changeQty = (variables) => (dispatch) => {
       return response;
     })
     .catch(async (error) => {
-      handleError(error,dispatch)
+      handleError(error,dispatch,router)
     });
 };
-export const removeAllCartItemsAction = (variables) => (dispatch) => {
+export const removeAllCartItemsAction = (variables,router) => (dispatch) => {
   return mutation(DELETE_CART, variables)
     .then((response) => {
       if (response) {
@@ -126,6 +126,6 @@ export const removeAllCartItemsAction = (variables) => (dispatch) => {
       return response;
     })
     .catch((error) => {
-      handleError(error,dispatch)
+      handleError(error,dispatch,router)
     });
 };

@@ -192,68 +192,58 @@ export const CheckOut = () => {
   }, [allProducts, get(cart, "cartItems")]);
 
   const updateCartProductQuantity = (item, updatedQuantity) => {
-    const isQuantityIncreased = cartItems?.find((cartItem) => {
-      let cartItemId = get(cartItem, "_id");
-      let cartItemVariantId = get(cartItem, "variantId");
-      let itemId = get(item, "_id");
-      let itemVariantId = get(item, "variantId");
-      let itemProductQuantity = get(item, "productQuantity");
-      return (
-        ((cartItemId === itemId && cartItemVariantId === itemVariantId) ||
-          (cartItemId === itemId && !cartItemVariantId === itemVariantId)) &&
-        itemProductQuantity >= updatedQuantity
-      );
+    // const isQuantityIncreased = cartItems?.find((cartItem) => {
+    //   let cartItemId = get(cartItem, "_id");
+    //   let cartItemVariantId = get(cartItem, "variantId");
+    //   let itemId = get(item, "_id");
+    //   let itemVariantId = get(item, "variantId");
+    //   let itemProductQuantity = get(item, "productQuantity");
+    //   console.log(itemProductQuantity, "itemProductQuantity", item);
+    //   return (
+    //     ((cartItemId === itemId && cartItemVariantId === itemVariantId) ||
+    //       (cartItemId === itemId && !cartItemVariantId === itemVariantId)) &&
+    //     itemProductQuantity >= updatedQuantity
+    //   );
+    // });
+    let prevQuantity = null;
+    let updatedCartItems = cartItems?.map((cartItem) => {
+      if (cartItem?._id === item?._id) {
+        prevQuantity = cartItem?.quantity; // Store previous quantity
+        return { ...cartItem, quantity: updatedQuantity };
+      }
+      return cartItem;
     });
-    if (isQuantityIncreased) {
-      let updatedCartItems = cartItems?.map((cartItem) => ({
-        ...cartItem,
-        quantity:
-          cartItem?._id === item?._id &&
-          (cartItem?.variantId === item?.variantId ||
-            (!cartItem?.variantId && !item?.variantId))
-            ? updatedQuantity
-            : cartItem?.quantity,
-      }));
-      setCartItems([...updatedCartItems]);
-      if ("authenticated" !== session?.status) {
-        dispatch(
-          increaseQuantity(
-            item?._id,
-            item?.productQuantity,
-            item?.variantId,
-            updatedQuantity
-          )
-        );
-        dispatch(calculateUnauthenticatedCart(updatedCartItems));
-        setIsQuantityBtnLoading(false);
-      } else {
-        let id = get(session, "data.user.accessToken.customer._id");
-        let variables = {
-          userId: id,
-          productId: get(item, "_id"),
-          qty: updatedQuantity,
-        };
-        dispatch(changeQty(variables))
-          .then((res) => {
-            if (get(res, "data.changeQty.success")) {
-              dispatch(calculateUserCart(id));
+    setCartItems([...updatedCartItems]);
+
+    let id = get(session, "data.user.accessToken.customer._id");
+    let variables = {
+      userId: id,
+      productId: get(item, "_id"),
+      qty: updatedQuantity,
+    };
+    dispatch(changeQty(variables, router))
+      .then((res) => {
+        if (get(res, "data.changeQty.success")) {
+          dispatch(calculateUserCart(id));
+        } else {
+          let revertedCartItems = cartItems?.map((cartItem) => {
+            if (cartItem?._id === item?._id) {
+              return { ...cartItem, quantity: prevQuantity };
             }
-            setIsQuantityBtnLoading(false);
-          })
-          .catch((error) => {
-            setIsQuantityBtnLoading(false);
+            return cartItem;
           });
-      }
-    } else {
-      if (item?.productQuantity) {
-        notify(`Only ${item?.productQuantity} Unit(s) available in stock `);
-      }
-    }
+          setCartItems([...revertedCartItems]);
+        }
+        setIsQuantityBtnLoading(false);
+      })
+      .catch((error) => {
+        setIsQuantityBtnLoading(false);
+      });
   };
   // Function to remove an item from the cart
   const removeToCart = async (item) => {
     let productId = get(item, "_id", "");
-    if ("authenticated" === session?.status) {
+    if (session?.status==="authenticated") {
       let id = get(session, "data.user.accessToken.customer._id");
       let variables = {
         userId: id,
@@ -268,23 +258,8 @@ export const CheckOut = () => {
           }
         })
         .catch((error) => {
-          handleError(error, dispatch);
+          handleError(error, dispatch, router);
         });
-    } else {
-      let cartItemsfilter = cartItems?.filter(
-        (cartItem) =>
-          cartItem?._id !== productId ||
-          (cartItem?._id === productId &&
-            cartItem?.variantId !== item?.variantId)
-      );
-      let variables = {
-        id: productId,
-        variantId: get(item, "variantId", ""),
-      };
-
-      dispatch(removeCartItemAction(variables));
-      dispatch(calculateUnauthenticatedCart(cartItemsfilter));
-      setCartItems(cartItemsfilter);
     }
   };
 
@@ -323,6 +298,7 @@ export const CheckOut = () => {
         let cartItemList = prepareCartItemsList(get(carts, "cartItems", []));
         setTotalSummary({ ...get(carts, "totalSummary") });
         setCartItems([...cartItemList]);
+        checkCart()
         setCouponCardDetail({});
       } else {
         setCartItems([]);
@@ -333,21 +309,21 @@ export const CheckOut = () => {
     };
     getProducts();
   }, [carts]);
-  useEffect(() => {
-    const checkCart = async () => {
-      const userSession = await getSession();
-      if ("authenticated" === session?.status || null !== userSession) {
-        setIsLogin(true);
-        let cartItemsProduct = get(carts, "cartItems", []);
-        // If the cart is empty, redirect the user to the home page
-        if (cartItemsProduct?.length <= 0) {
-          router.push("/");
-        }
-        if (isAnyProductOutOfStock(cartItemsProduct)) {
-          router.push("/shopcart");
-        }
+  const checkCart = async () => {
+    const userSession = await getSession();
+    if ("authenticated" === session?.status || null !== userSession) {
+      setIsLogin(true);
+      let cartItemsProduct = get(carts, "cartItems", []);
+      // If the cart is empty, redirect the user to the home page
+      if (cartItemsProduct?.length <= 0) {
+        router.push("/");
       }
-    };
+      if (isAnyProductOutOfStock(cartItemsProduct)) {
+        router.push("/shopcart");
+      }
+    }
+  };
+  useEffect(() => {
     checkCart();
   }, []);
   useEffect(() => {
@@ -458,6 +434,7 @@ export const CheckOut = () => {
   const checkCode = async (code) => {
     try {
       let variable = { zipcode: code.toString() };
+
       if (code) {
         const { data: result } = await queryWithoutToken(
           CHECK_ZIPCODE,
@@ -704,14 +681,19 @@ export const CheckOut = () => {
         const data = get(response, "data.addAddressBook.data");
         if (success) {
           // setAddress(addressObject)
+          notify(message,success)
           setBillingInfo({ ...billingInfo, id: data?._id });
           setIsAddNewAddressForm(false);
           nextFormStep();
           await getAddress();
         }
+        if (!success) {
+          notify(message,success)
+        }
+
       })
       .catch((error) => {
-        handleError(error, dispatch);
+        handleError(error, dispatch, router);
       });
   };
   const getAddress = async () => {
@@ -724,6 +706,7 @@ export const CheckOut = () => {
       selectAddressList(addressBook);
       return customer;
     } catch (e) {
+      selectAddressList([])
       return [];
     }
   };
@@ -783,10 +766,11 @@ export const CheckOut = () => {
                         shippingAdd={shippingAdd}
                         getBillingInfo={getBillingData}
                       />
-                      {isAddNewAddressForm ||
-                        (selectAddressList?.length === 0 && (
+                     { console.log(isAddNewAddressForm)}
+                      {(isAddNewAddressForm ||
+                        addressList?.length === 0) && (
                           <h5>Add New Address</h5>
-                        ))}
+                        )}
                       <form onSubmit={handleSubmit(onSubmit)}>
                         <BillingDetails
                           checkCode={checkCode}
@@ -807,7 +791,7 @@ export const CheckOut = () => {
                           errorRef={errors}
                           getBillingInfo={getBillingData}
                           isAddNewAddressForm={isAddNewAddressForm}
-                          selectAddressList={selectAddressList}
+                          addressList={addressList}
                         />
                           <button
                             type="submit"

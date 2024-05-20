@@ -36,13 +36,12 @@ const BillingDetails = (props) => {
     handleBillingInfo,
     setZipMessage,
     isAddNewAddressForm,
-    selectAddressList
+    addressList
   } = props;
   const addressTypeOptions = [
     { value: "Home", label: "Home" },
     { value: "Office", label: "Office" },
   ];
-
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
@@ -74,13 +73,12 @@ const BillingDetails = (props) => {
   const getErrorMessage = (errorRef, name) => {
     return errorRef[name]?.message || "";
   };
-
   return (
     <>
       <div className="billing-container">
         <div>
         {isAddNewAddressForm ||
-                        selectAddressList?.length === 0 ? (<>
+                        addressList?.length === 0 ? (<>
           <div className="twoRows">
             <div className="col-lg-6 col-md-12 col-md-5half">
               <InputField
