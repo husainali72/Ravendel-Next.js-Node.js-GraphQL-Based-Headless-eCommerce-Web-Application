@@ -19,7 +19,6 @@ const LoginPage = () => {
     // console.log("customer", customer);
     return (
         <>
-            <BreadCrumb title={"register"} />
             <Container>
                 {/* {customet ? (
                     <div>
@@ -35,7 +34,7 @@ const LoginPage = () => {
 
                 ) : ( */}
                 <div className="row account-row justify-content-between">
-                    <div className="col-lg-5 account-page" >
+                    <div className="col-lg-6 account-page" >
                         <LogIn />
                     </div>
                     <div className="col-lg-6 ">

@@ -7,7 +7,7 @@ import FilterCheckbox from "./component/filterCheckbox";
 import { ARRAY, CHOICE, RANGE } from "./constant";
 import AccordionComponent from "../accordian";
 
-const CategoryFilter = ({ filterCategoryData, handleFilter, clearFilter }) => {
+const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
   const [filterData, setFilteredData] = useState([]);
   useEffect(() => {
     setFilteredData(filterCategoryData);
@@ -78,13 +78,6 @@ const CategoryFilter = ({ filterCategoryData, handleFilter, clearFilter }) => {
   };
   return (
     <div className=" category-filter-container">
-      <div className="filter-heading-container">
-
-        <h4 className="category-section-title">Filters</h4>
-        <button className="clear-filters-btn" onClick={clearFilter}>
-          Clear Filters
-        </button>
-      </div>
       {filterData?.length > 0 && filterData?.map((filter, index) => (
         <div key={index} className="filter-section">
           {(() => {
@@ -150,7 +143,6 @@ const CategoryFilter = ({ filterCategoryData, handleFilter, clearFilter }) => {
 };
 CategoryFilter.propTypes = {
   handleFilter: PropTypes.func.isRequired,
-  clearFilter: PropTypes.func.isRequired,
   filterCategoryData: PropTypes.array.isRequired,
 };
 

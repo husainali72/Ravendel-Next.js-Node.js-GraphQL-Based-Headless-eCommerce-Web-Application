@@ -3,6 +3,9 @@ import { gql } from "@apollo/client";
 export const GET_HOMEPAGE_DATA_QUERY = gql`
   query HomePageSettings {
     getSettings {
+      general {
+        date_format
+      }
       seo {
         meta_title
         meta_tag

@@ -99,16 +99,16 @@ function cartReducer(state = initialState, action) {
       };
 
     case CREATE_CART_ON_LOGIN: {
-      const { id, cart, dispatch } = get(action, "payload");
+      const { id, cart, dispatch ,router} = get(action, "payload");
       let variables = { userId: id, products: cart };
       mutation(ADD_CART, variables)
         .then((res) => {
           dispatch({ type: "ADDED_CART", payload: true });
           removeItemFromLocalStorage("cart");
-          window.location.pathname = "/";
+          // window.location.pathname = "/";
         })
         .catch((error) => {
-          handleError(error, dispatch);
+          handleError(error, dispatch,router);
         });
       return {
         ...state,

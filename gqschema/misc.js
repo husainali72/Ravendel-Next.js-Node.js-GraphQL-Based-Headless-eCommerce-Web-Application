@@ -8,7 +8,7 @@ module.exports = `
   type statusDataSchema {
     message: String
     success: Boolean
-    data: customArray!
+    data: customArray
   }
   type dashboardDataRES {
     productCount: Int

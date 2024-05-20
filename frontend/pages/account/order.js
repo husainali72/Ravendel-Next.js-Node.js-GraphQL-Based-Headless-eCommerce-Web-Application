@@ -15,7 +15,7 @@ import BasicModal from "../../components/ModalComponent";
 import OrdersDetails from "../../components/account/component/orders-details";
 
 const Order = () => {
-  const { status } = useSession();
+  const [viewOrderDetails, setViewOrderDetails] = useState(false);
   const [customerOrder, setCustomerOrder] = useState([]);
   const [loading, setloading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -62,10 +62,6 @@ const Order = () => {
     setOpen(false);
   }
 
-  useEffect(() => {
-    console.log(customerOrder)
-  }, [customerOrder])
-
   const columns = [
     { field: 'orderNumber', headerName: 'Order Number', minWidth: 140, flex: 1, filterable: false, sortable: true },
     { field: 'date', headerName: 'Date', minWidth: 140, flex: 1, filterable: false, sortable: true },
@@ -88,30 +84,24 @@ const Order = () => {
             <CircularProgress/>
           </div>
         :
-        <DataTable
-          rows={customerOrder}
-          columns={columns}
-          rowHeight={40}
-          columnHeaderHeight={40}
-        />
+        <>
+        {
+          !open ? 
+            <DataTable
+              rows={customerOrder}
+              columns={columns}
+              rowHeight={40}
+              columnHeaderHeight={40}
+            />
+          :
+          <OrdersDetails
+            order={order}
+            handleClose={handleClose}
+          />
+        }
+        </>
       }
-      <BasicModal
-        openState={[open, setOpen]}
-        handleClose={handleClose}
-        className='order-details-wrapper'
-      >
-        <OrdersDetails
-          orderDetail={get(order, "products", [])}
-          order={order}
-          billingInfo={get(order, "billing", {})}
-          shippingInfo={get(order, "shipping", {})}
-          tax={get(order, "taxAmount", 0)}
-          subtotal={get(order, "subtotal", 0)}
-          shippingAmount={get(order, "shippingAmount", 0)}
-          total={get(order, "grandTotal", 0)}
-          handleClose={handleClose}
-        />
-      </BasicModal>
+      
       {/* <div className="row order-btn-row">
         <div>
           <button

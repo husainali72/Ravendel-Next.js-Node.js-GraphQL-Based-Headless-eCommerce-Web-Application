@@ -5,12 +5,18 @@ const ProductDetails = ({ product }) => {
   if (!product) {
     return null;
   }
-  const { description, specifications } = product;
+  const { description, specifications, ratingCount } = product;
   return (
     <>
-      <div className="singleproduct-detail">
-        <Description description={description} />
-        <Specification specifications={specifications} />
+      <div className="singleproduct-detail" style={ratingCount <= 0 ? {width: '100%'} : {}} >
+        {
+          description &&
+          <Description description={description} />
+        }
+        {
+          specifications && specifications.length > 0 &&
+          <Specification specifications={specifications} />
+        }
       </div>
     </>
   );
