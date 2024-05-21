@@ -34,6 +34,7 @@ import BusinessIcon from "@mui/icons-material/Business";
 import PhoneIcon from "@mui/icons-material/Phone";
 import HomeIcon from "@mui/icons-material/Home";
 import Rating from "@mui/material/Rating";
+import ApartmentIcon from '@mui/icons-material/Apartment';
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import {
   Loading,
@@ -42,6 +43,7 @@ import {
   TopBar,
   Alert,
   CardBlocks,
+  SelectComponent,
 } from "../components";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -115,7 +117,7 @@ const EditCustomerComponent = ({ params }) => {
   const addUpdateCustomer = (e) => {
     e.preventDefault();
     let errors = validate(
-      ["company", "email", "lastName", "firstName"],
+      [ "email", "lastName", "firstName"],
       customer
     );
     let phoneNumberError = validatePhone(["phone"], customer);
@@ -180,17 +182,37 @@ const EditCustomerComponent = ({ params }) => {
     setSingleCustomer({ ...singleCustomer, [name]: value });
   };
 
-  const addressInput = (label, name) => {
-    return (
-      <Grid item md={12} sm={6} xs={12}>
-        {label === "Phone" ? (
+  const addressInput = (label, name,type) => {
+    let inputComponent;
+  
+    switch (type) {
+      case 'phone':
+        inputComponent = (
           <PhoneNumber
             handleOnChange={AddressBookPhonehandlechange}
             phoneValue={singleCustomer.phone}
             width="100%"
             className="phoneValidation"
           />
-        ) : (
+        );
+        break;
+      case 'select':
+        inputComponent = (
+          <SelectComponent
+          label={label}
+          labelId="paymentStatus"
+          onSelectChange={handleAddressInputField}
+          items={[
+            { value: "Home", label: "Home" },
+            { value: "Office", label: "Office" },
+          ]}
+          name="addressType"
+          value={get(singleCustomer, "addressType", "Home")}
+        />
+        );
+        break;
+      default:
+        inputComponent = (
           <TextInput
             label={label}
             name={name}
@@ -198,10 +220,17 @@ const EditCustomerComponent = ({ params }) => {
             onInputChange={handleAddressInputField}
             sizeSmall
           />
-        )}
+        );
+        break;
+    }
+  
+    return (
+      <Grid item md={12} sm={6} xs={12}>
+        {inputComponent}
       </Grid>
     );
   };
+  
 
   const updateAddress = () => {
     let phoneNumberError = validatePhone(["phone"], singleCustomer);
@@ -212,7 +241,6 @@ const EditCustomerComponent = ({ params }) => {
         "state",
         "city",
         "addressLine1",
-        "company",
         "lastName",
         "firstName",
       ],
@@ -389,7 +417,7 @@ const EditCustomerComponent = ({ params }) => {
 
                     {addressInput("Company", "company")}
 
-                    {addressInput("Phone", "phone")}
+                    {addressInput("Phone", "phone","phone")}
 
                     {addressInput("Address line1", "addressLine1")}
 
@@ -400,6 +428,7 @@ const EditCustomerComponent = ({ params }) => {
                     {addressInput("State", "state")}
 
                     {addressInput("Country", "country")}
+                    {addressInput("Address Type", "addressType",'select')}
 
                     {addressInput("Pincode", "pincode")}
                     <Grid item md={12}>
@@ -503,6 +532,16 @@ const EditCustomerComponent = ({ params }) => {
                             />
                             <CardContent>
                               <List dense>
+                              <ListItem>
+                                  <ListItemIcon>
+                                {  get(address,'addressType')==='Home'?<HomeIcon/>:<ApartmentIcon/>}
+                                  </ListItemIcon>
+                                  <ListItemText
+                                    primary={
+                                      get(address,'addressType','') 
+                                    }
+                                  />
+                                </ListItem>
                                 <ListItem>
                                   <ListItemIcon>
                                     <AccountCircleIcon />

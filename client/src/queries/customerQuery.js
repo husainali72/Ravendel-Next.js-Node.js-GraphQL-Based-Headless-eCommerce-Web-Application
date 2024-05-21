@@ -143,6 +143,7 @@ const ADD_ADDRESSBOOK = gql`
     $country: String
     $state: String
     $pincode: String
+    $addressType: ADDRESS_TYPE
     $defaultAddress: Boolean
   ) {
     addAddressBook(
@@ -157,10 +158,13 @@ const ADD_ADDRESSBOOK = gql`
       country: $country
       state: $state
       pincode: $pincode
+      addressType: $addressType
       defaultAddress: $defaultAddress
     ) {
+
       message
       success
+      data
     }
   }
 `;
@@ -276,6 +280,7 @@ const UPDATE_ADDRESSBOOK = gql`
     $country: String
     $state: String
     $pincode: String
+    $addressType: ADDRESS_TYPE
     $defaultAddress: Boolean
   ) {
     updateAddressBook(
@@ -291,6 +296,7 @@ const UPDATE_ADDRESSBOOK = gql`
       country: $country
       state: $state
       pincode: $pincode
+      addressType: $addressType
       defaultAddress: $defaultAddress
     ) {
       message

@@ -15,8 +15,8 @@ module.exports = `
   }
 
   enum ADDRESS_TYPE {
-    homeAddress
-    officeAddress
+    Home
+    Office
   }
 
   type AddressBook {
