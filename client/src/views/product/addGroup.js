@@ -195,6 +195,7 @@ const AddProductTheme = () => {
       }
       const obj = {
         title: groupProduct?.title,
+        status:groupProduct?.status,
         attributes: (id && attributes?.length <= 0) ? groupProduct?.attributes : attributes,
         variations:  (id && variations?.length <= 0) ? groupProduct?.variations : variations,
         productIds: variations?.map(variation => variation?.productId)
@@ -274,6 +275,7 @@ const AddProductTheme = () => {
       // const productVariants = ['65cb2b0ca9dfee40f95226ff', '65cb2b2ba9dfee40f9522716'];
       setGroupProduct({
         ...groupProduct,
+        status:get(groupProductState, 'groupProduct.status'),
         attributes: convertedAttributes,
         variations: convertedVariations,
         // attributes:  get(groupProductState, 'groupProduct.attributes', []),
@@ -356,8 +358,8 @@ const AddProductTheme = () => {
             <Box component="span">
               <CardBlocks title="Status" nomargin>
                 <RadioGroup
-                  defaultValue="Draft"
                   name="status"
+                  value={get(groupProduct,'status','')}
                   onChange={handleChange}
                   row
                 >

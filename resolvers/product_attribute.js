@@ -49,6 +49,14 @@ module.exports = {
       const duplicate = await duplicateData({name: args.name}, ProductAttribute)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Attribute", false);
       let validation = ["name"];
+
+      for(let i of data.values){
+        if(/^[a-zA-Z0-9\s]*$/.test(i.name) && i.name.trim() !== ''){
+          continue;
+        }
+        return MESSAGE_RESPONSE("Custom", "Attributes can only contain letters, numbers, and spaces", false);
+      }
+
       return await CREATE_FUNC(
         id,
         "Product Attribute",

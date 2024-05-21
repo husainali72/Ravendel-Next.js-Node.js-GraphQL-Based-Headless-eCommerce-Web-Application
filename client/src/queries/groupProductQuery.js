@@ -39,16 +39,16 @@ mutation Mutation($deleteGroupId: ID!) {
 `;
 
 const ADD_GROUP_PRODUCT = gql`
-mutation Mutation($title: String!, $attributes: [AttributeInput], $productIds: [ID], $variations: [VariationInput]) {
-  addGroup(title: $title, attributes: $attributes, productIds: $productIds, variations: $variations) {
+mutation Mutation($title: String!,$status: String, $attributes: [AttributeInput], $productIds: [ID], $variations: [VariationInput]) {
+  addGroup(title: $title,status: $status, attributes: $attributes, productIds: $productIds, variations: $variations) {
     success
     message
   }
 }
 `;
 const UPDATE_GROUP_PRODUCT = gql`
-mutation UpdateGroup( $title: String!, $attributes: [AttributeInput], $variations: [VariationInput], $productIds: [ID], $updateGroupId: ID!) {
-  updateGroup( title: $title, attributes: $attributes, variations: $variations, productIds: $productIds, id: $updateGroupId) {
+mutation UpdateGroup($title: String!, $status: String, $attributes: [AttributeInput], $variations: [VariationInput], $productIds: [ID], $updateGroupId: ID!) {
+  updateGroup( title: $title, status: $status, attributes: $attributes, variations: $variations, productIds: $productIds, id: $updateGroupId) {
     message
     success
   }
@@ -63,6 +63,7 @@ const GET_GROUP_PRODUCT = gql`query Query($groupId: ID!) {
     data {
       id
       title
+      status
       attributes {
         _id
         values
