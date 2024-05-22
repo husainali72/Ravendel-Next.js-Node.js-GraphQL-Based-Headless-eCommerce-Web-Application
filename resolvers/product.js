@@ -1348,20 +1348,16 @@ module.exports = {
       };
     },
     additionalDetails: async (root, args) => {
-      const { productId } = args
-      const response = []
-      const existingProduct = await Product.findById(productId).select("categoryTree")
-      const { categoryTree } = existingProduct
-      const { parentChildren, checkedCategoryIDs } = getParentChildren(categoryTree, {}, [])
-      const parentIDs = [...new Set([...checkedCategoryIDs, ...Object.keys(parentChildren).reverse()])]
+      try {
+        const { productId } = args
+        const response = []
+        const existingProduct = await Product.findById(productId).select("categoryTree")
+        const { categoryTree } = existingProduct
+        const { parentChildren, checkedCategoryIDs } = getParentChildren(categoryTree, {}, [])
+        const parentIDs = [...new Set([...checkedCategoryIDs, ...Object.keys(parentChildren).reverse()])]
 
-      const sortStage = {
-        $sort: {
-          date: -1
-        }
-      }
-      const facetStage = {
-        $facet: {
+        let previousFacets = [];
+        const facetStage = { $facet: {
           boughtTogetherProducts: [
             {
               $match: {
@@ -1451,55 +1447,89 @@ module.exports = {
               }
             }
           ]
-        }
-      }
-      const setStage = {
-        $set: {
-          combinedResults: {
-            $concatArrays: []
-          }
-        }
-      }
-      const projectStage = {
-        $project: {
-          Related_Products: {
-            $slice: ["$combinedResults", 10]
-          },
-          Bought_Together_Products: {
-            $arrayElemAt: [
-              "$boughtTogetherProducts.boughtTogetherProducts",
-              0
-            ]
-          }
-        }
-      }      
-      parentIDs.map(parentID => {
-        facetStage["$facet"][`categoryId_${parentID}`] = [
-          {
+        } };
+        const setStage = { $set: { combinedResults: { $concatArrays: [] } } };
+        const addFieldsStage = { $addFields: {} };
+        const projectStage = { $project: {} };
+        parentIDs.forEach((parentID, index) => {
+          const facetName = `categoryId_${parentID}`;
+          const matchStage = {
             $match: {
-              categoryId: parentID
+              categoryId: parentID,
+              _id: { $ne: toObjectID(productId) }
             }
-          },
-          { $sort: { categoryId: 1 } }
-        ]
-        setStage["$set"]["combinedResults"]["$concatArrays"].push(`$categoryId_${parentID}`)
-      })
-      
-      const additionalDetails = await Product.aggregate([
-        sortStage,
-        facetStage,
-        setStage,
-        projectStage
-      ])
-      
-      for(const key in additionalDetails[0]) {
-        response.push({
-          title: `${key}`.replace(/_/g, " "),
-          products: additionalDetails[0][key]
-        })
-      }
+          };
+          const groupStage = {
+            $group: {
+              _id: null,
+              productIds: { $push: "$_id" },
+              products: { $push: "$$ROOT" }
+            }
+          };
 
-      return response
+          facetStage["$facet"][facetName] = [matchStage, groupStage];
+
+          if (index > 0) {
+            const prevFacetNames = parentIDs.slice(0, index).map(id => `categoryId_${id}`);
+            const filterCondition = {
+              $filter: {
+                input: `$${facetName}.products`,
+                as: "product",
+                cond: {
+                  $not: {
+                    $in: ["$$product._id", prevFacetNames.map(name => `$${name}.productIds`)]
+                  }
+                }
+              }
+            };
+
+            projectStage["$project"][`categoryId_${parentID}`] = {
+              products: filterCondition
+            };
+          } else {
+            projectStage["$project"][`categoryId_${parentID}`] = {
+              products: `$${facetName}.products`,
+              productIds: `$${facetName}.productIds`
+            };
+          }
+
+          addFieldsStage["$addFields"][`categoryId_${parentID}`] = {
+            $arrayElemAt: [`$categoryId_${parentID}`, 0]
+          }
+
+          previousFacets.push(facetName);
+          setStage["$set"]["combinedResults"]["$concatArrays"].push(`$${facetName}.products`);
+        });
+
+        const pipeline = [
+          facetStage,
+          addFieldsStage,
+          projectStage,
+          setStage,
+          {
+            $project: {
+              Related_Products: {
+                $ifNull: ["$combinedResults", []]
+              },
+              Bought_Together_Products: {
+                $ifNull: ["$boughtTogetherProducts", []]
+              },
+            }
+          }
+        ];
+        const additionalDetails = await Product.aggregate(pipeline)
+        
+        for(const key in additionalDetails[0]) {
+          response.push({
+            title: `${key}`.replace(/_/g, " "),
+            products: additionalDetails[0][key]
+          })
+        }
+
+        return response
+      } catch (err) {
+        console.log(err)
+      }
     },
     parentCategories: async (root, args) => {
       try{
