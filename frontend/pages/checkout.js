@@ -796,9 +796,9 @@ export const CheckOut = () => {
                         getBillingInfo={getBillingData}
                       />
                       {(isAddNewAddressForm || addressList?.length === 0) && (
-                        <h5>Add New Address</h5>
+                        <h5>Billing Details</h5>
                       )}
-                      <form onSubmit={handleSubmit(onSubmit)}>
+                      <form onSubmit={handleSubmit(onSubmit)} className="mt-3">
                         <BillingDetails
                           checkCode={checkCode}
                           setZipMessage={setZipMessage}
@@ -893,11 +893,11 @@ export const CheckOut = () => {
                         />
                         <button
                           type="submit"
-                          className="btn btn-success primary-btn-color checkout-continue-btn"
+                          className="btn btn-success primary-btn-color checkout-continue-btn mt-4"
                           onClick={handlePlacedOrder}
                           disabled={!billingInfo.paymentMethod}
                         >
-                          Place Order{" "}
+                          PLACE ORDER
                         </button>
                       </div>
                       <div className="checkout-order-summary-container">

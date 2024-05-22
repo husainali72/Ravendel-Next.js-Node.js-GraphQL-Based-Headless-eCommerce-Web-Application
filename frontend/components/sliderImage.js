@@ -8,10 +8,13 @@ import { get } from "lodash";
 import { getImage, imageOnError } from "../utills/helpers";
 import { useSelector } from "react-redux";
 import ReactImageMagnify from "react-image-magnify";
-const GalleryImageSlider = ({ galleryImages, variantSelect, comboData }) => {
+const GalleryImageSlider = ({ galleryImages, variantSelect, comboData, showMagnifiedImageState }) => {
   const [imgError, setImgError] = useState([]);
   const [imageType, setImageType] = useState([]);
   const setting = useSelector(state => state.setting)
+  const [showMagnifiedImage, setShowMagnifiedImage] = showMagnifiedImageState;
+
+
   useEffect(()=>{
     let type=get(setting,'setting.imageStorage.status','')
     setImageType(type)
@@ -85,37 +88,41 @@ const getImageSrc = (gallery, imageType, variantSelect, comboData) => {
   return (
     <>
       {galleryImages?.length > 1 ? (
-        <Slider {...settings}>
-          {galleryImages?.map((gallery, index) => (
-            <div key={index}>
-              {/* <ProductImage src={getImage(gallery, imageType)} className="gallery-image single" alt="" /> */}
-              {/* <GlassMagnifier
-                imageSrc={getImageSrc(gallery, imageType, variantSelect, comboData)}
-                imageAlt=""
-                largeImageSrc={getImage(gallery, imageType)}
-                className="gallery-image"
-                magnifierSize={1025 > window?.innerWidth ? "60%" : "30%"}
-                magnifierBorderSize={5}
-                magnifierBorderColor="rgba(0, 0, 0, .5)"
-                onError={(e)=>imageOnError(e)}
-              /> */}
-              <ReactImageMagnify {...{
-                  smallImage: {
-                      isFluidWidth: true,
-                      src: getImageSrc(gallery, imageType, variantSelect, comboData)
-                  },
-                  largeImage: {
-                      src: getImageSrc(gallery, imageType, variantSelect, comboData),
-                      width: 1200,
-                      height: 1800
-                  },
-                  enlargedImagePosition: 'over',
-                  enlargedImageContainerStyle: { zIndex: 9999 },
-                  imageClassName: 'gallery-image'
-              }} />
-            </div>
-          ))}
-        </Slider>
+        <>
+          <Slider {...settings}>
+            {galleryImages?.map((gallery, index) => (
+              <div key={index}>
+                {/* <ProductImage src={getImage(gallery, imageType)} className="gallery-image single" alt="" /> */}
+                {/* <GlassMagnifier
+                  imageSrc={getImageSrc(gallery, imageType, variantSelect, comboData)}
+                  imageAlt=""
+                  largeImageSrc={getImage(gallery, imageType)}
+                  className="gallery-image"
+                  magnifierSize={1025 > window?.innerWidth ? "60%" : "30%"}
+                  magnifierBorderSize={5}
+                  magnifierBorderColor="rgba(0, 0, 0, .5)"
+                  onError={(e)=>imageOnError(e)}
+                /> */}
+                <ReactImageMagnify {...{
+                    smallImage: {
+                        isFluidWidth: true,
+                        src: getImageSrc(gallery, imageType, variantSelect, comboData)
+                    },
+                    largeImage: {
+                        src: getImageSrc(gallery, imageType, variantSelect, comboData),
+                        width: 1200,
+                        height: 1800
+                    },
+                    enlargedImagePortalId: "myPortal"
+                    // enlargedImagePosition: 'over',
+                    // enlargedImageContainerStyle: { zIndex: 9999 },
+                    // imageClassName: 'gallery-image'
+                }} />
+              </div>
+            ))}
+          </Slider>
+          
+        </>
       ) : (
         <ProductImage src="" className="gallery-image single" alt="" />
       )}
@@ -126,5 +133,6 @@ GalleryImageSlider.propTypes = {
   galleryImages: PropTypes.array.isRequired,
   variantSelect: PropTypes.bool.isRequired,
   comboData: PropTypes.array.isRequired,
+  showMagnifiedImageState: PropTypes.array.isRequired
 };
 export default GalleryImageSlider;

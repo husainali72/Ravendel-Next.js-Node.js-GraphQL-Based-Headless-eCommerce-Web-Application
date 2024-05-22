@@ -1,22 +1,46 @@
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
-import PageTitle from "../../components/PageTitle";
-import PaymentFailedImage from "../../components/images/paymentFailed.png";
+import failedImage from '../../components/images/orderFailed.png'
 import {
   getSingleOrderAction,
   updatePaymentStatus,
 } from "../../redux/actions/orderAction";
 import { useSession } from "next-auth/react";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { get } from "lodash";
+import { Container } from "react-bootstrap";
+import ProductCard from "../../components/ProductCard";
+import TotalSummary from "../../components/TotalSummary";
+import DetailsCard from "../../components/cardcomponent/DetailsCard";
+import Link from "next/link";
+import { currencySetter, isObjectEmpty } from "../../utills/helpers";
+import { CircularProgress } from "@mui/material";
+
 const PaymentFailed = () => {
   const session = useSession();
   const router = useRouter();
   const dispatch = useDispatch();
   const orderDetail = useSelector((state) => state.order);
+  const [singleOrderDetail, setSingleOrderDetail] = useState();
+  const [currency, setCurrency] = useState("$");
+  const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line no-unused-vars
+  const [currencyOption, setCurrencyOption] = useState({});
+  const settings = useSelector((state) => state.setting);
   useEffect(() => {
-    if (session?.status === "authenticated" && orderDetail?.order) {
+    const currencyStoreOptions = get(
+      settings,
+      "setting.store.currency_options",
+      {}
+    );
+    setCurrencyOption({ ...currencyStoreOptions });
+    currencySetter(currencyStoreOptions, setCurrency);
+  }, [settings]);
+  
+  useEffect(() => {
+    if (!isObjectEmpty(orderDetail?.order)) {
+      setSingleOrderDetail({ ...get(orderDetail, "order", {}) });
       updateOrderPaymentStatus();
     }
   }, [orderDetail]);
@@ -26,14 +50,15 @@ const PaymentFailed = () => {
     }
   }, [session?.status]);
   // If orderId is present, dispatch action to get single order details
-  const getOrderDetails = () => {
+  const getOrderDetails = async() => {
     const { orderId } = get(router, "query");
     if (session?.status === "authenticated") {
       if (orderId) {
         let variable = { id: orderId };
-        dispatch(getSingleOrderAction(variable));
+        await dispatch(getSingleOrderAction(variable));
       }
     }
+    setLoading(false);
   };
   // If payment status is not updated, dispatch action to update it
   const updateOrderPaymentStatus = async () => {
@@ -48,27 +73,94 @@ const PaymentFailed = () => {
      await dispatch(updatePaymentStatus(payload,customerId));
     }
   };
+
   return (
     <div>
-      <PageTitle title="Payment Failed" />
       <BreadCrumb title={"Payment-Failed"} />
-      <div className="payment-failed-container">
-        <div className="payment-failed-content">
-          <img
-            className="payment-failed-image"
-            src={PaymentFailedImage?.src}
-            alt="Payment Failed"
-          />
-          <p className="payment-failed-message">
-            Oops! It seems like there was an issue processing your payment.
-            Please try again.
-          </p>
-          <button className="retry-button">Retry Payment</button>
-          <p className="contact-support">
-            If the issue persists, please contact our support team.
-          </p>
+      {
+        loading ?
+          <div className="loading-wrapper">
+            <CircularProgress/>
+          </div>
+        :
+        
+      <Container>
+        <div className="thankyou-page-container">
+          <div className="left-col">
+            <div className="success-head">
+              <img
+                src={failedImage.src}
+                alt="success"
+              />
+              <h1>Something went wrong!</h1>
+            </div>
+            <ProductCard
+              cardItems={get(singleOrderDetail, 'products', [])}
+            />
+            <TotalSummary totalSummary={get(singleOrderDetail, 'totalSummary', {})} couponCartDetail={get(singleOrderDetail, 'couponCard', {})} />
+          </div>
+          <div className="right-col">
+            {
+                get(singleOrderDetail, 'billing') &&
+                <div className="order-address">
+                  <DetailsCard
+                    title="Billing Address"
+                    info={get(singleOrderDetail, 'billing', {})}
+                    type='order'
+                  />
+                </div>
+              }
+              {
+                get(singleOrderDetail, 'shipping') &&
+                <div className="order-address">
+                  <DetailsCard
+                    title="Shipping Address"
+                    info={get(singleOrderDetail, 'shipping', {})}
+                  />
+                </div>
+              }
+              <div className="order-address">
+                <div className="checkout-shipping-method">
+                  <div className="checkout-details-title">
+                    <h5>Shipping Details</h5>
+                  </div>
+                  <div className="checkout-shipping-address ">
+                    <div className="checkout-list-content">
+                      <b>Free Shipping</b>
+                      <p>{currency}0.00 (3-10 Business Days) </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="order-address">
+                <div className="checkout-shipping-method">
+                  <div className="checkout-details-title">
+                    <h5>Payment Datails</h5>
+                  </div>
+                  <div className="checkout-shipping-address ">
+                    <div className="checkout-list-content">
+                      <b>Payment Mode: {singleOrderDetail?.billing?.paymentMethod}</b>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          {/* <OrderDetailAfter orderInfo={singleOrderDetail} /> */}
         </div>
-      </div>
+        <div className='btn-wrapper d-flex flex-column align-items-center thankyou' style={{gap: '12px'}}>
+          <Link href='/shopcart'>
+            <a className="card-btons text-align-center">
+              <span className="text-align-center">GO TO CART</span>
+            </a>
+          </Link>
+          <Link href='/'>
+            <a className="card-btons text-align-center outline">
+              <span className="text-align-center">GO TO HOME</span>
+            </a>
+          </Link>
+        </div>
+      </Container>
+    }
     </div>
   );
 };

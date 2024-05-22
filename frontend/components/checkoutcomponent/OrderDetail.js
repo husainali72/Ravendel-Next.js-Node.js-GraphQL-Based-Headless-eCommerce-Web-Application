@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { get } from "lodash";
-// import CheckBox from "../check";
 import PropTypes from "prop-types";
-import ProductImage from "../imageComponent";
+import razorpayImage from '../images/razorpay.png';
+import stripeImage from '../images/stripe.png';
+import paypalImage from '../images/paypal.png';
+import bankImage from '../images/bank.png';
+import codImage from '../images/cod.png';
+
 const Orderdetail = (props) => {
   const {
     getOrderDetails,
@@ -95,7 +99,7 @@ const Orderdetail = (props) => {
     <>
       <div className="payment-method-container">
         <div className="payment-method">
-          <h5 className="mb-4">Payment Mode</h5>
+          <h5 className="mb-2">Payment Mode</h5>
           <div className="cust-detail-container">
             {paymentOptions?.map((option, i) => (
               <>
@@ -115,11 +119,7 @@ const Orderdetail = (props) => {
                         <b>{get(option, 'label', '')}</b>
                         <p>{get(option, "description", '')}</p>
                       </div>
-                      <ProductImage
-                        className="userImg"
-                        src="/assets/razorpay.png"
-                        alt="payment mode"
-                      />
+                      <img className="payment-mode-img" src={option?.label === 'Razorpay' ? razorpayImage.src : option?.label === 'Paypal' ? paypalImage.src : option?.label === 'Stripe' ? stripeImage.src : option?.label === 'Cash On Delivery' ? codImage.src : option?.label === 'Bank Transfer' ? bankImage.src : ''} />
                     </div>
                   </div>
                 </div>
