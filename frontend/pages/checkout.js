@@ -298,6 +298,9 @@ export const CheckOut = () => {
         // get CartItems and Total summary detail
         let cartItemList = prepareCartItemsList(get(carts, "cartItems", []));
         setTotalSummary({ ...get(carts, "totalSummary") });
+        if (isAnyProductOutOfStock(cartItemList)) {
+          router.push("/shopcart");
+        }
         setCartItems([...cartItemList]);
         setCouponCardDetail({});
       } else {
@@ -317,9 +320,6 @@ export const CheckOut = () => {
       // If the cart is empty, redirect the user to the home page
       if (cartItemsProduct?.length <= 0) {
         router.push("/");
-      }
-      if (isAnyProductOutOfStock(cartItemsProduct)) {
-        router.push("/shopcart");
       }
     }
   };
