@@ -18,8 +18,7 @@ const APP_KEYS = require("./config/keys");
 const { graphqlUploadExpress } = require("graphql-upload");
 const jwt = require("jsonwebtoken");
 const {
-  updateAdminProductLowStock,
-  updateCustomerCheckoutCart,
+  abandonedCartsNotification,
 } = require("./config/crons");
 
 connectDB();
@@ -41,8 +40,7 @@ async function startServer() {
   app.use(cors());
   app.use(bodyParser.json());
 
-  updateAdminProductLowStock(app);
-  updateCustomerCheckoutCart(app);
+  abandonedCartsNotification(app);
 
   const server = new ApolloServer({
     typeDefs,

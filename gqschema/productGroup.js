@@ -5,6 +5,7 @@ module.exports = `
     attributes: [Attribute]
     variations: [Variation]
     productIds: [ID]
+    status: String
     updatedAt: Date
     createdAt: Date
   }
@@ -59,6 +60,7 @@ module.exports = `
   extend type Mutation {
     addGroup(
       title: String!
+      status: String
       attributes: [AttributeInput]
       variations: [VariationInput]
       productIds: [ID]
@@ -66,6 +68,7 @@ module.exports = `
     updateGroup(
       id: ID!
       title: String!
+      status: String
       attributes: [AttributeInput]
       variations: [VariationInput]
       productIds: [ID]

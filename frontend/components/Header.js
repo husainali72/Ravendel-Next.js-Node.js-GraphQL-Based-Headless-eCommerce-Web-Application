@@ -17,6 +17,9 @@ import PropTypes from "prop-types";
 import ProductImage from "./imageComponent";
 import NavBar from "./navBar/navBar";
 import Search from "./globalSearch/globalSearch";
+import { useRouter } from "next/router";
+import { expiredTimeErrorMessage } from "./validationMessages";
+import AlertModal from "./alert/alertModal";
 const SessionCheckInterval = 60000;
 const Header = ({ setOpenMenu }) => {
   const data = useSession();
@@ -28,6 +31,8 @@ const Header = ({ setOpenMenu }) => {
   const [timerId, setTimerId] = useState(null);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const isLogin = data?.status === "authenticated"
+  const router=useRouter()
   useEffect(() => {
     checkSessionExpiration();
     const intervalId = setInterval(
@@ -51,8 +56,8 @@ const Header = ({ setOpenMenu }) => {
     }
   };
   const logOutUser = async () => {
-    await logoutAndClearData(dispatch);
-    window.location.pathname = "/";
+    await logoutAndClearData(dispatch,router);
+    window.location.pathname = "/login";
   };
 
   const handleClickOutside = (event) => {
@@ -88,7 +93,7 @@ const Header = ({ setOpenMenu }) => {
   }, [data]);
   const alertHandleConfirm = async () => {
     setShowModal(false);
-    await logoutAndClearData(dispatch);
+    await logoutAndClearData(dispatch,router);
   };
   return (
     <header className="header-area header-style-5 mt-0">
@@ -187,6 +192,18 @@ const Header = ({ setOpenMenu }) => {
         </Container>
       </div> */}
       <div className="header-bottom sticky-white-bg">
+      {showModal && (
+            <AlertModal
+              confirmAction={alertHandleConfirm}
+              icon="error"
+              title="Oops..."
+              text={expiredTimeErrorMessage}
+              showConfirmButton={true}
+              confirmButtonText="OK"
+              confirmButtonColor="#dc3545"
+              allowOutsideClick={false}
+            />
+          )}
         <Container>
           <div className="header-container header-wrap">
             <div className="app-logo">
@@ -250,9 +267,11 @@ const Header = ({ setOpenMenu }) => {
                         <HiOutlineUserCircle/>
                       </a>
                       <div className="dropdown-content">
-                        <Link href='/account'>My Account</Link>
-                        {data?.status === "authenticated" ? (
-                          <a onClick={logOutUser}>Logout</a>
+                        {isLogin ? (
+                          <>
+                            <Link href='/account'>My Account</Link>
+                            <a onClick={logOutUser}>Logout</a>
+                          </>
                           ):(
                             <Link href='/login'>Login/Signup</Link>
                           )

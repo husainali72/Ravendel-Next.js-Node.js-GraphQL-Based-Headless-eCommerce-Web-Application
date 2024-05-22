@@ -1,122 +1,93 @@
-import Table from "../../dataTable";
-import { get } from "lodash";
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import AddressDetails from "./addressDetail";
 import PropTypes from "prop-types";
-import { CASH_ON_DELIVERY } from "../../../utills/constant";
-import { getPaymentMethodLabel } from "../../../utills/helpers";
-import { Button } from "react-bootstrap";
-const columns = [
-  { title: "Products", name: "productTitle" },
-  { title: "Qty", name: "qty", type: "text" },
-  { title: "Attributes", name: "attributes", type: "attributes" },
-  { title: "Total", name: "productPrice", type: "price" },
-];
-const prepareOrderDetailRowData = (order) => {
-  const orderInfoDetail = [
-    { label: "Order Number", value: get(order, "orderNumber"), type: "text" },
-    { label: "Date", value: get(order, "date"), type: "date" },
-    { label: "Total", value: order?.totalSummary?.grandTotal, type: "price" },
-    {
-      label: "Payment Method",
-      value: getPaymentMethodLabel(get(order,"billing.paymentMethod", CASH_ON_DELIVERY)),
-      type: "text",
-    },
-  ];
-  return orderInfoDetail;
-};
-const prepareOrderSummaryRowData = (
-  total,
-  subtotal,
-  tax,
-  shippingAmount,
-  couponValue,
-  couponCode
-) => {
-  const OrderSummaryDetail = [
-    { label: "Subtotal", value: subtotal, type: "price" },
-    { label: "Tax", value: tax, type: "price" },
-    { label: "Shipping", value: shippingAmount, type: "price" },
-    couponCode
-      ? {
-          label: `Coupon - ${couponCode}`,
-          value: couponValue ? couponValue : 0,
-          type: "price",
-        }
-      : null,
-    { label: "Total", value: total, type: "price" },
-  ];
-  return OrderSummaryDetail;
-};
+import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
+import { get } from "lodash";
+import ProductCard from "../../ProductCard";
+import TotalSummary from "../../TotalSummary";
+import DetailsCard from "../../cardcomponent/DetailsCard";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { currencySetter } from "../../../utills/helpers";
+
 const OrdersDetails = ({
-  orderDetail,
-  billingInfo,
   order,
-  shippingInfo,
-  total,
-  subtotal,
-  tax,
-  shippingAmount,
-  couponValue,
-  couponCode,
   handleClose
 }) => {
-  const orderInfoDetail = prepareOrderDetailRowData(order);
-  const OrderSummaryDetail = prepareOrderSummaryRowData(
-    total,
-    subtotal,
-    tax,
-    shippingAmount,
-    couponValue,
-    couponCode
-  );
+  const settings = useSelector((state) => state.setting);
+  const [currency, setCurrency] = useState("$");
+  // eslint-disable-next-line no-unused-vars
+  const [currencyOption, setCurrencyOption] = useState({});
+  useEffect(() => {
+    const currencyStoreOptions = get(
+      settings,
+      "setting.store.currency_options",
+      {}
+    );
+    setCurrencyOption({ ...currencyStoreOptions });
+    currencySetter(currencyStoreOptions, setCurrency);
+  }, [settings]);
+
   return (
     <>
-      {orderDetail ? (
-        <>
-          <div className="order-details">
-            <div className="scroll-wrapper">
-              <Button className="close-btn" variant="link" onClick={handleClose}><CloseRoundedIcon/></Button>
-              <div className="row order-row">
-                <div className="col-md-6">
-                  <div className="details">
-                    <h4>Order Info</h4>
-                    <Table
-                      colSpan={1}
-                      additionalRows={orderInfoDetail}
-                    />
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="details">
-                    <AddressDetails
-                      title="Billing Address"
-                      address={billingInfo}
-                    />
-                    <hr />
-                    <AddressDetails
-                      title="Shipping Address"
-                      address={shippingInfo}
-                    />
-                  </div>
-                </div>
-                <hr />
+      <div className="order-details-container">
+        <div className="order-details-head">
+          <button className="back-btn" onClick={handleClose}><ArrowBackIosNewRoundedIcon/></button>
+          <h4>Order Details</h4>
+        </div>
+        <div className="row">
+          <div className="col-md-7">
+            <ProductCard
+              cardItems={get(order[0], 'products', [])}
+            />
+            <TotalSummary totalSummary={get(order[0], 'totalSummary', {})} couponCartDetail={get(order[0], 'couponCard', {})} />
+          </div>
+          <div className="col-md-5">
+            {
+              get(order[0], 'billing') &&
+              <div className="order-address">
+                <DetailsCard
+                  title="Billing Address"
+                  info={get(order[0], 'billing', {})}
+                  type='order'
+                />
               </div>
-              <div className="row">
-                <div className="details">
-                  <h4>Order Details</h4>
-                  <Table
-                    rows={orderDetail}
-                    columns={columns}
-                    colSpan={3}
-                    additionalRows={OrderSummaryDetail}
-                  />
+            }
+            {
+              get(order[0], 'shipping') &&
+              <div className="order-address">
+                <DetailsCard
+                  title="Shipping Address"
+                  info={get(order[0], 'shipping', {})}
+                />
+              </div>
+            }
+            <div className="order-address">
+              <div className="checkout-shipping-method">
+                <div className="checkout-details-title">
+                  <h5>Shipping Details</h5>
+                </div>
+                <div className="checkout-shipping-address ">
+                  <div className="checkout-list-content">
+                    <b>Free Shipping</b>
+                    <p>{currency}0.00 (3-10 Business Days) </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="order-address">
+              <div className="checkout-shipping-method">
+                <div className="checkout-details-title">
+                  <h5>Payment Datails</h5>
+                </div>
+                <div className="checkout-shipping-address ">
+                  <div className="checkout-list-content">
+                    <b>Payment Mode: {order[0]?.billing.paymentMethod}</b>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </>
-      ) : null}
+        </div>
+      </div>
     </>
   );
 };

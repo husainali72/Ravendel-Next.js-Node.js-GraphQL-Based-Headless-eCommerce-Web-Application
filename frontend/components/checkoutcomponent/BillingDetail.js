@@ -34,13 +34,14 @@ const BillingDetails = (props) => {
     shippingInfo,
     handlePhoneInput,
     handleBillingInfo,
-    setZipMessage
+    setZipMessage,
+    isAddNewAddressForm,
+    addressList,
   } = props;
   const addressTypeOptions = [
-    { value: "homeAddress", label: "Home Address" },
-    { value: "officeAddress", label: "Office Address" },
+    { value: "Home", label: "Home" },
+    { value: "Office", label: "Office" },
   ];
-
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
@@ -51,14 +52,13 @@ const BillingDetails = (props) => {
   useEffect(() => {
     let billingData = billingInfo;
     let shippingData = shippingInfo;
-
     billingData = {
       ...billingData,
-      addressType: billingInfo?.addressType?.value,
+      addressType: billingInfo?.addressType,
     };
     shippingData = {
       ...shippingData,
-      addressType: shippingData?.addressType?.value,
+      addressType: shippingData?.addressType,
     };
 
     var allData = {
@@ -68,300 +68,314 @@ const BillingDetails = (props) => {
     };
     getBillingInfo(allData);
   }, [shippingInfo, billingInfo, shippingAdd]);
-
   const getErrorMessage = (errorRef, name) => {
     return errorRef[name]?.message || "";
   };
-
   return (
     <>
       <div className="billing-container">
         <div>
-          <div className="twoRows">
-            <div className="col-lg-6 col-md-12 col-md-5half">
-              <InputField
-                className="input-filled"
-                name="firstname"
-                label="firstname"
-                placeholder="First name *"
-                {...registerRef("firstname", {
-                  required: {
-                    value: billingInfo.firstname ? false : true,
-                    message: "First Name is Required",
-                  },
-                  minLength: {
-                    value: 4,
-                    message: "First Name Min length is 4",
-                  },
-                })}
-                errors={errorRef}
-                value={billingInfo.firstname}
-                onChange={handleBillingInfo}
-                onKeyDown={(e) => handleEnter(e)}
-              />
-            </div>
-            <div className="col-lg-6 col-md-12  ">
-              <InputField
-                className="input-filled"
-                name="lastname"
-                label="lastname"
-                placeholder="Last name *"
-                {...registerRef("lastname", {
-                  required: {
-                    value: billingInfo.lastname ? false : true,
-                    message: "Last Name is Required",
-                  },
-                })}
-                errors={errorRef}
-                value={billingInfo.lastname}
-                onChange={handleBillingInfo}
-                error={errorRef.billingInfo ? true : false}
-                onKeyDown={(e) => handleEnter(e)}
-              />
-            </div>
-          </div>
-          <div className="twoRows">
-            <div className="col-lg-6 col-md-12">
-              <Controller
-                name="phone"
-                control={control}
-                rules={{
-                  required: {
-                    value: get(billingInfo, "phone") ? false : true,
-                    message: "Phone number is Required",
-                  },
-                  validate: () => {
-                    const cleanedPhoneNumber = get(
-                      billingInfo,
-                      "phone",
-                      ""
-                    )?.replace(/\D/g, "");
-
-                    // Add '91' to the cleaned phone number
-                    const formattedPhoneNumber = `+${cleanedPhoneNumber}`;
-                    return isValidPhoneNumber(formattedPhoneNumber);
-                  },
-                }}
-                render={({ field: { onChange, value } }) => (
-                  <PhoneInput
-                    enableSearch="true"
-                    country={"us"}
-                    inputClass={"custom-input"}
-                    placeholder="Enter phone number"
-                    value={billingInfo?.phone || ""}
-                    onChange={(value) => handlePhoneInput("phone", value)}
+          {isAddNewAddressForm || addressList?.length === 0 ? (
+            <>
+              <div className="twoRows">
+                <div className="col-lg-6 col-md-12 col-md-5half">
+                  <InputField
+                    className="input-filled"
+                    name="firstname"
+                    label="firstname"
+                    placeholder="First name *"
+                    {...registerRef("firstname", {
+                      required: {
+                        value: billingInfo.firstname ? false : true,
+                        message: "First Name is Required",
+                      },
+                      minLength: {
+                        value: 4,
+                        message: "First Name Min length is 4",
+                      },
+                    })}
+                    errors={errorRef}
+                    value={billingInfo.firstname}
+                    onChange={handleBillingInfo}
+                    onKeyDown={(e) => handleEnter(e)}
                   />
-                )}
-              />
-              <p>
-                <small style={{ color: "red" }}>
-                  {errorRef?.phone?.type === "required"
-                    ? errorRef.phone?.message
-                    : ""}
-                  {errorRef?.phone?.type === "validate"
-                    ? "Phone number is invalid"
-                    : ""}
-                </small>
-              </p>
-            </div>
-            <div className="col-lg-6 col-md-12">
-              <InputField
-                className="input-filled"
-                type="text"
-                required=""
-                name="email"
-                label="Email"
-                placeholder="email *"
-                registerRef={registerRef("email", {
-                  required: {
-                    value: !get(billingInfo, "email"),
-                    message: emailErrorMessage,
-                  },
-                  validate: () => {
-                    return validateEmail(get(billingInfo, "email"));
-                  },
-                })}
-                errors={errorRef}
-                value={billingInfo.email}
-                onChange={handleBillingInfo}
-                onKeyDown={(e) => handleEnter(e)}
-              />
-            </div>
-          </div>
-          <InputField
-            className="input-filled"
-            name="address"
-            label="address"
-            placeholder="Address Line 1*"
-            {...registerRef("address", {
-              required: {
-                value: billingInfo.address ? false : true,
-                message: "Address is Required",
-              },
-            })}
-            value={billingInfo.address}
-            onChange={(e) => {
-              handleBillingInfo(e);
-            }}
-            onKeyDown={(e) => handleEnter(e)}
-            errors={errorRef}
-          />
-          <InputField
-            errors={errorRef}
-            className="input-filled"
-            name="addressLine2"
-            label="address"
-            placeholder="Address Line 2"
-            {...registerRef("addressLine2", {
-              required: {
-                value: billingInfo.addressLine2 ? false : true,
-                message: "Address is Required",
-              },
-            })}
-            value={billingInfo?.addressLine2}
-            onChange={handleBillingInfo}
-            onKeyDown={(e) => handleEnter(e)}
-          />
-          <div className="twoRows">
-            <div className="col-lg-4 col-md-12">
-              <InputField
-                className="input-filled"
-                type="text"
-                required=""
-                name="city"
-                placeholder="City / Town *"
-                {...registerRef("city", {
-                  required: {
-                    value: billingInfo.city ? false : true,
-                    message: "City is Required",
-                  },
-                })}
-                value={billingInfo.city}
-                onChange={handleBillingInfo}
-                onKeyDown={(e) => handleEnter(e)}
-                errors={errorRef}
-              />
-            </div>
-            <div className="col-lg-4 col-md-12">
-              <InputField
-                className="input-filled"
-                type="text"
-                required=""
-                name="state"
-                placeholder="State *"
-                {...registerRef("state", {
-                  required: {
-                    value: billingInfo.state ? false : true,
-                    message: "State is Required",
-                  },
-                })}
-                value={billingInfo.state}
-                onChange={handleBillingInfo}
-                onKeyDown={(e) => handleEnter(e)}
-                errors={errorRef}
-              />
-            </div>
+                </div>
+                <div className="col-lg-6 col-md-12  ">
+                  <InputField
+                    className="input-filled"
+                    name="lastname"
+                    label="lastname"
+                    placeholder="Last name *"
+                    {...registerRef("lastname", {
+                      required: {
+                        value: billingInfo.lastname ? false : true,
+                        message: "Last Name is Required",
+                      },
+                    })}
+                    errors={errorRef}
+                    value={billingInfo.lastname}
+                    onChange={handleBillingInfo}
+                    error={errorRef.billingInfo ? true : false}
+                    onKeyDown={(e) => handleEnter(e)}
+                  />
+                </div>
+              </div>
+              <div className="twoRows">
+                <div className="col-lg-6 col-md-12">
+                  <Controller
+                    name="phone"
+                    control={control}
+                    rules={{
+                      required: {
+                        value: get(billingInfo, "phone") ? false : true,
+                        message: "Phone number is Required",
+                      },
+                      validate: () => {
+                        const cleanedPhoneNumber = get(
+                          billingInfo,
+                          "phone",
+                          ""
+                        )?.replace(/\D/g, "");
 
-            <div className="col-lg-4 col-md-12">
-              <InputField
-                className="input-filled"
-                type="text"
-                required=""
-                name="country"
-                placeholder="Country *"
-                {...registerRef("country", {
-                  required: {
-                    value: billingInfo.country ? false : true,
-                    message: "Country is Required",
-                  },
-                })}
-                value={billingInfo.country}
-                onChange={handleBillingInfo}
-                onKeyDown={(e) => handleEnter(e)}
-                errors={errorRef}
-              />
-            </div>
-          </div>
-
-          <div className="twoRows">
-            <div className="col-lg-6 col-md-12">
-              <InputField
-                className="input-filled"
-                type="text"
-                name="zip"
-                handleBlur={(e) => {
-                  if (!shippingAdd && billingInfo?.zip) {
-                    checkCode(billingInfo.zip);
-                  }else{
-                    if(!shippingAdd){
-                    setZipMessage({
-                      ...ZipMessage,
-                      zipMessage: "",
-                      zipSuccess: false,
-                    });}
-                  }
-                }}
-                placeholder="Zip *"
-                {...registerRef("zip", {
-                  required: {
-                    value: billingInfo.zip ? false : true,
-                    message: "zip is Required",
-                  },
-                })}
-                value={billingInfo.zip}
-                onChange={handleZipCode}
-                onKeyDown={(e) => handleEnter(e)}
-              />
-              {!shippingAdd && (
-                <p>
-                  <small
-                    style={{ color: ZipMessage.zipSuccess ? "#4BB543" : "red" }}
-                  >
-                    {ZipMessage.zipMessage}
-                  </small>
-                </p>
-              )}
-              {!ZipMessage.zipMessage && (
-                <ErrorMessage message={getErrorMessage(errorRef, "zip")} />
-              )}
-            </div>
-            <div className="col-lg-6 col-md-12">
-              <Controller
-                name="addressType"
-                control={control}
-                rules={{
-                  required: "Address Type is Required",
-                }}
-                render={({ field: { onChange, value, ref } }) => (
-                  <Select
-                    value={addressTypeOptions?.find(
-                      (addressType) =>
-                        addressType?.value === billingInfo?.addressType
-                    )}
-                    placeholder="Address Type"
-                    name="blog_tag"
-                    options={addressTypeOptions}
-                    onChange={(e) => {
-                      handleBillingInfo(e, "addressType");
-                      onChange(e);
+                        // Add '91' to the cleaned phone number
+                        const formattedPhoneNumber = `+${cleanedPhoneNumber}`;
+                        return isValidPhoneNumber(formattedPhoneNumber);
+                      },
                     }}
-                    className="custom-select"
-                    styles={customStyles}
+                    render={({ field: { onChange, value } }) => (
+                      <PhoneInput
+                        enableSearch="true"
+                        country={"us"}
+                        inputClass={"custom-input"}
+                        placeholder="Enter phone number"
+                        value={billingInfo?.phone || ""}
+                        onChange={(value) => handlePhoneInput("phone", value)}
+                      />
+                    )}
                   />
-                )}
+                  <p>
+                    <small style={{ color: "red" }}>
+                      {errorRef?.phone?.type === "required"
+                        ? errorRef.phone?.message
+                        : ""}
+                      {errorRef?.phone?.type === "validate"
+                        ? "Phone number is invalid"
+                        : ""}
+                    </small>
+                  </p>
+                </div>
+                <div className="col-lg-6 col-md-12">
+                  <InputField
+                    className="input-filled"
+                    type="text"
+                    required=""
+                    name="email"
+                    label="Email"
+                    placeholder="email *"
+                    registerRef={registerRef("email", {
+                      required: {
+                        value: !get(billingInfo, "email"),
+                        message: emailErrorMessage,
+                      },
+                      validate: () => {
+                        return validateEmail(get(billingInfo, "email"));
+                      },
+                    })}
+                    errors={errorRef}
+                    value={billingInfo.email}
+                    onChange={(e) => {
+                      handleBillingInfo(e);
+                    }}
+                    onKeyDown={(e) => handleEnter(e)}
+                  />
+                </div>
+              </div>
+              <InputField
+                className="input-filled"
+                name="address"
+                label="address"
+                placeholder="Address Line 1*"
+                {...registerRef("address", {
+                  required: {
+                    value: billingInfo.address ? false : true,
+                    message: "Address is Required",
+                  },
+                })}
+                value={billingInfo.address}
+                onChange={(e) => {
+                  handleBillingInfo(e);
+                }}
+                onKeyDown={(e) => handleEnter(e)}
+                errors={errorRef}
               />
-              <p>
-                <small style={{ color: "red" }}>
-                  {errorRef.addressType?.type === "required"
-                    ? errorRef.addressType?.message
-                    : ""}
-                  {errorRef.addressType?.type === "validate"
-                    ? "Address Type is invalid"
-                    : ""}
-                </small>
-              </p>
-            </div>
-          </div>
+              <InputField
+                errors={errorRef}
+                className="input-filled"
+                name="addressLine2"
+                label="address"
+                placeholder="Address Line 2"
+                {...registerRef("addressLine2", {
+                  required: {
+                    value: billingInfo.addressLine2 ? false : true,
+                    message: "Address is Required",
+                  },
+                })}
+                value={billingInfo?.addressLine2}
+                onChange={(e) => {
+                  handleBillingInfo(e);
+                }}
+                onKeyDown={(e) => handleEnter(e)}
+              />
+              <div className="twoRows">
+                <div className="col-lg-4 col-md-12">
+                  <InputField
+                    className="input-filled"
+                    type="text"
+                    required=""
+                    name="city"
+                    placeholder="City / Town *"
+                    {...registerRef("city", {
+                      required: {
+                        value: billingInfo.city ? false : true,
+                        message: "City is Required",
+                      },
+                    })}
+                    value={billingInfo.city}
+                    onChange={(e) => {
+                      handleBillingInfo(e);
+                    }}
+                    onKeyDown={(e) => handleEnter(e)}
+                    errors={errorRef}
+                  />
+                </div>
+                <div className="col-lg-4 col-md-12">
+                  <InputField
+                    className="input-filled"
+                    type="text"
+                    required=""
+                    name="state"
+                    placeholder="State *"
+                    {...registerRef("state", {
+                      required: {
+                        value: billingInfo.state ? false : true,
+                        message: "State is Required",
+                      },
+                    })}
+                    value={billingInfo.state}
+                    onChange={(e) => handleBillingInfo(e)}
+                    onKeyDown={(e) => handleEnter(e)}
+                    errors={errorRef}
+                  />
+                </div>
+
+                <div className="col-lg-4 col-md-12">
+                  <InputField
+                    className="input-filled"
+                    type="text"
+                    required=""
+                    name="country"
+                    placeholder="Country *"
+                    {...registerRef("country", {
+                      required: {
+                        value: billingInfo.country ? false : true,
+                        message: "Country is Required",
+                      },
+                    })}
+                    value={billingInfo.country}
+                    onChange={(e) => {
+                      handleBillingInfo(e);
+                    }}
+                    onKeyDown={(e) => handleEnter(e)}
+                    errors={errorRef}
+                  />
+                </div>
+              </div>
+
+              <div className="twoRows">
+                <div className="col-lg-6 col-md-12">
+                  <InputField
+                    className="input-filled"
+                    type="text"
+                    name="zip"
+                    handleBlur={(e) => {
+                      if (!shippingAdd && billingInfo?.zip) {
+                        checkCode(billingInfo.zip);
+                      } else {
+                        if (!shippingAdd) {
+                          setZipMessage({
+                            ...ZipMessage,
+                            zipMessage: "",
+                            zipSuccess: false,
+                          });
+                        }
+                      }
+                    }}
+                    placeholder="Zip *"
+                    {...registerRef("zip", {
+                      required: {
+                        value: billingInfo.zip ? false : true,
+                        message: "Zip is Required",
+                      },
+                    })}
+                    value={billingInfo.zip}
+                    onChange={handleZipCode}
+                    onKeyDown={(e) => handleEnter(e)}
+                  />
+
+                  {!shippingAdd && billingInfo?.zip && (
+                    <p>
+                      <small
+                        style={{
+                          color: ZipMessage.zipSuccess ? "#4BB543" : "red",
+                        }}
+                      >
+                        {ZipMessage.zipMessage}
+                      </small>
+                    </p>
+                  )}
+                  {!shippingAdd && !ZipMessage.zipMessage && (
+                    <ErrorMessage message={getErrorMessage(errorRef, "zip")} />
+                  )}
+                  {shippingAdd && (
+                    <ErrorMessage message={getErrorMessage(errorRef, "zip")} />
+                  )}
+                </div>
+                <div className="col-lg-6 col-md-12">
+                  <Controller
+                    name="addressType"
+                    control={control}
+                    rules={{
+                      required: "Address Type is Required",
+                    }}
+                    render={({ field: { onChange, value, ref } }) => (
+                      <Select
+                        value={addressTypeOptions?.find(
+                          (addressType) =>
+                            addressType?.value === billingInfo?.addressType
+                        )||''}
+                        placeholder="Address Type"
+                        name="addressType"
+                        options={addressTypeOptions}
+                        onChange={(e) => {
+                          handleBillingInfo(e, "addressType");
+                          onChange(e);
+                        }}
+                        className="custom-select"
+                        styles={customStyles}
+                      />
+                    )}
+                  />
+                  <p>
+                    <small style={{ color: "red" }}>
+                      {errorRef.addressType?.type === "required"
+                        ? errorRef.addressType?.message
+                        : ""}
+                    </small>
+                  </p>
+                </div>
+              </div>
+            </>
+          ) : null}
           <div className="ship_detail">
             <div className="form-group">
               <div className="chek-form custome-checkbox">
@@ -450,7 +464,7 @@ const BillingDetails = (props) => {
                       rules={{
                         required: {
                           value: shippingAdd
-                            ? get(billingInfo, "phone")
+                            ? get(shippingInfo, "phone")
                               ? false
                               : true
                             : false,
@@ -458,7 +472,7 @@ const BillingDetails = (props) => {
                         },
                         validate: () => {
                           const cleanedPhoneNumber = get(
-                            billingInfo,
+                            shippingInfo,
                             "phone",
                             ""
                           )?.replace(/\D/g, "");
@@ -486,6 +500,11 @@ const BillingDetails = (props) => {
                     <ErrorMessage
                       message={getErrorMessage(errorRef, "shippingPhone")}
                     />
+                    {errorRef?.shippingPhone?.type === "validate" ? (
+                      <ErrorMessage message="Phone number is invalid" />
+                    ) : (
+                      ""
+                    )}
                   </div>
                   <div className="col-lg-6 col-md-12">
                     <InputField
@@ -647,7 +666,7 @@ const BillingDetails = (props) => {
                       handleBlur={(e) => {
                         if (shippingInfo?.zip) {
                           checkCode(shippingInfo?.zip);
-                        }else{
+                        } else {
                           setZipMessage({
                             ...ZipMessage,
                             zipMessage: "",
@@ -669,16 +688,17 @@ const BillingDetails = (props) => {
                       onChange={handleShippingChange}
                       onKeyDown={(e) => handleEnter(e)}
                     />
-                    <p>
-                      <small
-                        style={{
-                          color: ZipMessage.zipSuccess ? "#4BB543" : "red",
-                        }}
-                      >
-                        {ZipMessage.zipMessage}
-                      </small>
-                    </p>
-                    {!ZipMessage.zipMessage && (
+                    {shippingInfo.zip ? (
+                      <p>
+                        <small
+                          style={{
+                            color: ZipMessage.zipSuccess ? "#4BB543" : "red",
+                          }}
+                        >
+                          {ZipMessage.zipMessage}
+                        </small>
+                      </p>
+                    ) : (
                       <ErrorMessage
                         message={getErrorMessage(errorRef, "shippingzip")}
                       />
@@ -696,7 +716,7 @@ const BillingDetails = (props) => {
                           value={addressTypeOptions?.find(
                             (addressType) =>
                               addressType?.value === shippingInfo?.addressType
-                          )}
+                          )||''}
                           placeholder="Address Type"
                           name="addressType"
                           options={addressTypeOptions}

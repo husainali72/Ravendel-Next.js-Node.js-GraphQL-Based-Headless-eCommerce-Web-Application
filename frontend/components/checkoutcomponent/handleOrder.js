@@ -62,7 +62,7 @@ export const handleOrderPlaced = (
               if (success && orderId) {
                 let id = customerId;
                 let variables = { userId: id };
-                dispatch(removeAllCartItemsAction(variables));
+                dispatch(removeAllCartItemsAction(variables,router));
                 setBillingDetails("");
                 router.push({
                   pathname: thankyouPageRoute,
@@ -81,7 +81,7 @@ export const handleOrderPlaced = (
               if (success && orderId) {
                 let id = customerId;
                 let variables = { userId: id };
-                dispatch(removeAllCartItemsAction(variables));
+                dispatch(removeAllCartItemsAction(variables,router));
                 setBillingDetails("");
                 router.push({
                   pathname: thankyouPageRoute,
@@ -100,7 +100,7 @@ export const handleOrderPlaced = (
         })
         .catch((error) => {
           setLoading(false);
-          handleError(error, dispatch);
+          handleError(error, dispatch,router);
         });
     }
   });
