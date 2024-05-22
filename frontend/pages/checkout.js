@@ -444,9 +444,9 @@ export const CheckOut = () => {
         mrpAmount: get(cart, "mrpAmount"),
         available: get(cart, "available"),
       };
-      if (cart.available) {
+      // if (cart.available) {
         cartItemsList.push(cartProduct);
-      }
+      // }
     });
     return cartItemsList;
   };
