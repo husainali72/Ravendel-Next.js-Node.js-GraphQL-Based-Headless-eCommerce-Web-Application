@@ -165,4 +165,4 @@ export const validatSpecification = (specifications) => {
   }
 };
 
-export const SPECIAL_CHARACTER_REGEX='/^[a-zA-Z0-9\s]*$/'
+export const SPECIAL_CHARACTER_REGEX=/^[a-zA-Z0-9\s]*$/
