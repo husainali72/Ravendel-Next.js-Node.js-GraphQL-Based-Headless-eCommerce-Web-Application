@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 
 const Search = () => {
@@ -15,7 +15,12 @@ const Search = () => {
     }
     }
   };
-
+  useEffect(() => {
+    // Check if the current path is not the search page or if there is no query parameter
+    if (router.pathname !== '/search' || !router.query.query) {
+      setSearchQuery("");
+    }
+  }, [router.pathname, router.query]);
   return (
     <>
       <div className="global-search-container">

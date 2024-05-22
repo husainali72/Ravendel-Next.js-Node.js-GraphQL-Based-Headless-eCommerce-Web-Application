@@ -6,13 +6,15 @@ import { get } from "lodash";
 import PropTypes from "prop-types";
 import { FaStar } from "react-icons/fa";
 import Pagination from "../../pagination";
-import moment from "moment";
+import { useSelector } from "react-redux";
+import { convertDateToStringFormat } from "../../../utills/helpers";
 const CustomerReviews = ({ productId }) => {
   //   setReviews("productReviews");
   let limit = 5;
   const [reviews, setReviews] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const setting=useSelector((state)=>state.setting)
   const getCustomerReviews = async () => {
     try {
       const { data: productReviewData } = await queryWithoutToken(
@@ -50,7 +52,7 @@ const CustomerReviews = ({ productId }) => {
                 <div>
                   { (review.customerId.firstName || review.customerId.lastName) &&
                     <span className="name">{review.customerId.firstName} {" "} {review.customerId.lastName}</span> }
-                    { (review.date) && <span>{moment(review.date).format('DD MMM YYYY')}</span>}
+                    { (review.date) && <span>{convertDateToStringFormat(review.date,setting)}</span>}
                 </div>
               </div>
             </div>
