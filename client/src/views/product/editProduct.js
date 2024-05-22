@@ -115,7 +115,7 @@ let defaultobj = {
   // custom_field: [],
   specifications: [
     {
-      group: "Specification 1",
+      group: "",
       customFields: [{ key: null, value: null }],
     },
   ],
@@ -731,12 +731,9 @@ const EditProductComponent = ({ params }) => {
     setProduct(updatedProduct);
   };
   const addSpecificationGroup = () => {
-    const updatedProduct = { ...product };
-    const specificationsLength = get(product, "specifications")?.length + 1;
+    const updatedProduct = { ...product }; 
     updatedProduct.specifications.push({
-      group: `Specification ${
-        specificationsLength ? specificationsLength : ""
-      }`,
+      group: '',
       customFields: [{ key: null, value: null }],
     });
     setProduct(updatedProduct);
