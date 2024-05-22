@@ -37,6 +37,7 @@ const CouponSchema = new Schema({
   category: Boolean,
   includeCategories: [],
   excludeCategories: [],
+  categoryTree: Schema.Types.Mixed,
   date: {
     type: Date,
     default: Date.now

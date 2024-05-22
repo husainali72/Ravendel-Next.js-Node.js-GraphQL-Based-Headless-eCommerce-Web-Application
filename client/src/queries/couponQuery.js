@@ -39,6 +39,7 @@ const GET_COUPONS = gql`
         category
         includeCategories
         excludeCategories
+        categoryTree
         date
         updated
       }
@@ -90,6 +91,7 @@ const GET_COUPON = gql`
         category
         includeCategories
         excludeCategories
+        categoryTree
         date
         updated
       }
@@ -164,6 +166,7 @@ const ADD_COUPON = gql`
     $category: Boolean
     $includeCategories: customArray
     $excludeCategories: customArray
+    $categoryTree: customArray
   ) {
     addCoupon(
       code: $code
@@ -180,6 +183,7 @@ const ADD_COUPON = gql`
       category: $category
       includeCategories: $includeCategories
       excludeCategories: $excludeCategories
+      categoryTree: $categoryTree
     ) {
       message
       success
@@ -253,6 +257,7 @@ const UPDATE_COUPON = gql`
     $category: Boolean
     $includeCategories: customArray
     $excludeCategories: customArray
+    $categoryTree: customArray
   ) {
     updateCoupon(
       id: $id
@@ -270,6 +275,7 @@ const UPDATE_COUPON = gql`
       category: $category
       includeCategories: $includeCategories
       excludeCategories: $excludeCategories
+      categoryTree: $categoryTree
     ) {
       message
       success

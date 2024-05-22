@@ -35,7 +35,6 @@ export default function Home({
   useEffect(() => {
     dispatch(storeSetting(settings));
   }, [settings]);
-
   useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false;
@@ -102,6 +101,7 @@ export default function Home({
               <OnSaleProductCard
                 titleShow={get(section, "name")}
                 onSaleProduct={get(section, "products", [])}
+                display_type={get(section, "display_type", [])}
               />
             )}
           </>

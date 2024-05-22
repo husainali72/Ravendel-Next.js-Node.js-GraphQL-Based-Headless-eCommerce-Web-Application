@@ -67,8 +67,6 @@ const SETTING_TILE_DATA = gql`
         }
         notification_recipients
         low_stock_threshold
-        out_of_stock_threshold
-        out_of_stock_visibility
         stock_display_format
         left_quantity
       }
@@ -163,6 +161,7 @@ const SETTING_TILE_DATA = gql`
         playstore
         appstore
         logo
+        placeholder_image
       }
       mobile {
         slider {
@@ -337,8 +336,6 @@ const UPDATE_STORE_INVENTORY = gql`
     $notifications: inventory_notification
     $notification_recipients: String
     $low_stock_threshold: Int
-    $out_of_stock_threshold: Int
-    $out_of_stock_visibility: Boolean
     $stock_display_format: String
     $left_quantity: Int
   ) {
@@ -347,8 +344,6 @@ const UPDATE_STORE_INVENTORY = gql`
       notifications: $notifications
       notification_recipients: $notification_recipients
       low_stock_threshold: $low_stock_threshold
-      out_of_stock_threshold: $out_of_stock_threshold
-      out_of_stock_visibility: $out_of_stock_visibility
       stock_display_format: $stock_display_format
       left_quantity: $left_quantity
     ) {
@@ -602,16 +597,20 @@ const UPDATE_APPEARANCE_THEME = gql`
   mutation (
     $primary_color: String
     $new_logo: Upload
+    $new_placeholder_image: Upload
     $playstore: String
     $appstore: String
     $logo: String
+    $placeholder_image: String
   ) {
     updateAppeanranceTheme(
       primary_color: $primary_color
       new_logo: $new_logo
+      new_placeholder_image: $new_placeholder_image
       playstore: $playstore
       appstore: $appstore
       logo: $logo
+      placeholder_image: $placeholder_image
     ) {
       ...SettingTile
     }

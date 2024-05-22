@@ -1,6 +1,6 @@
 import { get } from "lodash";
 import NoImagePlaceHolder from "../assets/images/NoImagePlaceHolder.png";
-import { CASH_ON_DELIVERY, STRIPE, PAYPAL, RAZORPAY } from "./constant";
+import { CASH_ON_DELIVERY, STRIPE, PAYPAL, RAZORPAY, BANKTRANSFER } from "./constant";
 export const isEmpty = (value) =>
   value === undefined ||
   value === null ||
@@ -208,8 +208,10 @@ export const getPaymentMethodLabel = (paymentMethod) => {
       return "Paypal";
     case RAZORPAY:
       return "Razor Pay";
+    case BANKTRANSFER:
+      return "Bank Transfer";
     default:
-      return "Cash On Deliverys";
+      return "Cash On Delivery";
   }
 };
 export const getCheckedIds = (data) => {
@@ -244,7 +246,35 @@ export const hasCheckedChild = (cat) => {
 export const calculateDiscount = (price, sellPrice) => {
   if (sellPrice && sellPrice > 0 && sellPrice < price) {
     const discountPercentage = Math.floor(((price - sellPrice) / price) * 100);
+    console.log(discountPercentage,'discountPercentage')
     return discountPercentage || 0;
   }
+
 return 0;
+};
+
+export const filterTreeData = (data) => {
+  return data.reduce((acc, category) => {
+    const filteredCategory = {
+      id: category?.id,
+      name: category.name,
+      checked: category.checked,
+    };
+    if (category?.children && category?.children?.length > 0) {
+      filteredCategory.children = category?.children;
+    }
+
+    if (category?.checked) {
+      acc.push(filteredCategory);
+    }
+
+   else if (category?.children && category?.children?.length > 0) {
+      filteredCategory.children = filterTreeData(category?.children);
+      if (filteredCategory.children.length > 0) {
+        acc.push(filteredCategory);
+      }
+    }
+
+    return acc;
+  }, []);
 };

@@ -67,7 +67,7 @@ const RenderProductPrice = ({
       return null;
     } else {
       return (
-        <span className=" mx-2">
+        <span className=" mx-1 discount">
           {!comboData?.length && !variantSelect
             ? isDiscount(singleProducts) &&
               calculateDiscount(price, salePrice) !== 0
@@ -108,7 +108,12 @@ const RenderProductPrice = ({
                 <RenderPrice />
               </span>
             ) : null}
-            <RenderDiscount singleProducts={singleProducts} />
+            {get(singleProducts, "pricing.discountPercentage") > 0 && (
+              <span className=" mx-1 discount">
+                {get(singleProducts, "pricing.discountPercentage")} % OFF
+              </span>
+            )}
+            {/* <RenderDiscount singleProducts={singleProducts} /> */}
           </div>
         ) : (
           <h6 className="product-not-available">

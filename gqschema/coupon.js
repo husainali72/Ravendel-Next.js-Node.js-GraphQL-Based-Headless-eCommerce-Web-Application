@@ -16,6 +16,7 @@ module.exports = `
     category: Boolean
     includeCategories: customArray
     excludeCategories: customArray
+    categoryTree: customArray
     date: Date
     updated: Date
   }
@@ -62,6 +63,7 @@ module.exports = `
       category: Boolean
       includeCategories: customArray
       excludeCategories: customArray
+      categoryTree: customArray
     ): statusSchema
     updateCoupon(
       id: ID!
@@ -79,6 +81,7 @@ module.exports = `
       category: Boolean
       includeCategories: customArray
       excludeCategories: customArray
+      categoryTree: customArray
     ): statusSchema
     deleteCoupon(id: ID!): statusSchema
   }

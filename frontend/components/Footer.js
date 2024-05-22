@@ -12,7 +12,8 @@ import {
 import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
 import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import ProductImage from "./imageComponent";
 
 export default function Footer() {
   const [Address, setAddress] = useState({
@@ -26,6 +27,7 @@ export default function Footer() {
     socialMedia: [],
   });
   const dispatch = useDispatch();
+  const settings = useSelector((state) => state.setting);
   const LogOutUser = async () => {
     await logout();
     removeItemFromLocalStorage("cart");
@@ -50,13 +52,14 @@ export default function Footer() {
         city: get(res, cityPath, "Paris"),
         email: get(res, emailPath, "ravendel@gmail.com"),
         phoneNumber: get(res, phonePath, "+91 9124192994"),
-        appStoreUrl: get(res, appStorePath, "#")||'#',
-        playStoreUrl: get(res, playStorePath, "#")||'#',
+        appStoreUrl: get(res, appStorePath, "#") || "#",
+        playStoreUrl: get(res, playStorePath, "#") || "#",
         hour: get(res, hour, ""),
         socialMedia: get(res, socialMediaPath, []),
       }));
     });
   }, []);
+
   const {
     addressLine1,
     addressLine2,
@@ -64,73 +67,106 @@ export default function Footer() {
     email,
     phoneNumber,
     appStoreUrl,
+    hour,
     playStoreUrl,
   } = Address;
   const session = useSession();
   const customerId = session?.data?.user?.accessToken?.customer?._id;
   return (
-    <section className="product-cart-section">
+    <section className="product-cart-section footer">
       <Container>
         <footer className="text-center text-lg-start text-muted">
           <section className="">
-            <div className="container text-center text-md-start">
+            <div className="text-center text-md-start">
               <hr className="hr_divider"></hr>
               <div className="row mt-5">
                 <div className="col-lg-4 col-md-6 mb-4 mt-2">
                   <div className="app-logo-container">
-                    <Link href="/">
-                      <a className="app-logo">Ravendel</a>
-                    </Link>
+                  <Link href="/">
+                    <a className="app-logo">
+                      <ProductImage
+                        src={get(settings, "setting.appearance.theme.logo")}
+                        className="logo-image"
+                        alt=""
+                      />
+                    </a>
+                  </Link>
                   </div>
                   <div className="address">
-                    <h5 className="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated animated animated">
-                      Contact
-                    </h5>
-                    <strong>Address : </strong>
-                    <span>
-                      {addressLine1 || ""}
-                      {addressLine1 && ", "}
-                      {addressLine2 || ""}
-                      {addressLine2 && ", "}
-                      {city || ""}
-                    </span>
-                    <br />
-                    <strong>Phone : </strong>
-                    <Link href={"tel:" + phoneNumber || ""}>
-                      <span className="contact-details">
-                        <a>{phoneNumber || ""}</a>
-                      </span>
-                    </Link>
-                    <br />
-                    <strong>Email : </strong>
-                    <Link href={"mailto:" + email || ""}>
-                      <span className="contact-details">
-                        <a>{email || ""}</a>
-                      </span>
-                    </Link>
-                    <br />
-                    <strong>Hour: </strong>
-
-                    {<span>{get(Address, "hour", "")}</span>}
-                  </div>
-
-                  <div className="mt-4 follow">
-                    <h5>Follow us</h5>
-                    {/* <ui> */}
-                    {get(Address, "socialMedia", [])?.map((media, i) => {
-                      return (
-                        <Link href={media.handle} key={i}>
-                          <a
-                            href={media.handle}
-                            className={iconSetter(media.name)}
-                            aria-hidden="true"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          ></a>
+                  
+                    { (addressLine1 ||
+                      addressLine2 ||
+                      city ||
+                      email ||
+                      phoneNumber ||
+                       hour)
+                       && (
+                        <h5 className="fw-600 text-grey-4 wow fadeIn animated animated animated">
+                          Contact
+                        </h5>
+                      )}
+                    {addressLine1 && (
+                      <>
+                        <strong>Address : </strong>
+                        <span>
+                          {addressLine1 || ""}
+                          {addressLine1 && ", "}
+                          {addressLine2 || ""}
+                          {addressLine2 && ", "}
+                          {city || ""}
+                        </span>
+                        <br />
+                      </>
+                    )}
+                    {phoneNumber && (
+                      <>
+                        <strong>Phone : </strong>
+                        <Link href={"tel:" + phoneNumber || ""}>
+                          <span className="contact-details">
+                            <a>{phoneNumber || ""}</a>
+                          </span>
                         </Link>
-                      );
-                    })}
+                        <br />
+                      </>
+                    )}
+                    {email && (
+                      <>
+                        <strong>Email : </strong>
+                        <Link href={"mailto:" + email || ""}>
+                          <span className="contact-details">
+                            <a>{email || ""}</a>
+                          </span>
+                        </Link>
+                        <br />
+                      </>
+                    )}
+                    {get(Address, "hour", "") && (
+                      <>
+                        <strong>Hour: </strong>
+
+                        {<span>{get(Address, "hour", "")}</span>}
+                      </>
+                    )}
                   </div>
+
+                  {get(Address, "socialMedia", [])?.length > 0 && (
+                    <div className="mt-4 follow">
+                      <h5>Follow us</h5>
+                      {get(Address, "socialMedia", [])?.map((media, i) => {
+                        return (
+                          <Link href={media.handle} key={i}>
+                            <a
+                              href={media.handle}
+                              className={iconSetter(media.name)}
+                              aria-hidden="true"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            ></a>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
                 <div className="col-lg-2 col-md-3 col-xl-2 mx-auto mb-4 mt-2 ">
                   <h5 className="foot-tittle mb-4">About</h5>

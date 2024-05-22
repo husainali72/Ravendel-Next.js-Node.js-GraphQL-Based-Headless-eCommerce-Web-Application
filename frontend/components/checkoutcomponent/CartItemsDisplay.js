@@ -85,7 +85,7 @@ const CartItemsDisplay = ({cartItems, removeToCart, updateCartProductQuantity, c
                         </div>
                         <div className="itemContainer-base-sizeAndQty">
                             <div className="itemComponents-base-quantity">
-                            <label className="quantity-label">QTY : </label>
+                            <label className="quantity-label">Qty : </label>
                             <select
                                 id="quantitySelect"
                                 className="quantity-button"

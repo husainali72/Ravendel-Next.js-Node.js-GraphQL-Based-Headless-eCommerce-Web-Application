@@ -266,6 +266,7 @@ const fs = require("fs");
 const Jimp = require("jimp");
 const sharp = require("sharp");
 const Zipcode = require("../models/Zipcode");
+const ProductCat = require("../models/ProductCat");
 const imgType = ["original", "large", "medium", "thumbnail"];
 
 //const path = require("path");
@@ -464,8 +465,6 @@ const imageUnlink = async (imgObject) => {
       fs.unlink(imgObject, (err) => {
         if (err) {
           console.error('Error deleting image:', err);
-        } else {
-          console.log('Image deleted successfully');
         }
       });
     }
@@ -1010,6 +1009,7 @@ module.exports.emptyCart = emptyCart;
 
 const addZipcodes = async (zipcode_file, filepath, modal) => {
   try {
+    const zipcodeRegex = /^\S{4,}$/;
     let { filename, mimetype, encoding, createReadStream } = await zipcode_file.file;
     const stream = createReadStream();
 
@@ -1037,11 +1037,10 @@ const addZipcodes = async (zipcode_file, filepath, modal) => {
     if (fs.existsSync(path)) {
       let csvData = await readFile(path, { encoding: "utf8", flag: "r" });
       csvData = csvData.split(",");
-
+      const allZipCode = await modal.find({});
       for (let zipcode of csvData) {
-        if (zipcode.length >= 5 && zipcode.length <= 10) {
-          const existingZipcode = await modal.findOne({ zipcode });
-          if (!existingZipcode) {
+        if (zipcodeRegex.test(zipcode)) {
+          if (!allZipCode.some(item => item.zipcode === zipcode)) {
             const newZipcode = new modal({ zipcode });
             await newZipcode.save();
           }
@@ -2035,25 +2034,101 @@ function getBreadcrumb(data) {
 }
 module.exports.getBreadcrumb = getBreadcrumb
 
-const addCategoryAttributes = async (categories, specifications, modal) => {
-  const productAttributes = specifications.map(specification => specification.attributeId)
-  const productCategories = toObjectID(categories)
+const addCategoryAttributes = async (categoryTree, specifications, modal) => {
+  // get parent categories with their children
+  // get checked category of the product
+  const { parentChildren, checkedCategoryIDs } = getParentChildren(categoryTree, {}, [])
 
-  const bulkWriteQuery = [
-    {
-      updateMany: {
-        filter: { "_id": {$in: toObjectID(productCategories)} },
-        update: {
-          $addToSet: {
-            attributeIds: {
-              $each: productAttributes
+  const checkedCategories = await ProductCat.find({_id: toObjectID(checkedCategoryIDs)}).select("attributes")
+
+  // populate data for product attributes
+  // and update checked category attributes accordingly
+  for(let cat of checkedCategories) {
+    const productAttributes = cat.attributes
+
+    specifications.forEach(spec => {
+      if(!isEmpty(spec) && !isEmpty(spec.key) && !isEmpty(spec.value)) {
+        let attribute = productAttributes.find(prodAttr => prodAttr.attributeId.toString() === spec.attributeId.toString())
+        if(!attribute) {
+          attribute = {
+            attributeId: spec.attributeId,
+            name: spec.key,
+            values: [
+              {
+                attributeValueId: spec.attributeValueId,
+                value: spec.value
+              }
+            ]
+          }
+          productAttributes.push(attribute)
+        } else {
+          let attributeValue = attribute.values.find(attrValue => attrValue.attributeValueId.toString() === spec.attributeValueId.toString())
+          if(!attributeValue) {
+            attributeValue = {
+              attributeValueId: spec.attributeValueId,
+              value: spec.value
+            }
+            attribute.values.push(attributeValue)
+          }
+        }
+      }
+    })
+
+    const bulkWriteQuery = [
+      {
+        updateMany: {
+          filter: { "_id": {$in: toObjectID(cat._id)} },
+          update: {
+            $set: {
+              attributes: productAttributes
             }
           }
         }
       }
-    }
-  ]
-  await modal.bulkWrite(bulkWriteQuery)
+    ]
+    await modal.bulkWrite(bulkWriteQuery)
+  }
+
+  const parentIDs = Object.keys(parentChildren).reverse()
+  for(const parentID of parentIDs) {
+    const parentChildrenData = await ProductCat.find({parentId: toObjectID(parentID)}).select("attributes")
+    const categoryAttributes = [];
+    let attributeCountMap = new Map();
+    let totalCategories = parentChildrenData.length;
+
+    // Collecting attributes and their counts
+    parentChildrenData.forEach((cat) => {
+      cat.attributes.forEach((attribute) => {
+        if (!attributeCountMap.has(attribute.attributeId)) {
+          attributeCountMap.set(attribute.attributeId, {
+            attributeId: attribute.attributeId,
+            name: attribute.name,
+            values: [],
+            count: 0
+          });
+        }
+        let attributeData = attributeCountMap.get(attribute.attributeId);
+        attributeData.values.push(...attribute.values);
+        attributeData.count++;
+      });
+    });
+
+    // Filtering attributes present in all objects
+    attributeCountMap.forEach((attribute) => {
+      if (attribute.count === totalCategories) {
+        // Remove duplicates if needed
+        const uniqueValues = [...new Map(attribute.values.map(item => [item.attributeValueId, item])).values()];
+
+        categoryAttributes.push({
+          attributeId: attribute.attributeId,
+          name: attribute.name,
+          values: uniqueValues
+        });
+      }
+    });
+
+    await ProductCat.findByIdAndUpdate(parentID, {$set: {attributes: categoryAttributes}})
+  }
 }
 module.exports.addCategoryAttributes = addCategoryAttributes
 

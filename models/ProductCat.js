@@ -11,12 +11,7 @@ const ProductCatSchema = new Schema({
     type: Schema.ObjectId,
     default: null
   },
-  attributeIds: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "productattributes"
-    }
-  ],
+  attributes: [],
   url: {
     type: String
   },
@@ -25,6 +20,7 @@ const ProductCatSchema = new Schema({
   },
   // image: {},
   image: String,
+  thumbnail_image: String,
   meta: {
     title: {
       type: String

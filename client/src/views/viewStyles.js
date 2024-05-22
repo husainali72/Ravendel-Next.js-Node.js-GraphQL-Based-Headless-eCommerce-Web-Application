@@ -295,7 +295,10 @@ const viewStyles = makeStyles((theme) => ({
   },
   statusSelect: {
     marginTop: 25,
-    width: 300,
+    width: "100%",
+    display: "flex",
+    gap: "16px",
+    alignItems: "center",
   },
   fullWidth: {
     width: "100%",
@@ -604,7 +607,7 @@ const viewStyles = makeStyles((theme) => ({
     height: " 100%",
     width: "100%",
   },
-  settingTextField:{
+  settingTextField: {
     marginLeft: "20px !important",
   },
   iconSelect: {
@@ -640,34 +643,40 @@ const viewStyles = makeStyles((theme) => ({
     padding: "10px",
     borderRadius: "5px",
   },
-  marginRight:{
+  marginRight: {
     marginLeft: "10px !important",
   },
-  socialMediaContainer:{
-    display:'flex'
+  socialMediaContainer: {
+    display: "flex",
   },
-  socialMediaSelect:{
-    display: "flex", 
-    flexWrap: "wrap"
+  socialMediaSelect: {
+    display: "flex",
+    flexWrap: "wrap",
   },
-  socialMediaIconName:{
+  socialMediaIconName: {
     marginLeft: "20px !important",
   },
-  textTransformlowerCase:{
-    textTransform: "lowercase !important"
+  textTransformlowerCase: {
+    textTransform: "lowercase !important",
   },
-  SocialContainer:{
+  SocialContainer: {
     width: "300px",
-     minWidth: 10 
+    minWidth: 10,
   },
-  SocialCloseIcon:{
-    margin:"20px"
+  SocialCloseIcon: {
+    margin: "20px",
   },
   discountAmount: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
   },
+  noImage: {
+    width: "50px",
+  },
+  emailText:{
+textTransform:'lowerCase !important'
+  }
 }));
 
 export default viewStyles;

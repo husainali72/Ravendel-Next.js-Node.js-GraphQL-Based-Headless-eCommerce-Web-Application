@@ -165,7 +165,7 @@ const InventoryComponent = () => {
                   </Box>
                 </>
               )}
-              <Box component="div">
+              {/* <Box component="div">
                 <SettingTextInput
                   value={get(inventory, "out_of_stock_threshold", 1)}
                   label="Out of stock threshold"
@@ -176,7 +176,7 @@ const InventoryComponent = () => {
                     });
                   }}
                 />
-              </Box>
+              </Box> */}
             </SettingBlock>
           ) : null}
           {get(inventory, "manage_stock") && (

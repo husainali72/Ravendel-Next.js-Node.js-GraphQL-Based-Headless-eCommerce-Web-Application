@@ -12,6 +12,9 @@ module.exports = {
         }
         let output = {};
         output.parentCategories = await productCategory.find({ parentId: null });
+        output.parentCategories.forEach(cat => {
+          cat.thumbnail_image = cat.image;
+        })
         output.sections = [];
 
         let sections;
@@ -92,11 +95,17 @@ module.exports = {
                     }
                   },
                   {
+                    $addFields: {
+                      products: { $slice: ["$products", 10] }
+                    }
+                  },
+                  {
                     $unset: "categoryIdString"
                   }       
                 ];
                 
-                let data = await productCategory.aggregate(pipeline);                
+                let data = await productCategory.aggregate(pipeline);    
+
                 output_section.name = data[0].name
                 output_section.products = data[0].products
 

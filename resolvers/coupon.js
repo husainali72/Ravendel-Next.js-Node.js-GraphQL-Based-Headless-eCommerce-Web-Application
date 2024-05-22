@@ -52,6 +52,7 @@ module.exports = {
         category: args.category,
         includeCategories: args.includeCategories,
         excludeCategories: args.excludeCategories,
+        categoryTree: args.categoryTree
       };
       let validation = ["code", "expire"];
       const duplicate = await duplicateData({code: data.code}, Coupon)
@@ -82,6 +83,7 @@ module.exports = {
         category: args.category,
         includeCategories: args.includeCategories,
         excludeCategories: args.excludeCategories,
+        categoryTree: args.categoryTree
       };
       let validation = ["code", "expire"];
       const duplicate = await duplicateData({code: data.code }, Coupon, args.id)

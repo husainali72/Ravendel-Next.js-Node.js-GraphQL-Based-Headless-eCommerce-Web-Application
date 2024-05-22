@@ -153,12 +153,6 @@ const SeetingSchema = new Schema(
         low_stock_threshold: {
           type: Number,
         },
-        out_of_stock_threshold: {
-          type: Number,
-        },
-        out_of_stock_visibility: {
-          type: Boolean,
-        },
         stock_display_format: {
           type: String,
         },
@@ -397,6 +391,9 @@ const SeetingSchema = new Schema(
         },
         logo: {
           type: String
+        },
+        placeholder_image: {
+          type: String
         }
       },
     },
@@ -504,8 +501,6 @@ module.exports.createSettings = async () => {
         },
         notification_recipients: "abc@gmail.com, xyz@gmail.com",
         low_stock_threshold: 5,
-        out_of_stock_threshold: 1,
-        out_of_stock_visibility: true,
         stock_display_format: "1",
         left_quantity: "0"
       },
@@ -623,7 +618,8 @@ module.exports.createSettings = async () => {
         primary_color: "#154050",
         playstore: "https://play.google.com/store/apps/details?id=com.ravendel",
         appstore: "https://apps.apple.com/us/app/ravendel/id1351162341",
-        logo: ""
+        logo: "",
+        placeholder_image: ""
       },
       mobile: {
         slider: [
@@ -659,7 +655,7 @@ module.exports.createSettings = async () => {
           //   url: "product_recommendation",
           // },
           {
-            label: "Product from Specific Categories",
+            label: "Product from Specific Category",
             section_img: "",
             visible: false,
             url: "product_from_specific_categories",

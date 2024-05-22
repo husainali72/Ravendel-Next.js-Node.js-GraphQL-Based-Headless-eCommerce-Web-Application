@@ -26,6 +26,7 @@ const BillingDetails = (props) => {
     errorRef,
     billingInfo,
     handleZipCode,
+    checkCode,
     ZipMessage,
     shippingAddressToggle,
     handleShippingChange,
@@ -33,13 +34,11 @@ const BillingDetails = (props) => {
     shippingInfo,
     handlePhoneInput,
     handleBillingInfo,
+    setZipMessage
   } = props;
-
   const addressTypeOptions = [
-    { value: "Home Address", label: "Home Address" },
-    { value: "Work Address", label: "Work Address" },
-    { value: "Office Address", label: "Office Address" },
-    { value: "Shop Address", label: "Shop Address" },
+    { value: "homeAddress", label: "Home Address" },
+    { value: "officeAddress", label: "Office Address" },
   ];
 
   const customStyles = {
@@ -175,11 +174,11 @@ const BillingDetails = (props) => {
                 placeholder="email *"
                 registerRef={registerRef("email", {
                   required: {
-                    value: !get(billingInfo,'email'),
+                    value: !get(billingInfo, "email"),
                     message: emailErrorMessage,
                   },
                   validate: () => {
-                    return validateEmail(get(billingInfo,'email'));
+                    return validateEmail(get(billingInfo, "email"));
                   },
                 })}
                 errors={errorRef}
@@ -201,7 +200,9 @@ const BillingDetails = (props) => {
               },
             })}
             value={billingInfo.address}
-            onChange={handleBillingInfo}
+            onChange={(e) => {
+              handleBillingInfo(e);
+            }}
             onKeyDown={(e) => handleEnter(e)}
             errors={errorRef}
           />
@@ -287,9 +288,19 @@ const BillingDetails = (props) => {
               <InputField
                 className="input-filled"
                 type="text"
-                required=""
-                label="zip"
                 name="zip"
+                handleBlur={(e) => {
+                  if (!shippingAdd && billingInfo?.zip) {
+                    checkCode(billingInfo.zip);
+                  }else{
+                    if(!shippingAdd){
+                    setZipMessage({
+                      ...ZipMessage,
+                      zipMessage: "",
+                      zipSuccess: false,
+                    });}
+                  }
+                }}
                 placeholder="Zip *"
                 {...registerRef("zip", {
                   required: {
@@ -301,24 +312,32 @@ const BillingDetails = (props) => {
                 onChange={handleZipCode}
                 onKeyDown={(e) => handleEnter(e)}
               />
-              <p>
-                <small
-                  style={{ color: ZipMessage.zipSuccess ? "#4BB543" : "red" }}
-                >
-                  {ZipMessage.zipMessage}
-                </small>
-              </p>
+              {!shippingAdd && (
+                <p>
+                  <small
+                    style={{ color: ZipMessage.zipSuccess ? "#4BB543" : "red" }}
+                  >
+                    {ZipMessage.zipMessage}
+                  </small>
+                </p>
+              )}
+              {!ZipMessage.zipMessage && (
+                <ErrorMessage message={getErrorMessage(errorRef, "zip")} />
+              )}
             </div>
             <div className="col-lg-6 col-md-12">
               <Controller
                 name="addressType"
                 control={control}
                 rules={{
-                  required:  "Address Type is Required",
+                  required: "Address Type is Required",
                 }}
                 render={({ field: { onChange, value, ref } }) => (
                   <Select
-                    value={billingInfo?.addressType}
+                    value={addressTypeOptions?.find(
+                      (addressType) =>
+                        addressType?.value === billingInfo?.addressType
+                    )}
                     placeholder="Address Type"
                     name="blog_tag"
                     options={addressTypeOptions}
@@ -343,27 +362,6 @@ const BillingDetails = (props) => {
               </p>
             </div>
           </div>
-
-          <div className="form-group">
-            <div className="checkbox">
-              <div className="custome-checkbox">
-                <input
-                  className="form-check-input-create-account"
-                  type="checkbox"
-                  name="checkbox"
-                  id="createaccount"
-                />
-                <label
-                  className="form-check-label label_info"
-                  data-target="#collapsePassword"
-                  aria-controls="collapsePassword"
-                >
-                  <span>Create an account?</span>
-                </label>
-              </div>
-            </div>
-          </div>
-
           <div className="ship_detail">
             <div className="form-group">
               <div className="chek-form custome-checkbox">
@@ -452,9 +450,9 @@ const BillingDetails = (props) => {
                       rules={{
                         required: {
                           value: shippingAdd
-                            ? (get(billingInfo, "phone")
+                            ? get(billingInfo, "phone")
                               ? false
-                              : true)
+                              : true
                             : false,
                           message: "Phone number is Required",
                         },
@@ -467,7 +465,9 @@ const BillingDetails = (props) => {
 
                           // Add '91' to the cleaned phone number
                           const formattedPhoneNumber = `+${cleanedPhoneNumber}`;
-                          return shippingAdd?(isValidPhoneNumber(formattedPhoneNumber)):true;
+                          return shippingAdd
+                            ? isValidPhoneNumber(formattedPhoneNumber)
+                            : true;
                         },
                       }}
                       render={({ field: { onChange, value } }) => (
@@ -497,11 +497,11 @@ const BillingDetails = (props) => {
                       placeholder="email *"
                       registerRef={registerRef("shippingemail", {
                         required: {
-                          value: !get(shippingInfo,'email'),
+                          value: !get(shippingInfo, "email"),
                           message: emailErrorMessage,
                         },
                         validate: () => {
-                          return validateEmail(get(shippingInfo,'email'));
+                          return validateEmail(get(shippingInfo, "email"));
                         },
                       })}
                       value={shippingInfo?.email}
@@ -542,15 +542,19 @@ const BillingDetails = (props) => {
                   placeholder="Address Line 2"
                   {...registerRef("shippingaddressLine2", {
                     required: {
-                      value: shippingAdd? (get(shippingInfo,'addressLine2') ? false : true):false,
+                      value: shippingAdd
+                        ? get(shippingInfo, "addressLine2")
+                          ? false
+                          : true
+                        : false,
                       message: "Address is Required",
                     },
                   })}
-                  value={get(shippingInfo,'addressLine2')}
+                  value={get(shippingInfo, "addressLine2")}
                   onChange={handleShippingChange}
                   onKeyDown={(e) => handleEnter(e)}
                 />
-                  <ErrorMessage
+                <ErrorMessage
                   message={getErrorMessage(errorRef, "shippingaddressLine2")}
                 />
                 <div className="twoRows">
@@ -575,9 +579,9 @@ const BillingDetails = (props) => {
                       onChange={handleShippingChange}
                       onKeyDown={(e) => handleEnter(e)}
                     />
-                      <ErrorMessage
-                  message={getErrorMessage(errorRef, "shippingcity")}
-                />
+                    <ErrorMessage
+                      message={getErrorMessage(errorRef, "shippingcity")}
+                    />
                   </div>
                   <div className="col-lg-4 col-md-12">
                     <InputField
@@ -600,9 +604,9 @@ const BillingDetails = (props) => {
                       onChange={handleShippingChange}
                       onKeyDown={(e) => handleEnter(e)}
                     />
-                      <ErrorMessage
-                  message={getErrorMessage(errorRef, "shippingstate")}
-                />
+                    <ErrorMessage
+                      message={getErrorMessage(errorRef, "shippingstate")}
+                    />
                   </div>
 
                   <div className="col-lg-4 col-md-12">
@@ -626,12 +630,11 @@ const BillingDetails = (props) => {
                       onChange={handleShippingChange}
                       onKeyDown={(e) => handleEnter(e)}
                     />
-                      <ErrorMessage
-                  message={getErrorMessage(errorRef, "shippingcountry")}
-                />
+                    <ErrorMessage
+                      message={getErrorMessage(errorRef, "shippingcountry")}
+                    />
                   </div>
                 </div>
-
                 <div className="twoRows">
                   <div className="col-lg-6 col-md-12">
                     <InputField
@@ -641,6 +644,17 @@ const BillingDetails = (props) => {
                       label="zip"
                       name="zip"
                       placeholder="Zip *"
+                      handleBlur={(e) => {
+                        if (shippingInfo?.zip) {
+                          checkCode(shippingInfo?.zip);
+                        }else{
+                          setZipMessage({
+                            ...ZipMessage,
+                            zipMessage: "",
+                            zipSuccess: false,
+                          });
+                        }
+                      }}
                       {...registerRef("shippingzip", {
                         required: {
                           value: shippingAdd
@@ -656,18 +670,19 @@ const BillingDetails = (props) => {
                       onKeyDown={(e) => handleEnter(e)}
                     />
                     <p>
-                      <small style={{ color: "red" }}>
-                        {errorRef.shippingzip?.type === "required"
-                          ? errorRef.shippingzip?.message
-                          : ""}
-                        {errorRef.shippingzip?.type === "minLength"
-                          ? errorRef.shippingzip?.message
-                          : ""}
-                        {errorRef.shippingzip?.type === "maxLength"
-                          ? errorRef.shippingzip?.message
-                          : ""}
+                      <small
+                        style={{
+                          color: ZipMessage.zipSuccess ? "#4BB543" : "red",
+                        }}
+                      >
+                        {ZipMessage.zipMessage}
                       </small>
                     </p>
+                    {!ZipMessage.zipMessage && (
+                      <ErrorMessage
+                        message={getErrorMessage(errorRef, "shippingzip")}
+                      />
+                    )}
                   </div>
                   <div className="col-lg-6 col-md-12">
                     <Controller
@@ -678,7 +693,10 @@ const BillingDetails = (props) => {
                       }}
                       render={({ field: { onChange, value, ref } }) => (
                         <Select
-                          value={shippingInfo.addressType}
+                          value={addressTypeOptions?.find(
+                            (addressType) =>
+                              addressType?.value === shippingInfo?.addressType
+                          )}
                           placeholder="Address Type"
                           name="addressType"
                           options={addressTypeOptions}
@@ -691,29 +709,13 @@ const BillingDetails = (props) => {
                         />
                       )}
                     />
-                  <ErrorMessage
-                  message={getErrorMessage(errorRef, "shippingAddressType")}
-                />
+                    <ErrorMessage
+                      message={getErrorMessage(errorRef, "shippingAddressType")}
+                    />
                   </div>
                 </div>
               </div>
             </Collapse>
-          </div>
-
-          <div style={{ marginBottom: "12px", marginTop: "26px" }}>
-            <h5>Additional information</h5>
-          </div>
-          <div className="form-group mb-30">
-            <textarea
-              rows="2"
-              placeholder="Order notes"
-              className="input-filled"
-              type="text"
-              name="order_notes"
-              label="notes"
-              value={billingInfo.order_notes}
-              onChange={handleBillingInfo}
-            ></textarea>
           </div>
         </div>
       </div>
