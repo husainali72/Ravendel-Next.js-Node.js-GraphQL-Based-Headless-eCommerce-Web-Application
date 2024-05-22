@@ -1,31 +1,31 @@
 import gql from "graphql-tag";
 
 export const ADD_CUSTOMER = gql`
-       mutation (
-         $firstName: String,
-         $lastName: String, 
-         $email: String, 
-         $company: String,
-         $phone: String,
-         $password: String)
-          {
-            addCustomer(
-              firstName: $firstName,
-              lastName: $lastName,
-              email: $email,
-              company: $company,
-              phone: $phone,
-              password: $password
-                      ) {
-                          message
-                          success
-                          __typename
-                          }
-}
+  mutation (
+    $firstName: String
+    $lastName: String
+    $email: String
+    $company: String
+    $phone: String
+    $password: String
+  ) {
+    addCustomer(
+      firstName: $firstName
+      lastName: $lastName
+      email: $email
+      company: $company
+      phone: $phone
+      password: $password
+    ) {
+      message
+      success
+      __typename
+    }
+  }
 `;
 
 export const GET_CUSTOMERS = gql`
-  query{
+  query {
     customers {
       data {
         id
@@ -46,24 +46,24 @@ export const GET_CUSTOMERS = gql`
   }
 `;
 export const GET_CUSTOMER_QUERY = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     customer(id: $id) {
-      data{
-      id
-      firstName
-      lastName
-      email
-      company
-      phone
-      addressBook
-      date
-      updated
+      data {
+        id
+        firstName
+        lastName
+        email
+        company
+        phone
+        addressBook
+        date
+        updated
       }
     }
   }
 `;
 export const ADD_ADDRESSBOOK = gql`
-  mutation(
+  mutation (
     $id: ID!
     $firstName: String
     $lastName: String
@@ -75,6 +75,7 @@ export const ADD_ADDRESSBOOK = gql`
     $country: String
     $state: String
     $pincode: String
+    $addressType: ADDRESS_TYPE
     $defaultAddress: Boolean
   ) {
     addAddressBook(
@@ -89,6 +90,7 @@ export const ADD_ADDRESSBOOK = gql`
       country: $country
       state: $state
       pincode: $pincode
+      addressType: $addressType
       defaultAddress: $defaultAddress
     ) {
       message
@@ -99,7 +101,7 @@ export const ADD_ADDRESSBOOK = gql`
 `;
 
 export const UPDATE_CUSTOMER = gql`
-  mutation(
+  mutation (
     $id: ID!
     $firstName: String
     $lastName: String
@@ -122,7 +124,7 @@ export const UPDATE_CUSTOMER = gql`
 `;
 
 export const UPDATE_ADDRESSBOOK = gql`
-  mutation(
+  mutation (
     $id: ID!
     $_id: ID!
     $firstName: String
@@ -135,6 +137,7 @@ export const UPDATE_ADDRESSBOOK = gql`
     $country: String
     $state: String
     $pincode: String
+    $addressType: ADDRESS_TYPE
     $defaultAddress: Boolean
   ) {
     updateAddressBook(
@@ -150,6 +153,7 @@ export const UPDATE_ADDRESSBOOK = gql`
       country: $country
       state: $state
       pincode: $pincode
+      addressType: $addressType
       defaultAddress: $defaultAddress
     ) {
       message
@@ -159,26 +163,24 @@ export const UPDATE_ADDRESSBOOK = gql`
 `;
 
 export const DELETE_ADDRESSBOOK = gql`
-mutation($id: ID!, $_id: ID!) {
-  deleteAddressBook(id: $id, _id: $_id) {
-    message
-    success
+  mutation ($id: ID!, $_id: ID!) {
+    deleteAddressBook(id: $id, _id: $_id) {
+      message
+      success
+    }
   }
-}
 `;
 
-
 export const GET_ORDER_BY_CUSTOMER = gql`
-query ($id:ID!){
-  cartbyUser(userId: $id) {
-    date
-    id
-    products
-    status
-    total
-    updated
-    userId
+  query ($id: ID!) {
+    cartbyUser(userId: $id) {
+      date
+      id
+      products
+      status
+      total
+      updated
+      userId
+    }
   }
-
-}
 `;

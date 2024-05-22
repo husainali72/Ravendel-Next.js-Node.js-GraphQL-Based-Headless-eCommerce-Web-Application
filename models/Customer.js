@@ -51,8 +51,8 @@ const CustomerSchema = new Schema({
       },
       addressType: {
         type: String,
-        enum: ["homeAddress", "officeAddress"],
-        default: 'homeAddress'
+        enum: ["Home", "Office"],
+        default: 'Home'
       },
       city: {
         type: String,

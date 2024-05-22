@@ -41,7 +41,6 @@ const GalleryImagesComponents = (props) => {
   const router = useRouter();
   const [available, setavailable] = useState(true);
   const [Lable, setLable] = useState("In Stock");
-  const [error, seterror] = useState(false);
   const cart = useSelector((state) => state.cart);
   const [singleproduct, setSingleproduct] = useState(singleProducts);
   const [selectedAttributes, setSelectedAttributes] = useState([]);
@@ -71,7 +70,6 @@ const GalleryImagesComponents = (props) => {
   const getSelectedAttributes = (attributes) => {
     setSelectedAttributes(attributes);
   };
-
   useEffect(() => {
     if (session?.status === "authenticated") {
       const accessToken = get(session, "data.user.accessToken");
@@ -125,7 +123,6 @@ const GalleryImagesComponents = (props) => {
   };
 
   const isProductInCart = (product, inCartProducts) => {
-    console.log(inCartProducts, product);
     return inCartProducts?.some((inCartProduct) => {
       const productIdMatch = product?._id === get(inCartProduct, "productId");
       return productIdMatch;
@@ -133,14 +130,6 @@ const GalleryImagesComponents = (props) => {
   };
   const addToCartProduct = async (product) => {
     const isUserAuthenticated = session?.status === "authenticated";
-    const hasAttributesMismatch =
-      get(singleProducts, "attributes")?.length > 0 &&
-      selectedAttributes?.length !== get(singleProducts, "attributes")?.length;
-    if (hasAttributesMismatch) {
-      seterror(true);
-      return;
-    }
-    seterror(false);
     if (isUserAuthenticated) {
       const cartProducts = get(cart, "cartItems", []);
       const productInCart = isProductInCart(product, cartProducts);
@@ -213,14 +202,12 @@ const GalleryImagesComponents = (props) => {
                 cart.
               </p>
             )}
-            {console.log(get(singleproduct, "variations"), get(singleproduct, "attributes"))}
             {
               (get(singleproduct, "variations") && get(singleproduct, "variations")?.length > 0) || (get(singleproduct, "attributes") && get(singleproduct, "attributes")?.length > 0) ?
               <div className="varaint-select">
                 <AttributeSelector
                   variations={get(singleproduct, "variations", [])}
                   attributes={get(singleproduct, "attributes", [])}
-                  error={error}
                   getSelectedAttributes={getSelectedAttributes}
                 />
               </div>

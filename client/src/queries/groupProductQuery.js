@@ -74,6 +74,7 @@ const GET_GROUP_PRODUCT = gql`query Query($groupId: ID!) {
           attributeId
           attributeValueId
         }
+        productUrl
         productId
       }
       productIds
