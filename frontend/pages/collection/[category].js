@@ -7,6 +7,7 @@ import { ARRAY, CHOICE, LIMIT } from "../../components/categoryFilter/constant";
 import SubCategoryProducts from "../../components/category/subCategories";
 import ParentCategories from "../../components/category/parentCategories";
 import { clearAllFilter } from "../../components/categoryFilter/component/urlFilter";
+import Meta from "../../components/Meta";
 
 const SingleCategoryProduct = () => {
   const productFilterData = useSelector((state) => state.products);
@@ -109,9 +110,10 @@ const SingleCategoryProduct = () => {
     setFilterPayload({ ...variable });
     clearAllFilter(router)
   }
+  const {title,description,keywords}=get(filteredProductData,'mostParentCategoryData.meta',{})
   return (
     <div>
-      {/* <Meta title={singlecategory?.meta?.title} description={singlecategory?.meta?.description} keywords={singlecategory?.meta?.keywords}/> */}
+      <Meta title={title} description={description} keywords={keywords}/>
       {/* <PageTitle title={"Collection"} /> */}
       {get(filteredProductData, "isMostParentCategory") ? (
         <ParentCategories
