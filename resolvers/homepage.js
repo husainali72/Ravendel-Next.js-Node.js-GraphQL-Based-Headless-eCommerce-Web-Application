@@ -12,9 +12,9 @@ module.exports = {
         }
         let output = {};
         output.parentCategories = await productCategory.find({ parentId: null });
-        output.parentCategories.forEach(cat => {
-          cat.thumbnail_image = cat.image;
-        })
+        // output.parentCategories.forEach(cat => {
+        //   cat.thumbnail_image = cat.image;
+        // })
         output.sections = [];
 
         let sections;
