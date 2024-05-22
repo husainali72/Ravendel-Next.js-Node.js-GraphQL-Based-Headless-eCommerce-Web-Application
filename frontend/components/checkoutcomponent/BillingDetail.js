@@ -209,17 +209,10 @@ const BillingDetails = (props) => {
                 errors={errorRef}
               />
               <InputField
-                errors={errorRef}
                 className="input-filled"
                 name="addressLine2"
                 label="address"
                 placeholder="Address Line 2"
-                {...registerRef("addressLine2", {
-                  required: {
-                    value: billingInfo.addressLine2 ? false : true,
-                    message: "Address is Required",
-                  },
-                })}
                 value={billingInfo?.addressLine2}
                 onChange={(e) => {
                   handleBillingInfo(e);
@@ -559,16 +552,6 @@ const BillingDetails = (props) => {
                   name="addressLine2"
                   label="addressLine2"
                   placeholder="Address Line 2"
-                  {...registerRef("shippingaddressLine2", {
-                    required: {
-                      value: shippingAdd
-                        ? get(shippingInfo, "addressLine2")
-                          ? false
-                          : true
-                        : false,
-                      message: "Address is Required",
-                    },
-                  })}
                   value={get(shippingInfo, "addressLine2")}
                   onChange={handleShippingChange}
                   onKeyDown={(e) => handleEnter(e)}

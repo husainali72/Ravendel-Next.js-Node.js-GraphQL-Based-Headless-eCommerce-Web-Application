@@ -292,6 +292,9 @@ export const CheckOut = () => {
         if (isAnyProductOutOfStock(cartItemList)) {
           router.push("/shopcart");
         }
+        if (cartItemList?.length <= 0) {
+          router.push("/");
+        }
         setCartItems([...cartItemList]);
         setCouponCardDetail({});
       } else {

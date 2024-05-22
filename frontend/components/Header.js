@@ -9,7 +9,7 @@ import { Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { useSession } from "next-auth/react";
 import { logoutDispatch } from "../redux/actions/userlogoutAction";
-import { logoutAndClearData } from "../utills/helpers";
+import { getItemFromLocalStorage, logoutAndClearData, query } from "../utills/helpers";
 import { getSettings } from "../redux/actions/settingAction";
 import { calculateUserCart } from "../redux/actions/cartAction";
 import { get } from "lodash";
@@ -20,10 +20,11 @@ import Search from "./globalSearch/globalSearch";
 import { useRouter } from "next/router";
 import { expiredTimeErrorMessage } from "./validationMessages";
 import AlertModal from "./alert/alertModal";
+import { GET_USER_CART_COUNT } from "../queries/cartquery";
 const SessionCheckInterval = 60000;
 const Header = ({ setOpenMenu }) => {
   const data = useSession();
-  const cartItem = useSelector((state) => state.cart.cartItems);
+  const cart = useSelector((state) => state.cart.cartItems);
   const addedCart = useSelector((state) => state.addedCart);
   const settings = useSelector((state) => state.setting);
   const dispatch = useDispatch();
@@ -31,8 +32,9 @@ const Header = ({ setOpenMenu }) => {
   const [timerId, setTimerId] = useState(null);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const isLogin = data?.status === "authenticated"
-  const router=useRouter()
+  const [cartItem, setCartItem] = useState(0);
+  const isLogin = data?.status === "authenticated";
+  const router = useRouter();
   useEffect(() => {
     checkSessionExpiration();
     const intervalId = setInterval(
@@ -56,7 +58,7 @@ const Header = ({ setOpenMenu }) => {
     }
   };
   const logOutUser = async () => {
-    await logoutAndClearData(dispatch,router);
+    await logoutAndClearData(dispatch, router);
     window.location.pathname = "/login";
   };
 
@@ -83,17 +85,30 @@ const Header = ({ setOpenMenu }) => {
     if (data?.status === "authenticated") {
       let id = get(data, "data.user.accessToken.customer._id");
       if (id) {
-        dispatch(calculateUserCart(id));
+        // dispatch(calculateUserCart(id));
+        console.log("fghfdjk,")
+        query(GET_USER_CART_COUNT,{userId:id})
+          .then((response) => {
+            let count = get(response, "data.getCartDetails.data.totalQuantity");
+            setCartItem(count);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       }
+    }else{
+      let item=getItemFromLocalStorage('cart')
+      console.log(item)
+      setCartItem(item?.length||0)
     }
   };
   useEffect(() => {
-    getCartLength();
     dispatch(getSettings());
-  }, [data]);
+    getCartLength();
+  }, [data?.status,cart]);
   const alertHandleConfirm = async () => {
     setShowModal(false);
-    await logoutAndClearData(dispatch,router);
+    await logoutAndClearData(dispatch, router);
   };
   return (
     <header className="header-area header-style-5 mt-0">
@@ -192,29 +207,29 @@ const Header = ({ setOpenMenu }) => {
         </Container>
       </div> */}
       <div className="header-bottom sticky-white-bg">
-      {showModal && (
-            <AlertModal
-              confirmAction={alertHandleConfirm}
-              icon="error"
-              title="Oops..."
-              text={expiredTimeErrorMessage}
-              showConfirmButton={true}
-              confirmButtonText="OK"
-              confirmButtonColor="#dc3545"
-              allowOutsideClick={false}
-            />
-          )}
+        {showModal && (
+          <AlertModal
+            confirmAction={alertHandleConfirm}
+            icon="error"
+            title="Oops..."
+            text={expiredTimeErrorMessage}
+            showConfirmButton={true}
+            confirmButtonText="OK"
+            confirmButtonColor="#dc3545"
+            allowOutsideClick={false}
+          />
+        )}
         <Container>
           <div className="header-container header-wrap">
             <div className="app-logo">
               <Link href="/">
                 <a>
-                <ProductImage
-                  src={get(settings, "setting.appearance.theme.logo")}
-                  className="logo-image"
-                  alt=""
-                />
-                </a>  
+                  <ProductImage
+                    src={get(settings, "setting.appearance.theme.logo")}
+                    className="logo-image"
+                    alt=""
+                  />
+                </a>
               </Link>
             </div>
             <div
@@ -244,55 +259,55 @@ const Header = ({ setOpenMenu }) => {
                   </li>
                 </ul>
               </nav>      */}
-              <NavBar setOpenMenu={setOpenMenu}/>
+              <NavBar setOpenMenu={setOpenMenu} />
               <div className="nav-actions">
-                <Search/>
+                <Search />
                 <div className="action-btn-wrapper">
-                    <div className="dropdown cart-btn">
-                      <Link href="/shopcart">
-                        <div className="add-to-cart-header">
-                          <a className="cart-icon action-btn">
-                            <SlHandbag />
-                          </a>
-                          <span className="pro-count blue">{cartItem?.length}</span>
-                        </div>
-                      </Link>
-                      <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
-                        <ShopCartProducts />
+                  <div className="dropdown cart-btn">
+                    <Link href="/shopcart">
+                      <div className="add-to-cart-header">
+                        <a className="cart-icon action-btn">
+                          <SlHandbag />
+                        </a>
+                        <span className="pro-count blue">
+                          {cartItem}
+                        </span>
                       </div>
-                      
+                    </Link>
+                    <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
+                      <ShopCartProducts />
                     </div>
-                    <div className="profile-btn">
-                      <a className="action-btn profile">
-                        <HiOutlineUserCircle/>
-                      </a>
-                      <div className="dropdown-content">
-                        {isLogin ? (
-                          <>
-                            <Link href='/account'>My Account</Link>
-                            <a onClick={logOutUser}>Logout</a>
-                          </>
-                          ):(
-                            <Link href='/login'>Login/Signup</Link>
-                          )
-                        }
-                      </div>
+                  </div>
+                  <div className="profile-btn">
+                    <a className="action-btn profile">
+                      <HiOutlineUserCircle />
+                    </a>
+                    <div className="dropdown-content">
+                      {isLogin ? (
+                        <>
+                          <Link href="/account">My Account</Link>
+                          <a onClick={logOutUser}>Logout</a>
+                        </>
+                      ) : (
+                        <Link href="/login">Login/Signup</Link>
+                      )}
                     </div>
-                    <div className="navigation-icon">
-                      <i
-                        className="fas fa-bars open-nav"
-                        id="openNav"
-                        onClick={() => OpenNav()}
-                      ></i>
-                      <i
-                        className="fas fa-times close-nav"
-                        id="closeNav"
-                        onClick={() => CloseNav()}
-                      ></i>
-                    </div>
+                  </div>
+                  <div className="navigation-icon">
+                    <i
+                      className="fas fa-bars open-nav"
+                      id="openNav"
+                      onClick={() => OpenNav()}
+                    ></i>
+                    <i
+                      className="fas fa-times close-nav"
+                      id="closeNav"
+                      onClick={() => CloseNav()}
+                    ></i>
                   </div>
                 </div>
               </div>
+            </div>
           </div>
         </Container>
       </div>
