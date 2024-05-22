@@ -239,7 +239,6 @@ module.exports.validateAndSetUrl = validateAndSetUrl;
 
 const UploadImageLocal = async (image, path, name) => {
   try {
-    console.log(image)
     let filename, createReadStream;
     let isBase64 = false;
     let buffer;
