@@ -105,7 +105,8 @@ function cartReducer(state = initialState, action) {
         .then((res) => {
           dispatch({ type: "ADDED_CART", payload: true });
           removeItemFromLocalStorage("cart");
-          // window.location.pathname = "/";
+          let pathName=getItemFromLocalStorage('previousPage')||'/'
+           router.push(pathName);
         })
         .catch((error) => {
           handleError(error, dispatch,router);
