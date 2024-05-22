@@ -123,10 +123,8 @@ export const CheckOut = () => {
   const [cartLoading, setCartLoading] = useState(false);
   const [isAddNewAddressForm, setIsAddNewAddressForm] = useState(false);
   const cart = useSelector((state) => state.cart);
-  const allProducts = useSelector((state) => state.products);
   useEffect(() => {
     getUserCartData();
-    dispatch(getAllProductsAction());
   }, []);
   useEffect(() => {
     setIsQuantityBtnLoading(get(cart, "loading"));
@@ -149,23 +147,16 @@ export const CheckOut = () => {
       let cartItemsArray = [];
       let allItem = [];
       get(cart, "cartItems", [])?.map((cart) => {
-        const originalProduct = allProducts?.products?.find(
-          (prod) => prod?._id === cart?.productId
-        );
-        const orginalAttributes = originalProduct?.variation_master?.find(
-          (prod) => prod?.id === cart?.variantId
-        );
         let cartProduct = {
           _id: get(cart, "productId", ""),
           variantId: get(cart, "variantId", ""),
           quantity: parseInt(get(cart, "qty")),
-          productQuantity: get(originalProduct, "quantity"),
+          productQuantity: get(cart, "productQuantity"),
           name: get(cart, "productTitle"),
           pricing: get(cart, "productPrice"),
-          price: get(originalProduct, "pricing.price"),
-          short_description: get(originalProduct, "short_description"),
+          short_description: get(cart, "short_description"),
           feature_image: get(cart, "productImage"),
-          url: get(originalProduct, "url"),
+          url: get(cart, "url"),
           attributes: get(cart, "attributes", []),
           shippingClass: get(cart, "shippingClass"),
           taxClass: get(cart, "taxClass"),
@@ -190,7 +181,7 @@ export const CheckOut = () => {
       setCartLoading(false);
     };
     getProducts();
-  }, [allProducts, get(cart, "cartItems")]);
+  }, [ get(cart, "cartItems")]);
 
   const updateCartProductQuantity = (item, updatedQuantity) => {
     // const isQuantityIncreased = cartItems?.find((cartItem) => {
