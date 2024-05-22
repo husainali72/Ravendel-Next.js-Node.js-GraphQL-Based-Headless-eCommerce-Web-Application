@@ -303,9 +303,7 @@ const EditProductComponent = ({ params }) => {
 
       if (category?.checked) {
         acc.push(filteredCategory);
-      }
-
-     else if (category?.children && category?.children?.length > 0) {
+      } else if (category?.children && category?.children?.length > 0) {
         filteredCategory.children = filterTreeData(category?.children);
         if (filteredCategory.children.length > 0) {
           acc.push(filteredCategory);
@@ -419,7 +417,17 @@ const EditProductComponent = ({ params }) => {
       let sellprice = get(product, "pricing.sellprice");
       if (price >= sellprice && sellprice <= price) {
         const filteredData = filterTreeData(get(product, "categoryTree", []));
-        let singleProductPayload = { ...product, categoryTree: filteredData };
+        let singleProductPayload = {
+          ...product,
+          categoryTree: filteredData,
+          shipping: {
+            ...product.shipping,
+            height: String(product.shipping?.height ?? ""),
+            width: String(product.shipping?.width ?? ""),
+            depth: String(product.shipping?.depth ?? ""),
+            weight: String(product.shipping?.weight ?? ""),
+          },
+        };
         if (productId) {
           singleProductPayload.update_gallery_image = gallery;
           dispatch(
@@ -700,10 +708,10 @@ const EditProductComponent = ({ params }) => {
           name: productToClone?.name && `${productToClone.name} copy`,
           specifications: groupedSpecifications,
           categoryId: categoryIds,
+          categoryTree: get(productToClone, "categoryTree", []),
           brand: defaultBrand || "",
           shipping,
         });
-
         if (productToClone.feature_image) {
           setfeatureImage(baseURl + productToClone.feature_image);
         } else {
@@ -1058,7 +1066,6 @@ const EditProductComponent = ({ params }) => {
               </Grid>
             </CardBlocks>
 
-
             {/* ===================Specifications=================== */}
 
             <CardBlocks title="Specifications">
@@ -1296,7 +1303,7 @@ const EditProductComponent = ({ params }) => {
               <Grid container spacing={isSmall ? 1 : 2}>
                 <Grid item md={6} xs={12}>
                   <TextInput
-                    value={product?.meta?.title}
+                    value={product?.meta?.title || ""}
                     label="Meta Title"
                     name="title"
                     onInputChange={onMetaChange}
@@ -1305,7 +1312,7 @@ const EditProductComponent = ({ params }) => {
 
                 <Grid item md={6} xs={12}>
                   <TextInput
-                    value={product?.meta?.keyword}
+                    value={product?.meta?.keywords || ""}
                     label="Meta Keywords"
                     name="keywords"
                     onInputChange={onMetaChange}
@@ -1314,7 +1321,7 @@ const EditProductComponent = ({ params }) => {
 
                 <Grid item xs={12}>
                   <TextInput
-                    value={product?.meta?.descriptio}
+                    value={product?.meta?.description || ""}
                     label="Meta Description"
                     name="description"
                     onInputChange={onMetaChange}
@@ -1328,42 +1335,21 @@ const EditProductComponent = ({ params }) => {
 
           <Grid item lg={3} md={12}>
             {/* ===================Clone=================== */}
-            <Box mb={1}>
-              <CardBlocks title="Clone Project" nomargin>
-                <Autocomplete
-                  disablePortal
-                  id="select-product"
-                  options={productsOptions}
-                  sx={{ width: 300 }}
-                  onChange={cloneProject}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Select product" />
-                  )}
-                />
-                {/* <FormControl variant="outlined" sx={{ width: "100%" }}>
-                  <InputLabel id="product">Select product</InputLabel>
-                  <Select
-                    label="Select product"
-                    labelId="Select product"
+            {!productId && (
+              <Box component="span" m={1}>
+                <CardBlocks title="Clone Product" >
+                  <Autocomplete
+                    disablePortal
                     id="select-product"
-                    name="product"
-                    // value={product?.specifications[index]?.customFields[secIndex].key}
-                    // value={get(product, `specifications[${index}].customFields[${secIndex}].key`, '')}
-                    // onChange={(e) => handleSpecificationKeyChange(e, index, secIndex)}
-                  >
-                    {productsOptions?.length > 0 ? (
-                      productsOptions.map((option) => (
-                        <MenuItem value={option?.value}>
-                          {option?.label}
-                        </MenuItem>
-                      ))
-                    ) : (
-                      <MenuItem value="">No products found</MenuItem>
+                    options={productsOptions}
+                    onChange={cloneProject}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Select product" />
                     )}
-                  </Select>
-                </FormControl> */}
-              </CardBlocks>
-            </Box>
+                  />
+                </CardBlocks>
+              </Box>
+            )}
             {/* ===================Status=================== */}
             <Box component="span">
               <CardBlocks title="Status" nomargin>
@@ -1412,7 +1398,7 @@ const EditProductComponent = ({ params }) => {
             <Box component="span" m={1}>
               <CardBlocks title="Featured Image">
                 <FeaturedImageComponent
-                name='feature_image'
+                  name="feature_image"
                   image={featureImage}
                   feautedImageChange={(e) => onFeatureImageChange(e)}
                 />
@@ -1421,7 +1407,7 @@ const EditProductComponent = ({ params }) => {
             {/* ===================Gallery Images=================== */}
             <Box component="span" m={1}>
               <CardBlocks title="Gallery Image">
-                {productId ? (
+                {productId || clonedId ? (
                   <EditGalleryImageSelection
                     onAddGalleryImage={(e) => {
                       var imagesRes = [...e.target.files];
@@ -1448,6 +1434,7 @@ const EditProductComponent = ({ params }) => {
                   <GalleryImageSelection
                     onAddGalleryImage={(e) => {
                       var imagesRes = [...e.target.files];
+
                       var images = [];
                       for (let i in imagesRes) {
                         if (get(imagesRes, [i])) {
