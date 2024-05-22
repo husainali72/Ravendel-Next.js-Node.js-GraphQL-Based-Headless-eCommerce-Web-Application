@@ -1920,7 +1920,9 @@ module.exports = {
             // console.log('fimage',args.feature_image);
             imgObject = await imageUpload(
               args.feature_image[0].file,
-              "assets/images/product/feature/", "productfeature"
+              "assets/images/product/feature/", 
+              "productfeature",
+              args.url
             );
 
             if (imgObject.success === false) {
@@ -1937,7 +1939,9 @@ module.exports = {
               console.log( args.gallery_image[i].file,' args.gallery_image[i].file')
               galleryObject = await imageUpload(
                 args.gallery_image[i].file,
-                "assets/images/product/gallery/", "productgallery"
+                "assets/images/product/gallery/", 
+                "productgallery",
+                args.url
               );
               if (galleryObject.success) {
                 imgArray.push(galleryObject.data);
@@ -2043,7 +2047,9 @@ module.exports = {
           if (args.update_feature_image) {
             imgObject = await imageUpload(
               args.update_feature_image[0].file,
-              "assets/images/product/feature/", "productfeature"
+              "assets/images/product/feature/", 
+              "productfeature",
+              args.url
             );
 
             if (imgObject.success === false) {
@@ -2064,7 +2070,9 @@ module.exports = {
             for (let i in args.update_gallery_image) {
               galleryObject = await imageUpload(
                 args.update_gallery_image[i].file,
-                "assets/images/product/gallery/", "productgallery"
+                "assets/images/product/gallery/", 
+                "productgallery",
+                args.url
               );
 
               if (galleryObject.success) {

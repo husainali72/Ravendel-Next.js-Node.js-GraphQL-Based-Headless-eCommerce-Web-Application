@@ -7,6 +7,7 @@ const { readFile } = require("fs").promises;
 const Setting = require("../models/Setting");
 const { uploadFile, FileDelete } = require("../config/aws");
 const multer = require('multer');
+const { Readable } = require('stream');
 const path = require('path');
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
@@ -238,10 +239,38 @@ module.exports.validateAndSetUrl = validateAndSetUrl;
 
 const UploadImageLocal = async (image, path, name) => {
   try {
+    console.log(image)
+    let filename, createReadStream;
+    let isBase64 = false;
+    let buffer;
 
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const { createReadStream, filename } = await image;
-    const stream = createReadStream();
+    if (typeof image === 'string' && image.startsWith('data:image')) {
+      // Handle Base64 input
+      const matches = image.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
+      if (matches) {
+        isBase64 = true;
+        buffer = Buffer.from(matches[2], 'base64');
+        filename = `.${matches[1]}`;
+      } else {
+        return resolve({
+          success: false,
+          message: "Invalid Base64 string"
+        });
+      }
+    } else {
+      // Handle regular file upload
+      ({ filename, createReadStream } = await image);
+    }
+
+    let stream;
+    if (isBase64) {
+      stream = new Readable();
+      stream.push(buffer);
+      stream.push(null);
+    } else {
+      stream = createReadStream();
+    }
     const imagePath = `${path}/${uniqueSuffix + filename}`;
     const fileStream = fs.createWriteStream(imagePath);
 
@@ -323,28 +352,46 @@ const jimpResize = (path, i, uploadPath, filename) => {
   });
 };
 
-const imageUpload = async (upload, uploadPath, nametype) => {
+const imageUpload = async (upload, uploadPath, nametype, imageName) => {
   const setting = await Setting.findOne({});
   if (setting?.imageStorage?.status === 's3') {
     return new Promise(async (resolve, reject) => {
       try {
-        let { filename, mimetype, encoding, createReadStream } = await upload;
+        let filename, createReadStream;
+        let isBase64 = false;
+        let buffer;
+
+        if (typeof upload === 'string' && upload.startsWith('data:image')) {
+          // Handle Base64 input
+          const matches = upload.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
+          if (matches) {
+            isBase64 = true;
+            buffer = Buffer.from(matches[2], 'base64');
+            filename = `.${matches[1]}`;
+          } else {
+            return resolve({
+              success: false,
+              message: "Invalid Base64 string"
+            });
+          }
+        } else {
+          // Handle regular file upload
+          ({ filename, createReadStream } = await upload);
+        }
+
+        filename = `${Date.now()}_${imageName}${filename.substring(filename.lastIndexOf("."))}`
 
         const extensions = ["gif", "jpeg", "jpg", "png", "webp", "svg"];
+        let ext = filename.split(".").pop().toLowerCase();
 
-        let ext = filename.split(".");
-        ext = ext.pop();
-        ext = ext.toLowerCase();
         if (!~extensions.indexOf(ext)) {
           return resolve({
             success: false,
             message: "This extension not allowed",
           });
         }
-        let stream = createReadStream();
 
         filename = slugify(filename, { lower: true, replacement: "-" });
-        filename = Date.now() + "-" + filename;
         let path = "." + uploadPath + filename;
 
         if (!fs.existsSync("." + uploadPath)) {
@@ -352,6 +399,15 @@ const imageUpload = async (upload, uploadPath, nametype) => {
             success: false,
             message: "Path does not exist",
           });
+        }
+
+        let stream;
+        if (isBase64) {
+          stream = new Readable();
+          stream.push(buffer);
+          stream.push(null);
+        } else {
+          stream = createReadStream();
         }
 
         stream
