@@ -11,7 +11,13 @@ import NoImagePlaceHolder from "../components/images/NoImagePlaceHolder.png";
 import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
 import moment from "moment";
-import { BANKTRANSFER, CASH_ON_DELIVERY, PAYPAL, RAZORPAY, STRIPE } from "./constant";
+import {
+  BANKTRANSFER,
+  CASH_ON_DELIVERY,
+  PAYPAL,
+  RAZORPAY,
+  STRIPE,
+} from "./constant";
 import notify from "./notifyToast";
 import { outOfStockMessage } from "../components/validationMessages";
 import { createCart } from "../redux/actions/cartAction";
@@ -116,14 +122,32 @@ export const queryWithoutToken = async (query, variables) => {
     });
     return Promise.resolve(response);
   } catch (error) {
+    console.log(error);
     return handleGraphQLErrors(error);
   }
 };
-export const logoutAndClearData = async (dispatch,router) => {
+export const mutationWithoutToken = async (query, variables) => {
+  try {
+    if (!variables.queryName) {
+      var response = await client.mutate({
+        mutation: query,
+        variables,
+      });
+    } else {
+      var response = await client.mutate({
+        mutation: query,
+        variables,
+      });
+    }
+    /////////////////////////////////////////////////////
+    return Promise.resolve(response);
+  } catch (error) {
+    return handleGraphQLErrors(error);
+  }
+};
+export const logoutAndClearData = async (dispatch, router) => {
   const data = await signOut({ redirect: false, callbackUrl: "/" });
-  const { pathname } = router || {};
   await removeItemFromLocalStorage("cart");
-  await setItemToLocalStorage("previousPage",pathname);
   await dispatch(logoutDispatch());
   window.location.pathname = "/login";
 };
@@ -160,10 +184,10 @@ export const currencySetter = (settings, setCurrency) => {
   const currency = get(settings, "currency", "usd") || settings;
   const currencySymbols = {
     usd: "$",
-    eur: '€',
-    gbp: '£',
+    eur: "€",
+    gbp: "£",
     cad: "CA$",
-    inr: '₹',
+    inr: "₹",
   };
   const selectedSymbol = currencySymbols[currency];
   if (selectedSymbol) setCurrency(selectedSymbol);
@@ -215,10 +239,10 @@ export const isVariantDiscount = (variantProduct) => {
 export const formatNumber = (value) => (value && !isNaN(value) ? value : "0");
 
 // ---------------------------------------------LocalStorage-------------------------
-export const getItemFromLocalStorage = (key) => {
+export const getItemFromLocalStorage = (key,defaultValue=[]) => {
   try {
     if (!localStorage.hasOwnProperty(key)) {
-      return []; // Key does not exist in localStorage
+      return defaultValue||[]; // Key does not exist in localStorage
     }
     const item = localStorage.getItem(key);
     return JSON.parse(item);
@@ -244,16 +268,15 @@ export const removeItemFromLocalStorage = (key) => {
   } catch (error) {}
 };
 
-export const formatDate = (date) => (
+export const formatDate = (date) =>
   new Date(date).toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-  })
-)
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
 
 export const convertDateToStringFormat = (date, setting) => {
   const selectedDateFormat = get(setting, "setting.general.date_format", "");
@@ -282,7 +305,7 @@ export const convertDateToStringFormat = (date, setting) => {
   return convertedDate;
 };
 
-export const handleError = (error, dispatch,router) => {
+export const handleError = (error, dispatch, router) => {
   const status = get(error, "extensions.code");
   if (status === 401) {
     logoutAndClearData(dispatch,router);
@@ -356,22 +379,26 @@ export const getPaymentMethodLabel = (paymentMethod) => {
   }
 };
 
-
-export const isCurrentCategory = (url,router) => {
+export const isCurrentCategory = (url, router) => {
   const { category } = router.query;
   return category === url;
 };
 
 export const isAnyProductOutOfStock = (products) => {
-  const outOfStockProduct = products?.some(product => !product.available);
+  const outOfStockProduct = products?.some((product) => !product.available);
   if (outOfStockProduct) {
-      notify(outOfStockMessage);
+    notify(outOfStockMessage);
   }
-  return outOfStockProduct; 
+  return outOfStockProduct;
 };
 
-
-export const loginCustomer = async (loginUser,setLoading,dispatch,router,setError) => {
+export const loginCustomer = async (
+  loginUser,
+  setLoading,
+  dispatch,
+  router,
+  setError
+) => {
   setLoading(true);
   try {
     const response = await signIn("credentials", {
@@ -425,7 +452,8 @@ export const loginCustomer = async (loginUser,setLoading,dispatch,router,setErro
       dispatch(createCart(id, products));
     }
     if (response.ok) {
-      let pathName=getItemFromLocalStorage('previousPage')||'/'
+      let pathName = getItemFromLocalStorage("previousPage",'/')
+      removeItemFromLocalStorage("previousPage");
       await router.push(pathName);
     }
   } catch (error) {

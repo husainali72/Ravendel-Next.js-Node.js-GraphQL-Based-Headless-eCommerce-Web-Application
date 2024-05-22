@@ -6862,3 +6862,10 @@ margin-bottom: 4px !important;
 .billing-container.cart-main-container{
   margin-top: 0;
 }
+.forgotPassword-container{
+  display: flex;
+  justify-content: center;
+}
+.reset-btn{
+  margin-left: 10px;
+}

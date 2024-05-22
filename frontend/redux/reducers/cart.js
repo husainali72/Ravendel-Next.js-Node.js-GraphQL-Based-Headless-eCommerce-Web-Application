@@ -19,6 +19,7 @@ import {
   SET_USER_CART,
   CART_LOADING,
   CART_FAILURE,
+  calculateUserCart,
 } from "../actions/cartAction";
 import { LOGGED_OUT } from "../actions/userlogoutAction";
 import { get } from "lodash";
@@ -104,6 +105,7 @@ function cartReducer(state = initialState, action) {
       mutation(ADD_CART, variables)
         .then((res) => {
           dispatch({ type: "ADDED_CART", payload: true });
+          dispatch(calculateUserCart(id));
           removeItemFromLocalStorage("cart");
           // window.location.pathname = "/";
         })
