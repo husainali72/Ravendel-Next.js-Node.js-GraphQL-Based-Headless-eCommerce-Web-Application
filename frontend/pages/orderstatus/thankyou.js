@@ -1,25 +1,40 @@
-/* eslint-disable no-unused-vars */
-
 import { Container } from "react-bootstrap";
-import BreadCrumb from "../../components/breadcrumb/breadcrumb";
-import PageTitle from "../../components/PageTitle";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import OrderDetailAfter from "../../components/account/component/OrderDetailAfter";
 import { useRouter } from "next/router";
 import { get } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
+import BreadCrumb from "../../components/breadcrumb/breadcrumb";
+import successImage from '../../components/images/orderSuccess.png'
 import {
   getSingleOrderAction,
   updatePaymentStatus,
 } from "../../redux/actions/orderAction";
-import { checkPaymentMethod } from "../../utills/helpers";
+import { checkPaymentMethod, currencySetter } from "../../utills/helpers";
+import ProductCard from "../../components/ProductCard";
+import TotalSummary from "../../components/TotalSummary";
+import DetailsCard from "../../components/cardcomponent/DetailsCard";
+import Link from "next/link";
 const ThankYou = () => {
   const session = useSession();
   const [singleOrderDetail, setSingleOrderDetail] = useState();
   const orderDetail = useSelector((state) => state.order);
   const router = useRouter();
   const dispatch = useDispatch();
+  const settings = useSelector((state) => state.setting);
+  const [currency, setCurrency] = useState("$");
+  // eslint-disable-next-line no-unused-vars
+  const [currencyOption, setCurrencyOption] = useState({});
+  useEffect(() => {
+    const currencyStoreOptions = get(
+      settings,
+      "setting.store.currency_options",
+      {}
+    );
+    setCurrencyOption({ ...currencyStoreOptions });
+    currencySetter(currencyStoreOptions, setCurrency);
+  }, [settings]);
+
   useEffect(() => {
     getOrderDetails();
   }, [session?.status]);
@@ -63,13 +78,76 @@ const ThankYou = () => {
 
   return (
     <div>
-      <PageTitle title="Order Status" />
       <BreadCrumb title={"Order Status"} />
       <Container>
         <div className="thankyou-page-container">
-          {" "}
-          <h1> Your order has been received.</h1>
-          <OrderDetailAfter orderInfo={singleOrderDetail} />
+          <div className="left-col">
+            <div className="success-head">
+              <img
+                src={successImage.src}
+                alt="success"
+              />
+              <h1>Order Placed Successfully</h1>
+            </div>
+            <ProductCard
+              cardItems={get(singleOrderDetail, 'products', [])}
+            />
+            <TotalSummary totalSummary={get(singleOrderDetail, 'totalSummary', {})} couponCartDetail={get(singleOrderDetail, 'couponCard', {})} />
+          </div>
+          <div className="right-col">
+            {
+                get(singleOrderDetail, 'billing') &&
+                <div className="order-address">
+                  <DetailsCard
+                    title="Billing Address"
+                    info={get(singleOrderDetail, 'billing', {})}
+                    type='order'
+                  />
+                </div>
+              }
+              {
+                get(singleOrderDetail, 'shipping') &&
+                <div className="order-address">
+                  <DetailsCard
+                    title="Shipping Address"
+                    info={get(singleOrderDetail, 'shipping', {})}
+                  />
+                </div>
+              }
+              <div className="order-address">
+                <div className="checkout-shipping-method">
+                  <div className="checkout-details-title">
+                    <h5>Shipping Details</h5>
+                  </div>
+                  <div className="checkout-shipping-address ">
+                    <div className="checkout-list-content">
+                      <b>Free Shipping</b>
+                      <p>{currency}0.00 (3-10 Business Days) </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="order-address">
+                <div className="checkout-shipping-method">
+                  <div className="checkout-details-title">
+                    <h5>Payment Datails</h5>
+                  </div>
+                  <div className="checkout-shipping-address ">
+                    <div className="checkout-list-content">
+                      <b>Payment Mode: {singleOrderDetail?.billing?.paymentMethod}</b>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          {/* <OrderDetailAfter orderInfo={singleOrderDetail} /> */}
+        </div>
+        <div className='btn-wrapper d-flex justify-content-center thankyou' style={{gap: '12px'}}>
+          <Link href='/'>
+            <a className="card-btons text-align-center outline">
+              <span className="text-align-center">GO TO HOME</span>
+            </a>
+          </Link>
         </div>
       </Container>
     </div>

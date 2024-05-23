@@ -13,6 +13,7 @@ const InputField = ( {
   onChange,
   handleBlur,
   disabled,
+  style
   // ...rest
 } ) => {
   return (
@@ -25,6 +26,7 @@ const InputField = ( {
         onBlur={handleBlur}
         value={value}
         name={name}
+        style={style}
         {...registerRef}
         onChange={( e ) => onChange( e, type )}
         disabled={disabled||false}
@@ -51,6 +53,7 @@ InputField.propTypes = {
   onChange: PropTypes.func.isRequired,
   handleBlur: PropTypes.func,
   disabled: PropTypes.bool,
+  style: PropTypes.object,
 };
 
 export default InputField;

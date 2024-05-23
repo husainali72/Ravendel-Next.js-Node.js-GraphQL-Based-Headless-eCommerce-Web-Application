@@ -461,3 +461,7 @@ export const loginCustomer = async (
     setError("Something went wrong");
   }
 };
+
+export function isObjectEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}

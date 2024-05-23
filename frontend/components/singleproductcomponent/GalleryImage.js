@@ -45,6 +45,7 @@ const GalleryImagesComponents = (props) => {
   const [singleproduct, setSingleproduct] = useState(singleProducts);
   const [selectedAttributes, setSelectedAttributes] = useState([]);
   const [itemInCart, setItemInCart] = useState(false);
+  const [showMagnifiedImage, setShowMagnifiedImage] = useState(false)
   const [id, setId] = useState("");
   const [token, setToken] = useState("");
   useEffect(() => {
@@ -178,11 +179,12 @@ const GalleryImagesComponents = (props) => {
     <>
       <div className="single-product row mb-50 single-product-container">
         <div className="single-product-image col-md-6 col-sm-12 col-xs-12">
-          <div className="singleroduct-gallery-slider">
-            <GalleryImageSlider galleryImages={galleryImages} />
+          <div className="singleroduct-gallery-slider" onMouseEnter={()=> setShowMagnifiedImage(true)} onMouseLeave={()=> setShowMagnifiedImage(false)}>
+            <GalleryImageSlider galleryImages={galleryImages} showMagnifiedImageState={[showMagnifiedImage, setShowMagnifiedImage]}/>
           </div>
         </div>
         <div className="single-product-detail col-md-6 col-sm-12 col-xs-12">
+          <div id='myPortal' className={`magnify-portal ${showMagnifiedImage ? 'active' : ''}`}></div>
           <div className="detail-info">
             <h2>{capitalize(get(singleproduct, "name"))}</h2>
             <div className="short-desc mb-30">

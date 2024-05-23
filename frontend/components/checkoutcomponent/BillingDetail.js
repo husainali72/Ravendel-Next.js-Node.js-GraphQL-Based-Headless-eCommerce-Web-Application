@@ -213,6 +213,7 @@ const BillingDetails = (props) => {
                 className="input-filled"
                 name="addressLine2"
                 label="address"
+                style={{marginBottom: '12px'}}
                 placeholder="Address Line 2"
                 {...registerRef("addressLine2", {
                   required: {
@@ -558,6 +559,7 @@ const BillingDetails = (props) => {
                   className="input-filled"
                   name="addressLine2"
                   label="addressLine2"
+                  // style={{marginBottom: '12px'}}
                   placeholder="Address Line 2"
                   {...registerRef("shippingaddressLine2", {
                     required: {
