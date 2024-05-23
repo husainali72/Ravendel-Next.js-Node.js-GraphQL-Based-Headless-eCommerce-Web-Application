@@ -4,17 +4,20 @@ import { emailErrorMessage } from "../../validationMessages";
 import { validateEmail } from "../../../utills/Validation";
 import { get } from "lodash";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
 import { mutationWithoutToken } from "../../../utills/helpers";
 import { SEND_FORGOT_PASSWORD_EMAIL } from "../../../queries/forgotPasswordQuery";
 import notify from "../../../utills/notifyToast";
 import PropTypes from "prop-types";
+import ProductImage from "../../imageComponent";
+import { useSelector } from "react-redux";
 const SendEmail = ({ token }) => {
   const [email, setEmail] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const settings = useSelector((state) => state.setting);
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm();
   const handleChange = (e) => {
@@ -50,15 +53,28 @@ const SendEmail = ({ token }) => {
       notify("An error occurred", false);
     }
   };
-  const resetEmail = () => {
-    reset()
-    setIsButtonDisabled(false);
-    setEmail("");
-  };
+  // const resetEmail = () => {
+  //   reset()
+  //   setIsButtonDisabled(false);
+  //   setEmail("");
+  // };
 
   return (
     <>
       <div className="forgotPassword-container">
+        <div className="mt-4">
+          <Link href="/">
+            <a>
+              <ProductImage
+                src={get(settings, "setting.appearance.theme.logo")}
+                className="logo-image"
+                alt=""
+              />
+            </a>  
+          </Link>
+          <h3 className="mt-4">Forgot Password</h3>
+          <p>Enter your email and we'll share a link to get back to your account.</p>
+        </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           {!token && (
             <>
@@ -79,18 +95,16 @@ const SendEmail = ({ token }) => {
                 onChange={handleChange}
                 errors={errors}
               />
+              <Link href="/login">
+                <a className="forgot-pasword-link">Back to login</a>
+              </Link>
+              
               <button
                 type="submit"
-                className="btn btn-primary mt-3 primary-btn-color"
+                className="btn btn-primary mt-4 primary-btn-color"
                 disabled={isButtonDisabled}
               >
                 Send Email
-              </button>
-              <button
-                className="btn btn-primary mt-3 primary-btn-color reset-btn"
-                onClick={resetEmail}
-              >
-                Reset
               </button>
             </>
           )}

@@ -648,7 +648,7 @@ background-color:var(--primary-color);
   background-color: #fff;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  z-index: 100;
 }
 
 .dropdown-content a {
@@ -859,7 +859,8 @@ background-color:var(--primary-color);
   /* background-color: #fafafa; */
   display: grid;
   grid-gap: 40px;
-  padding: 30px 0px;
+  padding: 0 0px;
+  /* padding-top: ; */
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   grid-auto-flow: column;
   grid-auto-columns: minmax(150px, 1fr);
@@ -1071,7 +1072,7 @@ background-color:var(--primary-color);
 
 .out-of-stock {
   color: #ff1212;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .category .card:hover img {
@@ -1141,6 +1142,9 @@ background-color:var(--primary-color);
   padding: 0;
   margin: 20px 0;
   margin-top: 0;
+}
+.home-page .product-cart-section{
+  margin-bottom: 5px;
 }
 .product-cart-section h5{
   margin-bottom: 30px !important;
@@ -1407,7 +1411,7 @@ footer .follow h5 {
 .percantage-save {
   padding-left: 0px;
   color: #FF2A2A;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   margin-left: 2px;
   min-width: 52px;
@@ -1415,7 +1419,7 @@ footer .follow h5 {
 
 .sale-price {
   margin: top 0%;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #1a1a1a !important;
 }
@@ -1426,16 +1430,19 @@ footer .follow h5 {
   font-weight: 400;
   color: #B3B3B3;
   text-decoration: line-through;
-  font-size: 13px;
+  font-size: 12px;
+}
+.on-sale-product-card .product-price{
+  width: 70%;
 }
 .on-sale-product-card .sale-price{
   display: inline-block;
-  max-width: 78px;
+  max-width: 57%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .on-sale-product-card .has-sale-price{
-  max-width: 60px;
+  max-width: 43%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -2632,16 +2639,15 @@ footer .btn:hover a {
   top: 10px;
   left: 0;
   bottom: unset;
-  background-color: rgba(0, 0, 0, .5);
   padding: 12px 0;
   gap: 14px;
   width: 115px;
 }
 .singleroduct-gallery-slider .slick-dots.slick-thumb::-webkit-scrollbar-thumb{
-  background-color: var(--primary-color);
+  background-color: rgba(0,0,0, 0.5);
 }
 .singleroduct-gallery-slider .slick-dots.slick-thumb::-webkit-scrollbar-track{
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .singleroduct-gallery-slider .slick-dots.slick-thumb li {
@@ -4769,14 +4775,17 @@ border-bottom: none !important;
 
 .out-of-stock-card {
   margin-bottom: 0px;
-  color: #ff1212;
-  font-size: 12px;
+  background-color: #ff1212;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 10px;
+  position: absolute;
+  top: 7px;
+  right: 7px;
   /* font-weight: bold; */
-  border: 1px solid rgba(255, 18, 18, 0.322);
-  border-radius: 2px;
   height: fit-content;
   padding: 2px 4px;
-  width: 60px;
+  width: fit-content;
   text-align: center;
 }
 
@@ -4876,6 +4885,7 @@ border-bottom: none !important;
 .zip-message {
   color: #dc3545;
   font-size: small;
+  margin-top: 6px;
 }
 
 .css-b62m3t-container {
@@ -5606,8 +5616,13 @@ text-align: start;
 .remeber-btn-margin{
 margin-top: 12px;
 }
-.forgot-pasword-link{
+.login-box .forgot-pasword-link{
   float: right;
+}
+.forgot-pasword-link{
+  color: var(--primary-color);
+  display: block;
+  font-size: 14px;
 }
 .login-btn{
   margin-top: 12px;
@@ -5994,7 +6009,6 @@ button.btn-outline-primary:hover{
   border-radius: 50%;
 }
 .address-card.active{
-  background-color: #F3FAF9;
   border: 1px solid var(--primary-color);
 }
 .address-card.active b{
@@ -6516,7 +6530,7 @@ margin-bottom: 4px !important;
   border-color: var(--primary-color);
   font-weight: 500;
   color: var(--primary-color);
-  background-color: #DCF0EF;
+  /* background-color: #DCF0EF; */
 }
 .zip-form{
   margin-top: 20px;
@@ -6761,7 +6775,13 @@ margin-bottom: 4px !important;
 }
 .search-page-title{
   text-align: center;
-  color: var(--primary-color);
+  color: #777777;
+  font-weight: 500 !important;
+  font-size: 16px !important;
+  margin-bottom: 40px;
+}
+.search-page-title span{
+  font-weight: 600;
 }
 .order-details-head{
   display: flex;
@@ -6900,6 +6920,23 @@ margin-bottom: 4px !important;
 .forgotPassword-container{
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  max-width: 560px;
+  margin: 0 auto;
+  margin-top: 30px;
+  gap: 10px;
+}
+.forgotPassword-container .form-control{
+  margin-bottom: 0px !important;
+}
+.forgotPassword-container h3{
+  color: var(--primary-color);
+}
+.forgotPassword-container p{
+  color: #636363;
+}
+.forgotPassword-container form{
+  width: 100%;
 }
 .reset-btn{
   margin-left: 10px;
@@ -6923,4 +6960,16 @@ margin-bottom: 4px !important;
 }
 .magnify-portal.active{
   top: 0;
+}
+.forget-password-container{
+  padding: 30px 0;
+  min-height: calc(100vh - 500px);
+  padding-bottom: 50px;
+}
+.search-page{
+  padding: 60px 0 ;
+}
+.search-pagination .pagination-container{
+  margin-top: 50px;
+  justify-content: center;
 }

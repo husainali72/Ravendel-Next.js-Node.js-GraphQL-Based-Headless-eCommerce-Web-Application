@@ -209,11 +209,11 @@ const Header = ({ setOpenMenu }) => {
             <div className="app-logo">
               <Link href="/">
                 <a>
-                <ProductImage
-                  src={get(settings, "setting.appearance.theme.logo")}
-                  className="logo-image"
-                  alt=""
-                />
+                  <ProductImage
+                    src={get(settings, "setting.appearance.theme.logo")}
+                    className="logo-image"
+                    alt=""
+                  />
                 </a>  
               </Link>
             </div>
