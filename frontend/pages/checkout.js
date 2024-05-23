@@ -23,36 +23,27 @@ import {
   queryWithoutToken,
 } from "../utills/helpers";
 import { useRouter } from "next/router";
-import Stripes from "../components/checkoutcomponent/reactstripe/StripeContainer";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
 import OrderSummary from "../components/checkoutcomponent/CheckOutOrderSummary";
-import Stepper from "../components/checkoutcomponent/stepperbar/Stepper";
 import {
   calculateUnauthenticatedCart,
   calculateUserCart,
   changeQty,
-  increaseQuantity,
-  removeCartItemAction,
 } from "../redux/actions/cartAction";
 import toast, { Toaster } from "react-hot-toast";
 import { CHECK_ZIPCODE } from "../queries/productquery";
-import { capitalize, get } from "lodash";
+import {  get } from "lodash";
 import Loading from "../components/loadingComponent";
 import Paypal from "../components/checkoutcomponent/paypal/paypal";
-import { PAYPAL, RAZORPAY } from "../utills/constant";
+import { PAYPAL } from "../utills/constant";
 import { handleOrderPlaced } from "../components/checkoutcomponent/handleOrder";
-import { getAllProductsAction } from "../redux/actions/productAction";
 import { DELETE_CART_PRODUCTS } from "../queries/cartquery";
-import { GET_CUSTOMER_ORDERS_QUERY } from "../queries/orderquery";
-import { ADD_ADDRESSBOOK, GET_CUSTOMER_QUERY } from "../queries/customerquery";
-
-const notify = (message, success) => {
-  if (success) {
-    return toast.success(message);
-  } else {
-    return toast.error(message);
-  }
-};
+import {
+  ADD_ADDRESSBOOK,
+  GET_CUSTOMER_QUERY,
+  UPDATE_ADDRESSBOOK,
+} from "../queries/customerquery";
+import notify from "../utills/notifyToast";
 
 var billingInfoObject = {
   order_notes: "",
@@ -69,7 +60,8 @@ var billingInfoObject = {
   paymentMethod: "",
   transaction_id: "",
   addressType: "",
-  _id:''
+  _id: "",
+  defaultAddress:false
 };
 var shippingObject = {
   order_notes: "",
@@ -84,12 +76,12 @@ var shippingObject = {
   firstname: "",
   country: "",
   addressType: "",
-  _id:''
+  _id: "",
+  defaultAddress:false
 };
 
 var savedShippingInfo;
 export const CheckOut = () => {
-
   const session = useSession();
   const dispatch = useDispatch();
   const [islogin, setIsLogin] = useState(false);
@@ -122,6 +114,7 @@ export const CheckOut = () => {
   const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false);
   const [cartLoading, setCartLoading] = useState(false);
   const [isAddNewAddressForm, setIsAddNewAddressForm] = useState(false);
+  const [isEditAddress, setIsEditAddress] = useState(false);
   const cart = useSelector((state) => state.cart);
   useEffect(() => {
     getUserCartData();
@@ -181,7 +174,7 @@ export const CheckOut = () => {
       setCartLoading(false);
     };
     getProducts();
-  }, [ get(cart, "cartItems")]);
+  }, [get(cart, "cartItems")]);
 
   const updateCartProductQuantity = (item, updatedQuantity) => {
     // const isQuantityIncreased = cartItems?.find((cartItem) => {
@@ -338,37 +331,47 @@ export const CheckOut = () => {
     reset,
     formState: { errors },
     control,
-    setError
+    setError,
   } = useForm({ mode: "onSubmit" });
-
   const onSubmit = (data) => {
-
-    const billingAddressType = !get(billingDetails, `billing.addressType`)
-    const shippingAddressType = shippingAdd&&!get(billingDetails, `shipping.addressType`)
-    if (!billingAddressType&&!shippingAddressType && ZipMessage && ZipMessage?.zipSuccess) {
+    const billingAddressType = !get(billingDetails, `billing.addressType`);
+    const shippingAddressType =
+      shippingAdd && !get(billingDetails, `shipping.addressType`);
+    if (
+      !billingAddressType &&
+      !shippingAddressType &&
+      ZipMessage &&
+      ZipMessage?.zipSuccess
+    ) {
       let isAddressAlready = get(billingDetails, "billing.id") ? true : false;
-
-      if (!isAddressAlready) {
+      if (!isAddressAlready&&isAddNewAddressForm) {
         addNewAddress();
+      }else if(isEditAddress){
+        updateCustomerAddress()
       } else {
         setIsAddNewAddressForm(false);
         nextFormStep();
       }
-    }else{
-      if(billingAddressType){
-        setError('addressType', {
+    } else {
+      if (billingAddressType) {
+        setError("addressType", {
           type: "required",
           message: `Address Type is required.`,
         });
       }
-      if(shippingAddressType){
-        setError('shippingAddressType', {
+      if (shippingAddressType) {
+        setError("shippingAddressType", {
           type: "required",
           message: `Address Type is required.`,
         });
       }
-      if(!isAddNewAddressForm&&!shippingAdd&&ZipMessage && ZipMessage?.zipSuccess){
-        notify(ZipMessage?.zipMessage,ZipMessage?.zipSuccess)
+      if (
+        !isAddNewAddressForm &&
+        !shippingAdd &&
+        ZipMessage &&
+        ZipMessage?.zipSuccess
+      ) {
+        notify(ZipMessage?.zipMessage, ZipMessage?.zipSuccess);
       }
     }
   };
@@ -377,10 +380,10 @@ export const CheckOut = () => {
     reset();
     let addresses = get(customer, "addressBook", []);
     if (addresses && 0 < addresses?.length) {
-      let defaultAddress = addresses?.find(
+      let customerDefaultAddress = addresses?.find(
         (address) => address?.defaultAddress
       );
-      defaultAddress = defaultAddress || addresses[0];
+      customerDefaultAddress = customerDefaultAddress || addresses[0];
       const {
         pincode,
         state,
@@ -393,7 +396,8 @@ export const CheckOut = () => {
         addressType,
         country,
         _id,
-      } = defaultAddress;
+        defaultAddress
+      } = customerDefaultAddress;
       let defaultAddressInfo = {
         zip: pincode || "",
         state: state || "",
@@ -407,12 +411,13 @@ export const CheckOut = () => {
         firstname: firstName || "",
         country: country || "",
         id: _id || "",
+        defaultAddress:defaultAddress||false
       };
 
       checkCode(get(defaultAddressInfo, "zip"));
       return defaultAddressInfo;
-    }else{
-      return billingInfoObject
+    } else {
+      return billingInfoObject;
     }
   };
   const prepareCartItemsList = (allCartItems) => {
@@ -436,7 +441,7 @@ export const CheckOut = () => {
         available: get(cart, "available"),
       };
       // if (cart.available) {
-        cartItemsList.push(cartProduct);
+      cartItemsList.push(cartProduct);
       // }
     });
     return cartItemsList;
@@ -489,7 +494,7 @@ export const CheckOut = () => {
   };
 
   const handleBillingInfo = (e, nm) => {
-    if(nm){
+    if (nm) {
       if (nm === "addressType") {
         if (!shippingAdd) {
           setShippingInfo({
@@ -500,9 +505,13 @@ export const CheckOut = () => {
         setBillingInfo({ ...billingInfo, [nm]: e?.value });
       } else if (nm === "paymentMethod") {
         setBillingInfo({ ...billingInfo, [nm]: e });
-      }  
-    }
-    else {
+      } else if (nm === "defaultAddress") {
+        setBillingInfo({
+          ...billingInfo,
+          [nm]: get(e, "target.checked", false),
+        });
+      }
+    } else {
       let { name, value } = get(e, "target");
       if (!shippingAdd && name !== "paymentMethod") {
         setShippingInfo({
@@ -554,7 +563,7 @@ export const CheckOut = () => {
   const shippingAddressToggle = (e) => {
     if (e?.target?.checked) {
       savedShippingInfo = shippingInfo;
-      setShippingInfo({...billingInfo,...shippingObject});
+      setShippingInfo({ ...billingInfo, ...shippingObject });
       setZipMessage({
         ...ZipMessage,
         zipMessage: "",
@@ -584,6 +593,8 @@ export const CheckOut = () => {
       country: address?.country || "",
       addressType: address?.addressType || "",
       id: address?._id || "",
+      _id:address?._id||'',
+      defaultAddress:address?.defaultAddress||false
     };
     let shipping = commonFields;
     let billing = {
@@ -595,7 +606,7 @@ export const CheckOut = () => {
       checkCode(get(address, "pincode", ""));
     }
     setBillingInfo(billing);
-    reset()
+    reset();
   };
   const doApplyCouponCode = async (e) => {
     e.preventDefault();
@@ -663,7 +674,7 @@ export const CheckOut = () => {
     }
   };
   const addNewAddress = async () => {
-    setLoading(true)
+    setLoading(true);
     let billingAddress = get(billingDetails, "billing");
     const {
       firstname,
@@ -689,12 +700,12 @@ export const CheckOut = () => {
       country,
       state,
       pincode,
-      addressType:addressType||'',
+      addressType: addressType || "",
       defaultAddress,
     };
     mutation(ADD_ADDRESSBOOK, payload)
       .then(async (response) => {
-        setLoading(false)
+        setLoading(false);
         const success = get(response, "data.addAddressBook.success");
         const message = get(response, "data.addAddressBook.message");
         const data = get(response, "data.addAddressBook.data");
@@ -711,7 +722,61 @@ export const CheckOut = () => {
         }
       })
       .catch((error) => {
-        setLoading(false)
+        setLoading(false);
+        handleError(error, dispatch, router);
+      });
+  };
+  const updateCustomerAddress = async () => {
+    setLoading(true);
+    let billingAddress = get(billingDetails, "billing");
+    const {
+      firstname,
+      _id,
+      lastname,
+      address,
+      addressLine2,
+      city,
+      country,
+      state,
+      phone,
+      zip: pincode,
+      addressType,
+      defaultAddress,
+    } = billingAddress;
+    let payload = {
+      id: customerId,
+      _id:_id,
+      firstName: firstname,
+      lastName: lastname,
+      phone,
+      addressLine1: address,
+      addressLine2,
+      city,
+      country,
+      state,
+      pincode,
+      addressType: addressType || "",
+      defaultAddress,
+    };
+    mutation(UPDATE_ADDRESSBOOK, payload)
+      .then(async (response) => {
+        setLoading(false);
+        const success = get(response, "data.updateAddressBook.success");
+        const message = get(response, "data.updateAddressBook.message");
+        const data = get(response, "data.updateAddressBook.data");
+        if (success) {
+          // setAddress(addressObject)
+          notify(message, success);
+          nextFormStep();
+          setIsEditAddress(false)
+          await getAddress();
+        }
+        if (!success) {
+          notify(message, success);
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
         handleError(error, dispatch, router);
       });
   };
@@ -738,12 +803,17 @@ export const CheckOut = () => {
       setBillingInfo({ ...defaultAddress });
     }
     // Set default address for shippingInfo if not already selected
-    if (!checkIsAddressSelected(shippingInfo) && !isAddNewAddressForm&&!shippingAdd) {
+    if (
+      !checkIsAddressSelected(shippingInfo) &&
+      !isAddNewAddressForm &&
+      !shippingAdd
+    ) {
       setShippingInfo({ ...defaultAddress });
     }
   };
   const toggleAddNewAddressForm = () => {
-    reset()
+    reset();
+    setIsEditAddress(false);
     setIsAddNewAddressForm(true);
     if (!shippingAdd) {
       setShippingInfo({ ...shippingObject });
@@ -763,6 +833,11 @@ export const CheckOut = () => {
     } else {
       // checkCode(shippingInfo?.zip);
     }
+  };
+  const editCustomerAddress = (address) => {
+    setIsEditAddress(true);
+    setIsAddNewAddressForm(false);
+    setBillingInfo({ ...billingInfo, ...address });
   };
   if (islogin) {
     switch (formStep) {
@@ -785,12 +860,14 @@ export const CheckOut = () => {
                         shippingInfo={shippingInfo}
                         shippingAdd={shippingAdd}
                         getBillingInfo={getBillingData}
+                        editCustomerAddress={editCustomerAddress}
                       />
-                      {(isAddNewAddressForm || addressList?.length === 0) && (
-                        <h5>Add New Address</h5>
-                      )}
+                      {(isAddNewAddressForm ||
+                        addressList?.length === 0 ) && <h5>Add New Address</h5>}
+                        { isEditAddress&&<h5>Edit Address</h5>}
                       <form onSubmit={handleSubmit(onSubmit)}>
                         <BillingDetails
+                          isEditAddress={isEditAddress}
                           checkCode={checkCode}
                           setZipMessage={setZipMessage}
                           control={control}
@@ -811,13 +888,13 @@ export const CheckOut = () => {
                           isAddNewAddressForm={isAddNewAddressForm}
                           addressList={addressList}
                         />
-                          <button
-                            type="submit"
-                            className="btn btn-success primary-btn-color checkout-continue-btn"
-                          >
-                            NEXT
-                          </button>
-                        </form>
+                        <button
+                          type="submit"
+                          className="btn btn-success primary-btn-color checkout-continue-btn"
+                        >
+                          NEXT
+                        </button>
+                      </form>
                     </div>
                     <div className="cupon-cart">
                       <OrderSummary
