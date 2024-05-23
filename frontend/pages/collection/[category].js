@@ -7,6 +7,7 @@ import { ARRAY, CHOICE, LIMIT } from "../../components/categoryFilter/constant";
 import SubCategoryProducts from "../../components/category/subCategories";
 import ParentCategories from "../../components/category/parentCategories";
 import { clearAllFilter } from "../../components/categoryFilter/component/urlFilter";
+import Meta from "../../components/Meta";
 
 const SingleCategoryProduct = () => {
   const productFilterData = useSelector((state) => state.products);
@@ -40,7 +41,7 @@ const SingleCategoryProduct = () => {
     let filteredData = filters?.map((item) => {
       switch (item?.type) {
         case ARRAY:
-          selectedData=[]
+          selectedData = [];
           get(item, "data", [])?.map((data) => {
             if (data?.select) {
               selectedData.push(data?.value);
@@ -80,9 +81,7 @@ const SingleCategoryProduct = () => {
       const { ...rest } = item;
       return rest;
     });
-    // if(filteredData?.length>0){
-    setFilterPayload({ ...filterPayload, filters: filteredData })
-  // }
+    setFilterPayload({ ...filterPayload, filters: filteredData });
   };
   const handleSorting = (sortingPayload) => {
     setFilterPayload({ ...filterPayload, sort: sortingPayload });
@@ -97,7 +96,7 @@ const SingleCategoryProduct = () => {
   if (router.isFallback) {
     return <div>loading...</div>;
   }
-  const clearFilter=()=>{
+  const clearFilter = () => {
     const { category } = get(router, "query");
     let variable = {
       mainFilter: {
@@ -107,20 +106,24 @@ const SingleCategoryProduct = () => {
       limit: LIMIT,
     };
     setFilterPayload({ ...variable });
-    clearAllFilter(router)
-  }
+    clearAllFilter(router);
+  };
+  const { title, description, keywords } = get(
+    filteredProductData,
+    "mostParentCategoryData.meta",
+    {}
+  );
   return (
     <div>
-      {/* <Meta title={singlecategory?.meta?.title} description={singlecategory?.meta?.description} keywords={singlecategory?.meta?.keywords}/> */}
-      {/* <PageTitle title={"Collection"} /> */}
+      <Meta title={title} description={description} keywords={keywords} />
       {get(filteredProductData, "isMostParentCategory") ? (
         <ParentCategories
           categories={get(filteredProductData, "mostParentCategoryData", {})}
-          categoryName={get(router, 'query.category', '')}
+          categoryName={get(router, "query.category", "")}
         />
       ) : (
         <SubCategoryProducts
-        clearFilter={clearFilter}
+          clearFilter={clearFilter}
           filteredProductData={filteredProductData}
           handleFilter={handleFilter}
           handleScroll={handleScroll}
