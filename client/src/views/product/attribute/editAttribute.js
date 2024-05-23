@@ -10,7 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme";
 import { get } from "lodash";
-import { validate, validatenested } from "../../components/validate";
+import { SPECIAL_CHARACTER_REGEX, validate, validatenested } from "../../components/validate";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
 const delimiters = ["Enter", "Tab"];
 
@@ -82,7 +82,25 @@ const EditAttributeComponent = ({ params }) => {
       });
     }
     else {
+      let allValid = true; // Validation flag
+
+      for (let i of attribute.values) {
+        if (!SPECIAL_CHARACTER_REGEX.test(i.name) || i.name.trim() === '') {
+          allValid = false; // Set flag to false if validation fails
+          dispatch({
+            type: ALERT_SUCCESS,
+            payload: {
+              boolean: false,
+              message: 'Attributes can only contain letters, numbers, and spaces',
+              error: true,
+            },
+          });
+          break; // Exit the loop on first validation failure
+        }
+      }
+      if(allValid){
       dispatch(attributeUpdateAction({ attribute: attribute }, navigate));
+    }
     }
 
 

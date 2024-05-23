@@ -237,6 +237,7 @@ export const SEARCH_PRODUCTS_QUERY = gql`
         pricing
         feature_image
         rating
+        quantity
       }
     }
   }

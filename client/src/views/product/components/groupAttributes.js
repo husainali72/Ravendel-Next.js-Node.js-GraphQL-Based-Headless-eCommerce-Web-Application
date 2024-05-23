@@ -24,7 +24,14 @@ import ReactSelect from "react-select";
 import { useSelector, useDispatch } from "react-redux";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { isEmpty, allPossibleCases, bucketBaseURL, baseUrl, imageOnError, getBaseUrl } from "../../../utils/helper";
+import {
+  isEmpty,
+  allPossibleCases,
+  bucketBaseURL,
+  baseUrl,
+  imageOnError,
+  getBaseUrl,
+} from "../../../utils/helper";
 import { CardBlocks } from "../../components";
 import { attributesAction, productsAction } from "../../../store/action";
 import viewStyles from "../../viewStyles";
@@ -32,20 +39,25 @@ import viewStyles from "../../viewStyles";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
+import { availbleProductsAction } from "../../../store/action/productAction.js";
+import { get } from "lodash";
+import CustomAutocomplete from "../../components/autoComplete.js";
 const AttributesComponent = ({
   product,
   productStateChange,
   onCombinationUpdate,
   EditMode,
-  setting
+  setting,
+  groupId,
 }) => {
-
   const classes = viewStyles();
 
   const dispatch = useDispatch();
   const inputLabel = useRef(null);
   const attributeState = useSelector((state) => state.productAttributes);
-  const {products} = useSelector((state) => state.products);
+  const { availableProduct: products } = useSelector(
+    (state) => state.groupProducts
+  );
   const [labelWidth, setLabelWidth] = useState(0);
   const [currentVariants, setcurrentVariants] = useState({
     combinations: [],
@@ -64,8 +76,7 @@ const AttributesComponent = ({
   }, [currentVariants.combinations]);
 
   useEffect(() => {
-    dispatch(productsAction());
-
+    dispatch(availbleProductsAction({ groupId: groupId }));
   }, []);
 
   useEffect(() => {
@@ -116,14 +127,18 @@ const AttributesComponent = ({
           }
         }
       }
-      let selected_variants = []
-      let allAttributes = []
+      let selected_variants = [];
+      let allAttributes = [];
 
       for (const [key, attribute] of attributeState.attributes.entries()) {
-
         for (const value of attribute.values) {
           product.variation_master?.forEach((variation_master) => {
-            if (variation_master?.combinations.includes(value._id) && !selected_variants.some((selected) => selected.id === variation_master.id)) {
+            if (
+              variation_master?.combinations.includes(value._id) &&
+              !selected_variants.some(
+                (selected) => selected.id === variation_master.id
+              )
+            ) {
               selected_variants.push(variation_master);
             }
           });
@@ -138,12 +153,20 @@ const AttributesComponent = ({
       setcurrentVariants({
         ...currentVariants,
       });
-      if(product?.variations){
-        setcurrentVariants({...currentVariants, combinations: product?.variations})
+      if (product?.variations) {
+        setcurrentVariants({
+          ...currentVariants,
+          combinations: product?.variations,
+        });
       }
     }
-  }, [attributeState.attributes, product.variation_master, product?.attributes, product?.variations]);
-  
+  }, [
+    attributeState.attributes,
+    product.variation_master,
+    product?.attributes,
+    product?.variations,
+  ]);
+
   const changeSelectedValue = (e, i) => {
     currentAttribute.attribute_list[i].selected_values = e;
     setcurrentAttribute({
@@ -158,7 +181,7 @@ const AttributesComponent = ({
     setcurrentAttribute({
       ...currentAttribute,
     });
-    saveAttribute()
+    saveAttribute();
   };
   const addAttribute = () => {
     if (!currentAttribute.id) {
@@ -168,8 +191,8 @@ const AttributesComponent = ({
           boolean: false,
           message: "Please Select The Correct Attribute",
           error: true,
-        }
-      })
+        },
+      });
       return;
     }
 
@@ -203,8 +226,11 @@ const AttributesComponent = ({
     // setLoading(true);
     product.attribute = [];
     product.variant = [];
-    let isValidattribute = false
-    if (currentAttribute.attribute_list && currentAttribute.attribute_list.length > 0) {
+    let isValidattribute = false;
+    if (
+      currentAttribute.attribute_list &&
+      currentAttribute.attribute_list.length > 0
+    ) {
       currentAttribute.attribute_list.forEach((attr, index) => {
         if (attr.selected_values.length > 0) {
           attr.selected_values.forEach((val) => {
@@ -219,7 +245,7 @@ const AttributesComponent = ({
           });
 
           // if (attr.isVariant) {
-            product.variant.push(attr.id);
+          product.variant.push(attr.id);
           // }
           isValidattribute = true;
         } else {
@@ -230,12 +256,12 @@ const AttributesComponent = ({
               boolean: false,
               message: "Attribute value is required",
               error: true,
-            }
-          })
+            },
+          });
         }
       });
     } else {
-      isValidattribute = true
+      isValidattribute = true;
     }
     if (isValidattribute) {
       productStateChange({
@@ -243,26 +269,24 @@ const AttributesComponent = ({
       });
 
       createVariants();
-    }
-    else {
-      setLoading(false)
+    } else {
+      setLoading(false);
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
           boolean: false,
           message: "Attribute value is required",
           error: true,
-        }
-      })
+        },
+      });
     }
-
   };
   const createVariants = () => {
     let variants = {};
     for (const i of product.variant) {
       variants[i] = [];
     }
-    if(product && product?.attribute && product?.attribute.length >=0){
+    if (product && product?.attribute && product?.attribute.length >= 0) {
       for (let attr of product.attribute) {
         if (variants.hasOwnProperty(attr.attribute_id)) {
           variants[attr.attribute_id].push(attr.attribute_value_id);
@@ -297,11 +321,12 @@ const AttributesComponent = ({
           index = key;
         }
       });
-      
-      if (max) {
+
+      if (max && index >= 0) {
         generatedVariants.push({
           combinations: comb,
           productID: currentVariants?.combinations[index]?.productID,
+          productUrl: currentVariants?.combinations[index]?.productUrl,
           // sku: currentVariants.combinations[index].sku,
           // quantity: currentVariants.combinations[index].quantity,
           // pricing: {
@@ -315,7 +340,8 @@ const AttributesComponent = ({
       } else {
         generatedVariants.push({
           combinations: comb,
-          productID:'',
+          productID: "",
+          productUrl: "",
           sku: "",
           quantity: 0,
           pricing: {
@@ -332,16 +358,13 @@ const AttributesComponent = ({
     });
     setLoading(false);
   };
-  const variantChange = (e, index) => {
-    if (e.target.name === "image") {
-      currentVariants.combinations[index]['upload_image'] = e.target.files;
-      currentVariants.combinations[index]['previous_img'] = currentVariants.combinations[index].image
-      if (e?.target?.files?.length&&e.target.files[0]) {
-        currentVariants.combinations[index][e.target.name] = URL.createObjectURL(e.target.files[0]);
-      }
-    } else {
-      currentVariants.combinations[index][e.target.name] = e.target.value;
-    }
+
+  const variantChange = (newValue, index) => {
+    let productUrl = products?.find(
+      (singleProduct) => singleProduct?._id === newValue?._id
+    )?.url;
+    currentVariants.combinations[index]["productUrl"] = productUrl;
+    currentVariants.combinations[index]["productID"] = newValue?._id;
     setcurrentVariants({
       ...currentVariants,
     });
@@ -519,49 +542,31 @@ const AttributesComponent = ({
                               style={{ width: 250 }}
                               variant="outlined"
                             >
-                              <InputLabel ref={inputLabel} id="product-name">
-                                Select Product
-                              </InputLabel>
-                              <Select
-                                size="small"
-                                label="Select Product"
-                                // labelWidth={labelWidth}
+                              <CustomAutocomplete
+                                id="productID"
                                 name="productID"
-                                labelId="product-name"
-                                value={variant.productID}
-                                onChange={(e) => variantChange(e, index)}
-                              >
-                                <MenuItem value =''>
-                                  <i>None</i>
-                                </MenuItem>
-                                {!!products?.length && products?.map(
-                                  (product, index) => {
-                                    return (
-                                      <MenuItem
-                                        value={product._id}
-                                        key={index}
-                                        disabled={currentVariants.combinations.some(variant => variant?.productID === product?._id)}
-                                      >
-                                        {product.name}
-                                      </MenuItem>
-                                    );
-                                  }
+                                label="Select Product"
+                                options={products || []}
+                                value={products?.find(
+                                  (singleProduct) =>
+                                    variant.productID === singleProduct._id
                                 )}
-                              </Select>
+                                onChange={(e, newValue) =>
+                                  variantChange(newValue, index)
+                                }
+                                getOptionLabel={(option) => option.name}
+                                isOptionEqualToValue={(option, value) =>
+                                  option?._id === value?._id
+                                }
+                                getOptionDisabled={(option) =>
+                                  currentVariants.combinations.some(
+                                    (variant) =>
+                                      variant.productID === option._id
+                                  )
+                                }
+                              />
                             </FormControl>
                           </TableCell>
-
-                          {/* <TableCell>
-                            <Tooltip title="Delete" aria-label="delete">
-                              <IconButton
-                                aria-label="Delete"
-                                className={classes.deleteicon}
-                                onClick={() => variantDelete(index)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell> */}
                         </TableRow>
                       ))}
                     </TableBody>
@@ -583,7 +588,8 @@ const GroupAttributes = ({
   productStateChange,
   onCombinationUpdate,
   EditMode,
-  setting
+  setting,
+  groupId,
 }) => {
   return (
     <ThemeProvider theme={theme}>
@@ -593,6 +599,7 @@ const GroupAttributes = ({
         onCombinationUpdate={onCombinationUpdate}
         EditMode={EditMode}
         setting={setting}
+        groupId={groupId}
       />
     </ThemeProvider>
   );

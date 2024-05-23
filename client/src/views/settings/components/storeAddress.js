@@ -115,6 +115,7 @@ const StoreAddressComponent = () => {
             />
           </Box>
           <Box component="div" className={classes.socialMediaContainer}>
+            <div>
             <Box>
               <SettingTextInput
                 value={get(address, "city")}
@@ -125,18 +126,7 @@ const StoreAddressComponent = () => {
                 }}
               />
             </Box>
-            <Box>
-              {}
-              <SocialMedia
-                onhandleChange={selectHandleChange}
-                removeInput={removeInput}
-                handleChange={LinkhandleChange}
-                menuItem={menuItem}
-                selectedIcons={social_media}
-              />
-            </Box>
-          </Box>
-          <Box component="div">
+            <Box component="div">
             <SettingTextInput
               value={get(address, "state")}
               label="State"
@@ -172,6 +162,18 @@ const StoreAddressComponent = () => {
               }}
             />
           </Box>
+          </div>
+            <Box>
+              <SocialMedia
+                onhandleChange={selectHandleChange}
+                removeInput={removeInput}
+                handleChange={LinkhandleChange}
+                menuItem={menuItem}
+                selectedIcons={social_media}
+              />
+            </Box>
+          </Box>
+
         </Grid>
 
         <Grid item md={12}>

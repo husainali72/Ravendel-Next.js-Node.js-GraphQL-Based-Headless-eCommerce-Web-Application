@@ -37,6 +37,7 @@ const BillingDetails = (props) => {
     setZipMessage,
     isAddNewAddressForm,
     addressList,
+    isEditAddress
   } = props;
   const addressTypeOptions = [
     { value: "Home", label: "Home" },
@@ -75,7 +76,7 @@ const BillingDetails = (props) => {
     <>
       <div className="billing-container">
         <div>
-          {isAddNewAddressForm || addressList?.length === 0 ? (
+          {isAddNewAddressForm || addressList?.length === 0||isEditAddress ? (
             <>
               <div className="twoRows">
                 <div className="col-lg-6 col-md-12 col-md-5half">
@@ -209,18 +210,11 @@ const BillingDetails = (props) => {
                 errors={errorRef}
               />
               <InputField
-                errors={errorRef}
                 className="input-filled"
                 name="addressLine2"
                 label="address"
                 style={{marginBottom: '12px'}}
                 placeholder="Address Line 2"
-                {...registerRef("addressLine2", {
-                  required: {
-                    value: billingInfo.addressLine2 ? false : true,
-                    message: "Address is Required",
-                  },
-                })}
                 value={billingInfo?.addressLine2}
                 onChange={(e) => {
                   handleBillingInfo(e);
@@ -345,9 +339,6 @@ const BillingDetails = (props) => {
                   <Controller
                     name="addressType"
                     control={control}
-                    rules={{
-                      required: "Address Type is Required",
-                    }}
                     render={({ field: { onChange, value, ref } }) => (
                       <Select
                         value={addressTypeOptions?.find(
@@ -374,6 +365,26 @@ const BillingDetails = (props) => {
                     </small>
                   </p>
                 </div>
+                <div className="form-group">
+              <div className="chek-form custome-checkbox">
+                <Form>
+                  <Form.Check
+                    className="form-check-input"
+                    id="defaultAddress"
+                    checked={get(billingInfo,'defaultAddress')}
+                    onChange={(e) =>
+                    handleBillingInfo(e,'defaultAddress')}
+                  />
+                </Form>
+                <label
+                  className="form-check-label label_info"
+                  data-bs-toggle="collapse"
+                  aria-controls="collapseAddress"
+                >
+                  <span>Make It Default Address</span>
+                </label>
+              </div>
+            </div>
               </div>
             </>
           ) : null}
@@ -561,16 +572,6 @@ const BillingDetails = (props) => {
                   label="addressLine2"
                   // style={{marginBottom: '12px'}}
                   placeholder="Address Line 2"
-                  {...registerRef("shippingaddressLine2", {
-                    required: {
-                      value: shippingAdd
-                        ? get(shippingInfo, "addressLine2")
-                          ? false
-                          : true
-                        : false,
-                      message: "Address is Required",
-                    },
-                  })}
                   value={get(shippingInfo, "addressLine2")}
                   onChange={handleShippingChange}
                   onKeyDown={(e) => handleEnter(e)}
@@ -710,9 +711,6 @@ const BillingDetails = (props) => {
                     <Controller
                       name="shippingAddressType"
                       control={control}
-                      rules={{
-                        required: shippingAdd && "Address Type is Required",
-                      }}
                       render={({ field: { onChange, value, ref } }) => (
                         <Select
                           value={addressTypeOptions?.find(

@@ -10,6 +10,7 @@ import { TextInput } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
 import { shippingAction } from "../../../store/action/";
 import viewStyles from "../../viewStyles";
+import { get, isEmpty } from "lodash";
 
 const ShippingComponent = ({
   product,
@@ -30,13 +31,13 @@ const ShippingComponent = ({
   }, []);
 
   useEffect(() => {
-    if (shippingState.shipping.shippingClass.length) {
-      let shippingClass = product?.shipping?.shippingClass && shippingState.shipping.shippingClass.some((shippingClass) => shippingClass._id === product?.shipping?.shippingClass);
-      onShippingClassChange(shippingClass ? product?.shipping?.shippingClass : shippingState.shipping.shippingClass[0]._id);
+    const shippingClass = get(product, 'shippingClass');
+    const classes = get(shippingState, 'shipping.shippingClass', []);
+    if (!isEmpty(classes)) {
+      const hasShippingClass = classes.some(cls => cls._id === shippingClass);
+      onShippingClassChange(hasShippingClass ? shippingClass : get(classes, '[0]._id'));
     }
   }, [shippingState.shipping]);
-
-
   return (
     <>
       <Grid container spacing={3}>
@@ -52,7 +53,7 @@ const ShippingComponent = ({
                 labelId='Shipping-name'
                 id='Shipping-name'
                 name='Shipping-name'
-                value={product.shipping.shippingClass}
+                value={product.shippingClass||''}
                 onChange={(e) => onShippingClassChange(e.target.value)}
               >
                 {shippingState.shipping.shippingClass.map(
@@ -79,7 +80,7 @@ const ShippingComponent = ({
             label='Height'
             name='height'
             type='number'
-            value={product.shipping.height}
+            value={product.height}
             onChange={(e) => {
               onShippingInputChange("height", e.target.value);
             }}
@@ -91,7 +92,7 @@ const ShippingComponent = ({
             label='Width'
             name='width'
             type='number'
-            value={product.shipping.width}
+            value={product.width}
             onChange={(e) => {
               onShippingInputChange("width", e.target.value);
             }}
@@ -103,7 +104,7 @@ const ShippingComponent = ({
             label='Depth'
             name='depth'
             type='number'
-            value={product.shipping.depth}
+            value={product.depth}
             onChange={(e) => {
               onShippingInputChange("depth", e.target.value);
             }}
@@ -116,7 +117,7 @@ const ShippingComponent = ({
             name='weigth'
             variant='outlined'
             type='number'
-            value={product.shipping.weight}
+            value={product.weight}
             onChange={(e) => {
               onShippingInputChange("weight", e.target.value);
             }}
