@@ -2133,16 +2133,14 @@ const addCategoryAttributes = async (categoryTree, specifications, modal) => {
 module.exports.addCategoryAttributes = addCategoryAttributes
 
 const getParentChildren = (category, parentChildren, checkedCategoryIDs) => {
-
   category.forEach(cat => {
     if(cat.checked) {
       checkedCategoryIDs.push(cat.id)
     }
-    if(cat.children){
-      if(cat?.children.length != 0) {
-        parentChildren[cat.id] = cat.children.map(catChild => catChild.id)
-        getParentChildren(cat.children, parentChildren, checkedCategoryIDs)
-      }
+    if(cat.children && cat.children.length) {
+      parentChildren[cat.id] = cat.children.map(catChild => catChild.id)
+
+      getParentChildren(cat.children, parentChildren, checkedCategoryIDs)
     }
   });
 
