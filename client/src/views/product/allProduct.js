@@ -33,6 +33,12 @@ const AllproductComponent = () => {
       sortingactive: false
     },
     {
+      name: "name",
+      type: "name",
+      title: "Name",
+      sortingactive: true
+    },
+    {
       name: "date",
       type: "date",
       title: "date",
@@ -42,12 +48,6 @@ const AllproductComponent = () => {
       name: "brand",
       type: "brand",
       title: "Brand",
-      sortingactive: true
-    },
-    {
-      name: "name",
-      type: "name",
-      title: "Name",
       sortingactive: true
     },
     {
