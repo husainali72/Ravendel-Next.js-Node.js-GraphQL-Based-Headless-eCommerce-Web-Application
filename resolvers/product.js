@@ -1397,6 +1397,14 @@ module.exports = {
                     }
                   },
                   {
+                    $lookup: {
+                      from: "products",
+                      localField: "products.productId",
+                      foreignField: "_id",
+                      as: "products"
+                    }
+                  },
+                  {
                     $project: {
                       filteredProducts: {
                         $filter: {
@@ -1404,7 +1412,7 @@ module.exports = {
                           as: "product",
                           cond: {
                             $ne: [
-                              "$$product.productId",
+                              "$$product._id",
                               "$$productId"
                             ]
                           }
@@ -1467,7 +1475,11 @@ module.exports = {
         } };
         const setStage = { $set: { combinedResults: { $concatArrays: [] } } };
         const addFieldsStage = { $addFields: {} };
-        const projectStage = { $project: {} };
+        const projectStage = { $project: {
+          boughtTogetherProducts: {
+            $arrayElemAt: ["$boughtTogetherProducts.boughtTogetherProducts", 0]
+          }
+        } };
         parentIDs.forEach((parentID, index) => {
           const facetName = `categoryId_${parentID}`;
           const matchStage = {
