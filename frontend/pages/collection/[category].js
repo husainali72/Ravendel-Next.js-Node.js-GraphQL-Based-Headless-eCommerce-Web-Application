@@ -41,7 +41,7 @@ const SingleCategoryProduct = () => {
     let filteredData = filters?.map((item) => {
       switch (item?.type) {
         case ARRAY:
-          selectedData=[]
+          selectedData = [];
           get(item, "data", [])?.map((data) => {
             if (data?.select) {
               selectedData.push(data?.value);
@@ -81,9 +81,7 @@ const SingleCategoryProduct = () => {
       const { ...rest } = item;
       return rest;
     });
-    // if(filteredData?.length>0){
-    setFilterPayload({ ...filterPayload, filters: filteredData })
-  // }
+    setFilterPayload({ ...filterPayload, filters: filteredData });
   };
   const handleSorting = (sortingPayload) => {
     setFilterPayload({ ...filterPayload, sort: sortingPayload });
@@ -98,7 +96,7 @@ const SingleCategoryProduct = () => {
   if (router.isFallback) {
     return <div>loading...</div>;
   }
-  const clearFilter=()=>{
+  const clearFilter = () => {
     const { category } = get(router, "query");
     let variable = {
       mainFilter: {
@@ -108,21 +106,24 @@ const SingleCategoryProduct = () => {
       limit: LIMIT,
     };
     setFilterPayload({ ...variable });
-    clearAllFilter(router)
-  }
-  const {title,description,keywords}=get(filteredProductData,'mostParentCategoryData.meta',{})
+    clearAllFilter(router);
+  };
+  const { title, description, keywords } = get(
+    filteredProductData,
+    "mostParentCategoryData.meta",
+    {}
+  );
   return (
     <div>
-      <Meta title={title} description={description} keywords={keywords}/>
-      {/* <PageTitle title={"Collection"} /> */}
+      <Meta title={title} description={description} keywords={keywords} />
       {get(filteredProductData, "isMostParentCategory") ? (
         <ParentCategories
           categories={get(filteredProductData, "mostParentCategoryData", {})}
-          categoryName={get(router, 'query.category', '')}
+          categoryName={get(router, "query.category", "")}
         />
       ) : (
         <SubCategoryProducts
-        clearFilter={clearFilter}
+          clearFilter={clearFilter}
           filteredProductData={filteredProductData}
           handleFilter={handleFilter}
           handleScroll={handleScroll}
