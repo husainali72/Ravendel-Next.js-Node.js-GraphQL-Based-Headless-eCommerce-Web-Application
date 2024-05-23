@@ -6,6 +6,7 @@ import { getFilteredProductsAction } from "../../redux/actions/productAction";
 import { ARRAY, CHOICE, LIMIT } from "../../components/categoryFilter/constant";
 import SubCategoryProducts from "../../components/category/subCategories";
 import ParentCategories from "../../components/category/parentCategories";
+import { clearAllFilter } from "../../components/categoryFilter/component/urlFilter";
 
 const SingleCategoryProduct = () => {
   const productFilterData = useSelector((state) => state.products);
@@ -39,6 +40,7 @@ const SingleCategoryProduct = () => {
     let filteredData = filters?.map((item) => {
       switch (item?.type) {
         case ARRAY:
+          selectedData=[]
           get(item, "data", [])?.map((data) => {
             if (data?.select) {
               selectedData.push(data?.value);
@@ -78,7 +80,9 @@ const SingleCategoryProduct = () => {
       const { ...rest } = item;
       return rest;
     });
-    setFilterPayload({ ...filterPayload, filters: filteredData });
+    // if(filteredData?.length>0){
+    setFilterPayload({ ...filterPayload, filters: filteredData })
+  // }
   };
   const handleSorting = (sortingPayload) => {
     setFilterPayload({ ...filterPayload, sort: sortingPayload });
@@ -103,6 +107,7 @@ const SingleCategoryProduct = () => {
       limit: LIMIT,
     };
     setFilterPayload({ ...variable });
+    clearAllFilter(router)
   }
   return (
     <div>

@@ -21,7 +21,12 @@ const SubCategoryProducts = ({
         <div className="single-category-page">
           {get(filteredProductData, "filterData", [])?.length > 0 && (
             <div className="category-option">
-              <h4 className="category-section-title">Filters</h4>
+              <div className="filter-head d-flex align-items-center justify-content-between">
+                <h4 className="category-section-title">Filters</h4>
+                <button className="clear-filters-btn" onClick={clearFilter}>
+                  Clear Filters
+                </button>
+              </div>
               <SubCategoryList
                 categoryTree={get(filteredProductData, "categoryTree", {})}
                 name={"Category"}
@@ -29,7 +34,6 @@ const SubCategoryProducts = ({
                 <div className="primary-sidebar sticky-sidebar category-shop-cart my-1">
                   <div className="theiaStickySidebar category-box-filler">
                     <CategoryFilter
-                    clearFilter={clearFilter}
                       filterCategoryData={get(
                         filteredProductData,
                         "filterData",

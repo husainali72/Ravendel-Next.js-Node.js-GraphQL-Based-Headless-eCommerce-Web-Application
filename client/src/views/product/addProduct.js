@@ -205,7 +205,7 @@ const AddProductTheme = () => {
     setProduct({
       ...product,
       meta: {
-        ...product.meta,
+        ...product?.meta,
         [e.target.name]: e.target.value,
       },
     });
@@ -597,7 +597,7 @@ const AddProductTheme = () => {
               <Grid container spacing={isSmall ? 1 : 2}>
                 <Grid item md={6} xs={12}>
                   <TextInput
-                    value={product.meta.title}
+                    value={product?.meta?.title}
                     label="Meta Title"
                     name="title"
                     onInputChange={onMetaChange}
@@ -606,7 +606,7 @@ const AddProductTheme = () => {
 
                 <Grid item md={6} xs={12}>
                   <TextInput
-                    value={product.meta.keywords}
+                    value={product?.meta?.keywords}
                     label="Meta Keywords"
                     name="keywords"
                     onInputChange={onMetaChange}
@@ -615,7 +615,7 @@ const AddProductTheme = () => {
 
                 <Grid item xs={12}>
                   <TextInput
-                    value={product.meta.description}
+                    value={product?.meta?.description}
                     label="Meta Description"
                     name="description"
                     onInputChange={onMetaChange}

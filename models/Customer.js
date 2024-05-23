@@ -49,6 +49,11 @@ const CustomerSchema = new Schema({
       addressLine2: {
         type: String,
       },
+      addressType: {
+        type: String,
+        enum: ["Home", "Office"],
+        default: 'Home'
+      },
       city: {
         type: String,
       },

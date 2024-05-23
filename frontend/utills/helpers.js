@@ -6,14 +6,21 @@ import { IMAGE_BASE_URL, BUCKET_BASE_URL } from "../config";
 import client from "../apollo-client";
 import { isEmpty } from "./service";
 import axios from "axios";
-import { getSession, signOut } from "next-auth/react";
+import { getSession, signIn, signOut } from "next-auth/react";
 import NoImagePlaceHolder from "../components/images/NoImagePlaceHolder.png";
 import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
 import moment from "moment";
-import { BANKTRANSFER, CASH_ON_DELIVERY, PAYPAL, RAZORPAY, STRIPE } from "./constant";
+import {
+  BANKTRANSFER,
+  CASH_ON_DELIVERY,
+  PAYPAL,
+  RAZORPAY,
+  STRIPE,
+} from "./constant";
 import notify from "./notifyToast";
 import { outOfStockMessage } from "../components/validationMessages";
+import { createCart } from "../redux/actions/cartAction";
 /* -------------------------------image funtion ------------------------------- */
 export const imageOnError = (event) => {
   event.target.src = NoImagePlaceHolder.src;
@@ -115,10 +122,30 @@ export const queryWithoutToken = async (query, variables) => {
     });
     return Promise.resolve(response);
   } catch (error) {
+    console.log(error);
     return handleGraphQLErrors(error);
   }
 };
-export const logoutAndClearData = async (dispatch) => {
+export const mutationWithoutToken = async (query, variables) => {
+  try {
+    if (!variables.queryName) {
+      var response = await client.mutate({
+        mutation: query,
+        variables,
+      });
+    } else {
+      var response = await client.mutate({
+        mutation: query,
+        variables,
+      });
+    }
+    /////////////////////////////////////////////////////
+    return Promise.resolve(response);
+  } catch (error) {
+    return handleGraphQLErrors(error);
+  }
+};
+export const logoutAndClearData = async (dispatch, router) => {
   const data = await signOut({ redirect: false, callbackUrl: "/" });
   await removeItemFromLocalStorage("cart");
   await dispatch(logoutDispatch());
@@ -157,10 +184,10 @@ export const currencySetter = (settings, setCurrency) => {
   const currency = get(settings, "currency", "usd") || settings;
   const currencySymbols = {
     usd: "$",
-    eur: '€',
-    gbp: '£',
+    eur: "€",
+    gbp: "£",
     cad: "CA$",
-    inr: '₹',
+    inr: "₹",
   };
   const selectedSymbol = currencySymbols[currency];
   if (selectedSymbol) setCurrency(selectedSymbol);
@@ -212,10 +239,10 @@ export const isVariantDiscount = (variantProduct) => {
 export const formatNumber = (value) => (value && !isNaN(value) ? value : "0");
 
 // ---------------------------------------------LocalStorage-------------------------
-export const getItemFromLocalStorage = (key) => {
+export const getItemFromLocalStorage = (key,defaultValue=[]) => {
   try {
     if (!localStorage.hasOwnProperty(key)) {
-      return []; // Key does not exist in localStorage
+      return defaultValue||[]; // Key does not exist in localStorage
     }
     const item = localStorage.getItem(key);
     return JSON.parse(item);
@@ -241,16 +268,15 @@ export const removeItemFromLocalStorage = (key) => {
   } catch (error) {}
 };
 
-export const formatDate = (date) => (
+export const formatDate = (date) =>
   new Date(date).toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-  })
-)
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
 
 export const convertDateToStringFormat = (date, setting) => {
   const selectedDateFormat = get(setting, "setting.general.date_format", "");
@@ -279,10 +305,10 @@ export const convertDateToStringFormat = (date, setting) => {
   return convertedDate;
 };
 
-export const handleError = (error, dispatch) => {
+export const handleError = (error, dispatch, router) => {
   const status = get(error, "extensions.code");
   if (status === 401) {
-    logoutAndClearData(dispatch);
+    logoutAndClearData(dispatch,router);
   }
 };
 export const getProductSellPrice = (product) => {
@@ -353,18 +379,85 @@ export const getPaymentMethodLabel = (paymentMethod) => {
   }
 };
 
-
-export const isCurrentCategory = (url,router) => {
+export const isCurrentCategory = (url, router) => {
   const { category } = router.query;
   return category === url;
 };
 
 export const isAnyProductOutOfStock = (products) => {
-  const outOfStockProduct = products?.some(product => !product.available);
+  const outOfStockProduct = products?.some((product) => !product.available);
   if (outOfStockProduct) {
-      notify(outOfStockMessage);
+    notify(outOfStockMessage);
   }
-  return outOfStockProduct; 
+  return outOfStockProduct;
 };
 
-
+export const loginCustomer = async (
+  loginUser,
+  setLoading,
+  dispatch,
+  router,
+  setError
+) => {
+  setLoading(true);
+  try {
+    const response = await signIn("credentials", {
+      email: loginUser.email,
+      password: loginUser.password,
+      redirect: false,
+    });
+    const session = await getSession();
+    const error = get(response, "error");
+    const status = get(response, "status");
+    const success = get(response, "ok");
+    if (error) {
+      setLoading(false);
+      setError(
+        status === 401 && error === "Invalid Email or Password"
+          ? error
+          : "Something went wrong"
+      );
+    } else {
+      setLoading(false);
+      setError(null);
+    }
+    if (success) {
+      setLoading(false);
+      const productsInCart = getItemFromLocalStorage("cart");
+      const id = get(session, "user.accessToken.customer._id");
+      const products = productsInCart?.map((product) => {
+        const {
+          _id,
+          name,
+          pricing,
+          feature_image,
+          shippingClass,
+          taxClass,
+          variantId,
+          quantity,
+          attributes,
+        } = product;
+        return {
+          productId: _id,
+          productTitle: name,
+          productPrice: pricing?.toString(),
+          productImage: feature_image,
+          shippingClass: shippingClass,
+          taxClass: taxClass,
+          variantId: variantId,
+          qty: quantity,
+          attributes: attributes,
+        };
+      });
+      dispatch(createCart(id, products));
+    }
+    if (response.ok) {
+      let pathName = getItemFromLocalStorage("previousPage",'/')
+      removeItemFromLocalStorage("previousPage");
+      await router.push(pathName);
+    }
+  } catch (error) {
+    setLoading(false);
+    setError("Something went wrong");
+  }
+};

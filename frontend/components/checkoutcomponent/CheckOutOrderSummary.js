@@ -34,7 +34,7 @@ const OrderSummary = ({
         {!get(couponCartDetail, "couponApplied") ? (
           <div className="coupon-code-wrapper">
             <h5 className="mb-30">
-              If you have a coupon code, please apply it below.
+              Coupon
             </h5>
             <form method="post" onSubmit={doApplyCouponCode}>
               <div className="coupon-form-group">

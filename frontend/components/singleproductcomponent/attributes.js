@@ -7,7 +7,7 @@ import TabBtn from "../TabBtn";
 const AttributeSelector = ({
   attributes,
   variations,
-  getSelectedAttributes
+  getSelectedAttributes,
 }) => {
   const router = useRouter();
   const [selectedAttributes, setSelectedAttributes] = useState([]);
@@ -18,8 +18,8 @@ const AttributeSelector = ({
     const productVariant = variations?.find(
       (variation) => variation?.productUrl === singleproduct
     );
-
     if (productVariant) {
+      console.log()
       let updatedAttributes = selectedAttributes;
       let updatedData = attributes;
       productVariant.combinations.forEach((combination) => {
@@ -37,7 +37,6 @@ const AttributeSelector = ({
           updatedAttributes.push({ attributeId, attributeValueId });
         }
         updatedData = updatedData?.map((attr) => {
-          console.log(attr,attributeId)
           if (attr?._id === attributeId) {
             return { ...attr, selectValue: attributeValueId };
           } else return attr;
@@ -46,7 +45,16 @@ const AttributeSelector = ({
       setSelectedAttributes(updatedAttributes);
       prepareVariant(updatedAttributes);
       setAttributesData(updatedData);
-      getSelectedAttributes(updatedAttributes)
+      getSelectedAttributes(updatedAttributes);
+    } else {
+      const modifiedData = attributes?.map((item) => ({
+        ...item,
+        values: item.values.map((value) => ({
+          ...value,
+          select: false,
+        })),
+      }));
+      setAttributesData(modifiedData || []);
     }
   }, [router.query.singleproduct, variations]);
 
@@ -68,7 +76,6 @@ const AttributeSelector = ({
   };
   const prepareData = (e, attributeId) => {
     const attributeValueId = e;
-    console.log(e, attributeId, "=======");
     const updatedAttributes = selectedAttributes.map((attr) =>
       attr.attributeId === attributeId ? { ...attr, attributeValueId } : attr
     );
@@ -79,7 +86,7 @@ const AttributeSelector = ({
     if (!isAttributeExisting) {
       updatedAttributes.push({ attributeId, attributeValueId });
     }
-    let  updatedData = attributesData
+    let updatedData = attributesData;
     updatedData = updatedData?.map((attr) => {
       if (attr?._id === attributeId) {
         return { ...attr, selectValue: attributeValueId };
@@ -88,22 +95,24 @@ const AttributeSelector = ({
     setAttributesData(updatedData);
     setSelectedAttributes(updatedAttributes);
     prepareVariant(updatedAttributes);
-    getSelectedAttributes(updatedAttributes)
+    getSelectedAttributes(updatedAttributes);
   };
 
   useEffect(() => {
     const { singleproduct } = router.query;
-    let productUrl = get(comboData, "[0].productUrl", "#");
+    console.log(comboData,'comboData')
+    let productUrl = get(comboData, "[0].productUrl", "");
     const hasAttributesMismatch =
       attributes?.length > 0 &&
       selectedAttributes?.length !== attributes?.length;
     if (
       !hasAttributesMismatch &&
       comboData?.length === 1 &&
+      productUrl &&
       productUrl !== singleproduct
     ) {
       router.push(productUrl);
-    }
+    } 
   }, [comboData]);
 
   const createAttributeOptions = (singleAttribute) => {
@@ -113,31 +122,17 @@ const AttributeSelector = ({
     }));
   };
 
-  // const checkVariantIsSelected = (singleAttribute) => {
 
-    // const attributeName = get(singleAttribute, "name", "");
-    // const isAttributeSelected = selectedAttributes?.some(
-    //   ({ name }) => name === singleAttribute?.id
-    // );
-    // if (error && !isAttributeSelected) {
-    //   return `Please select the ${capitalize(attributeName)}`;
-    // }
-    // return null;
-
-  // };
   return (
     <>
       {attributesData?.map((singleAttribute) => {
         return (
           <>
-
             <TabBtn
               label={get(singleAttribute, "name", "")}
               values={get(singleAttribute, "selectValue")}
               onChange={(e) => prepareData(e, get(singleAttribute, "_id", ""))}
               options={createAttributeOptions(singleAttribute)}
-              // error={checkVariantIsSelected(singleAttribute)}
-
             />
           </>
         );
@@ -149,7 +144,6 @@ const AttributeSelector = ({
 AttributeSelector.propTypes = {
   attributes: PropTypes.array,
   variations: PropTypes.array,
-  error: PropTypes.boolean,
   getSelectedAttributes: PropTypes.func,
 };
 

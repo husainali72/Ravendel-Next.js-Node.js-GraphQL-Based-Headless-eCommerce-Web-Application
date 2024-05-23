@@ -89,7 +89,7 @@ const addOrUpdateProductGroup = async (args, token, isAdd = false) => {
 module.exports = {
   Query: {
     groups: async (root, args) => {
-      return await GET_ALL_FUNC(Group, "Groups");
+      return await GET_ALL_FUNC(Group, "Groups", false, "createdAt");
     },
     group: async (root, args) => {
       return await GET_SINGLE_FUNC(args.id, Group, "Group");

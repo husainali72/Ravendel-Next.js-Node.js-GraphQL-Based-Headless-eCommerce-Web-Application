@@ -240,6 +240,7 @@ module.exports = {
               meta: 1,
               image: 1,
               parentId: 1,
+              attributes:1,
         
               "parentCategory._id": 1,
               "parentCategory.name": 1,
@@ -262,6 +263,7 @@ module.exports = {
           return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Product", false);
         }
         const categoryAggrResult = categoryAggrActualResult[0];
+        // console.log('categoryAggrResult', categoryAggrResult);
         if(!categoryAggrResult.parentId) {
           let mostParentCategoryData = categoryAggrResult;
           delete mostParentCategoryData["parentCategory"];
@@ -300,6 +302,7 @@ module.exports = {
             categoryId: categoryAggrResult._id.toString(),
           },
         });
+        //
 
         //
         // preparing product group facet to get no of products count and products as per page no and limit - START
@@ -308,18 +311,31 @@ module.exports = {
         if(filters && filters.length) {
           for(let filterElement of filters) {
             productFilter = {};
-            productFilter[filterElement.field] = {};
-            if(filterElement.type == 'array') {
-              let values = [];
-              for(let value of filterElement.select) {
-                values.push(filterElement.valueType == "ObjectId" ? new mongoose.Types.ObjectId(value) : value);
+            if(filterElement.category == 'dynamic') {
+              if(filterElement.type == 'array') {
+                productFilter['specifications.key'] = filterElement.heading;
+                let values = [];
+                for(let value of filterElement.select) {
+                  values.push(filterElement.valueType == "ObjectId" ? new mongoose.Types.ObjectId(value) : value);
+                }
+                productFilter[filterElement.field] = {};
+                productFilter[filterElement.field]["$in"] = values;
               }
-              productFilter[filterElement.field]["$in"] = values;
             }
-            else if(filterElement.type == 'range' || filterElement.type == 'choice') {
-              productFilter[filterElement.field]["$gte"] = filterElement.select.minValue;
-              if(filterElement.select.maxValue) {
-                productFilter[filterElement.field]["$lte"] = filterElement.select.maxValue;
+            else {
+              productFilter[filterElement.field] = {};
+              if(filterElement.type == 'array') {
+                let values = [];
+                for(let value of filterElement.select) {
+                  values.push(filterElement.valueType == "ObjectId" ? new mongoose.Types.ObjectId(value) : value);
+                }
+                productFilter[filterElement.field]["$in"] = values;
+              }
+              else if(filterElement.type == 'range' || filterElement.type == 'choice') {
+                productFilter[filterElement.field]["$gte"] = filterElement.select.minValue;
+                if(filterElement.select.maxValue) {
+                  productFilter[filterElement.field]["$lte"] = filterElement.select.maxValue;
+                }
               }
             }
             productFilters.push(productFilter);
@@ -391,70 +407,129 @@ module.exports = {
         // preparing product group facet to get no of products count and products as per page no and limit - END
         //
 
-        // adding brand, price and rating facets in the aggregation which provide distinct values
-        // and adding product group facet which provice no of products count and products as per page no and limit 
-        prodAggr.push({
-          $facet: {
-            brands: [
-              {
-                $group: {
-                  _id: "$brand", // Group by the brand field to get distinct values
-                  count: { $sum: 1 }, // Optional: count the number of products for each brand
-                },
-              },
-              {
-                $lookup: {
-                  from: "brands", 
-                  localField: "_id", 
-                  foreignField: "_id", 
-                  as: "brand_details", 
-                },
-              },
-              {
-                $unwind: "$brand_details", // Unwind the brand details to deconstruct the array
-              },
-              {
-                $project: {
-                  _id: 1, // Exclude the _id field
-                  brandName: "$brand_details.name", // Include the brand name field
-                  count: 1,
-                },
-              },
-            ],
-            price: [
-              {
-                $group: {
-                  _id: null,
-                  minPrice: {
-                    $min: "$pricing.sellprice",
-                  },
-                  maxPrice: {
-                    $max: "$pricing.sellprice",
-                  },
-                  count: { $sum: 1 },
-                },
-              },
-            ],
-            ratings: [
-              {
-                $group: {
-                  _id: "$rating",
-                  count: { $sum: 1 }, 
-                },
-              },
-              {
-                $addFields: {
-                  value: "$_id",
-                },
-              },
-              {
-                $project: {
-                  _id:0
-                }
-              }
-            ],
-            productData:productDataFacet
+        // adding brand facets in the aggregation which provide distinct brand values
+        let prodAggrFacets = {};
+        prodAggrFacets["brands"] = [
+          {
+            $group: {
+              _id: "$brand", // Group by the brand field to get distinct values
+              count: { $sum: 1 }, // Optional: count the number of products for each brand
+            },
           },
+          {
+            $lookup: {
+              from: "brands", 
+              localField: "_id", 
+              foreignField: "_id", 
+              as: "brand_details", 
+            },
+          },
+          {
+            $unwind: "$brand_details", // Unwind the brand details to deconstruct the array
+          },
+          {
+            $project: {
+              _id: 1, 
+              brandName: "$brand_details.name", 
+              count: 1,
+            },
+          },
+        ];
+        //
+
+        // adding price facets in the aggregation which provide minimum and maximum price
+        prodAggrFacets["price"] = [
+          {
+            $group: {
+              _id: null,
+              minPrice: {
+                $min: "$pricing.sellprice",
+              },
+              maxPrice: {
+                $max: "$pricing.sellprice",
+              },
+              count: { $sum: 1 },
+            },
+          },
+        ];
+        //
+
+        // adding rating facets in the aggregation which provide available rating group values
+        prodAggrFacets["ratings"] = [
+          {
+            $group: {
+              _id: "$rating",
+              count: { $sum: 1 }, 
+            },
+          },
+          {
+            $addFields: {
+              value: "$_id",
+            },
+          },
+          {
+            $project: {
+              _id:0
+            }
+          }
+        ];
+        //
+
+        //
+        // Specification Filter facets as per attributes we saved in category - START
+        //
+        if(categoryAggrResult.attributes) {
+          let cnt = 1;
+          for(let attribute of categoryAggrResult.attributes) {
+            //let specsFilterFacet = {};
+            const specsFacet = [
+              {
+                $unwind: "$specifications",
+              },
+              {
+                $group: {
+                  _id: "$specifications.key",
+                  values: {
+                    $addToSet: {
+                      $cond: [
+                        {
+                          $eq: [
+                            "$specifications.attributeId",
+                            attribute.attributeId,
+                          ],
+                        },
+                        "$specifications.value",
+                        ""
+                      ],
+                    },
+                  },
+                },
+              },
+              {
+                $match: {
+                  "_id":attribute.name,
+                }
+              },
+              {
+                $project: {
+                  _id: 1,
+                  count: 1,
+                  values:1
+                },
+              }
+            ]
+            prodAggrFacets[`specs${cnt++}`] = specsFacet;
+          }
+          // console.log('prodAggrFacets', JSON.stringify(prodAggrFacets));
+        }
+        //
+        // Specification Filter facets as per attributes we saved in category - END
+        //
+        
+        prodAggrFacets["productData"] = productDataFacet;
+        // adding prepared facets in the aggregation stage
+        prodAggr.push({
+          $facet: prodAggrFacets
         });
 
         // adding unwind in the aggregation to deconstruct the price array 
@@ -464,13 +539,14 @@ module.exports = {
           },
         );
 
+        // console.log('prodAggr', JSON.stringify(prodAggr));
         const aggrActualResult = await Product.aggregate(prodAggr);
-        
         if(!aggrActualResult) {
           return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Product", false);
         }
         
         const aggrResult = aggrActualResult[0];
+        // console.log('aggrResult', aggrResult);
 
         let filterData = [];
 
@@ -577,6 +653,56 @@ module.exports = {
         }
         filterData.push(ratingFilterData);
         // preparing rating response data - END
+
+        //
+        // preparing specifications filter data - START
+        //
+        for(let i=1;i<=10;i++) {
+          if(!aggrResult[`specs${i}`] || !aggrResult[`specs${i}`].length) {
+            break;
+          }
+
+          const specsAggrResult = aggrResult[`specs${i}`][0];
+
+          let specsFilterData;
+          specsFilterData = {
+            heading:specsAggrResult._id,
+            type:"array",
+            field:"specifications.value",
+            category:"dynamic",
+            valueType: "String",
+            data:[]
+          };
+          let loopSpecsFilterData, reqSpecsFilter;
+          if(filters) {
+            reqBrandFilter = filters.find(filter => filter.field == specsAggrResult._id);
+          }
+          for(let specs of specsAggrResult.values) {
+            loopSpecsFilterData = {
+              label:specs,
+              value:specs,
+              select:false
+            };
+            if(reqSpecsFilter && reqSpecsFilter.select) {
+              loopSpecsFilterData.select = reqSpecsFilter.select.includes(specs.toString());
+            }
+            specsFilterData.data.push(loopSpecsFilterData);
+          }
+          specsFilterData.data.sort(function(a, b) {
+            // First, sort by boolean column (true comes before false)
+            if (a.select === b.select) {
+              // If boolean values are equal, sort by string column
+              return a.label.localeCompare(b.label);
+            }
+            // If boolean values are different, sort true before false
+            return a.select ? -1 : 1;
+          });
+          filterData.push(specsFilterData);
+        }
+        //
+        // preparing specifications filter data - END
+        //
+
         //
         // preparing product aggregation to load category wise filter data and product - END
         //
@@ -1955,7 +2081,6 @@ module.exports = {
           if(matchedProduct && matchedProduct._id != args.id){
             isSku = true;
           } */
-          console.log("updateImage",product.update_feature_image)
           let imgObject = "";
           if (args.update_feature_image) {
             imgObject = await imageUpload(
