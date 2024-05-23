@@ -15,6 +15,7 @@ const CustomerDetail = (props) => {
     shippingInfo,
     shippingAdd,
     toggleAddNewAddressForm,
+    editCustomerAddress
   } = props;
   useEffect(() => {
     let billingData = billingInfo;
@@ -66,7 +67,7 @@ const CustomerDetail = (props) => {
                       onClick={(e) => SelectAddressBook(address, e)}
                     >
                       <span className="radio-check"></span>
-                      <Button className="edit-btn" variant="link">
+                      <Button className="edit-btn" variant="link" onClick={()=>editCustomerAddress(address)}>
                         <CreateOutlinedIcon />
                       </Button>
                       <div className="content">
@@ -111,5 +112,6 @@ CustomerDetail.propTypes = {
   shippingInfo: PropTypes.object,
   shippingAdd: PropTypes.object,
   toggleAddNewAddressForm: PropTypes.func,
+  editCustomerAddress: PropTypes.func,
 };
 export default CustomerDetail;
