@@ -10,7 +10,7 @@ const SearchResult = () => {
   const router = useRouter();
   const [products, setProducts] = useState([]);
   const limit = 10;
-  const [currentPage, setCurrentPage] = useState(1); // Start from page 1
+  const [currentPage, setCurrentPage] = useState(0); // Start from page 1
   const [totalPages, setTotalPages] = useState(0);
   const { query } = router.query;
   useEffect(() => {
@@ -56,7 +56,7 @@ const SearchResult = () => {
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={handlePageChange}
+          handlePageChange={handlePageChange}
         />
       )}
     </div>
