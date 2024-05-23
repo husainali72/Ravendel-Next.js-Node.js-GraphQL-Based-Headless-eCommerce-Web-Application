@@ -41,6 +41,7 @@ import theme from "../../../theme/index.js";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
 import { availbleProductsAction } from "../../../store/action/productAction.js";
 import { get } from "lodash";
+import CustomAutocomplete from "../../components/autoComplete.js";
 const AttributesComponent = ({
   product,
   productStateChange,
@@ -321,7 +322,7 @@ const AttributesComponent = ({
         }
       });
 
-      if (max&&index >= 0) {
+      if (max && index >= 0) {
         generatedVariants.push({
           combinations: comb,
           productID: currentVariants?.combinations[index]?.productID,
@@ -357,25 +358,13 @@ const AttributesComponent = ({
     });
     setLoading(false);
   };
-  const variantChange = (e, index) => {
-    if (e.target.name === "image") {
-      currentVariants.combinations[index]["upload_image"] = e.target.files;
-      currentVariants.combinations[index]["previous_img"] =
-        currentVariants.combinations[index].image;
-      if (e?.target?.files?.length && e.target.files[0]) {
-        currentVariants.combinations[index][e.target.name] =
-          URL.createObjectURL(e.target.files[0]);
-      }
-    } else {
-      const { name, value } = get(e, "target", {});
-      if (name === "productID") {
-        let productUrl = products?.find(
-          (singleProduct) => singleProduct?._id === value
-        )?.url;
-        currentVariants.combinations[index]["productUrl"] = productUrl;
-      }
-      currentVariants.combinations[index][e.target.name] = e.target.value;
-    }
+
+  const variantChange = (newValue, index) => {
+    let productUrl = products?.find(
+      (singleProduct) => singleProduct?._id === newValue?._id
+    )?.url;
+    currentVariants.combinations[index]["productUrl"] = productUrl;
+    currentVariants.combinations[index]["productID"] = newValue?._id;
     setcurrentVariants({
       ...currentVariants,
     });
@@ -553,51 +542,31 @@ const AttributesComponent = ({
                               style={{ width: 250 }}
                               variant="outlined"
                             >
-                              <InputLabel ref={inputLabel} id="product-name">
-                                Select Product
-                              </InputLabel>
-                              <Select
-                                size="small"
-                                label="Select Product"
-                                // labelWidth={labelWidth}
+                              <CustomAutocomplete
+                                id="productID"
                                 name="productID"
-                                labelId="product-name"
-                                value={variant.productID}
-                                onChange={(e) => variantChange(e, index)}
-                              >
-                                <MenuItem value="">
-                                  <i>None</i>
-                                </MenuItem>
-                                {!!products?.length &&
-                                  products?.map((product, index) => {
-                                    return (
-                                      <MenuItem
-                                        value={product._id}
-                                        key={index}
-                                        disabled={currentVariants.combinations.some(
-                                          (variant) =>
-                                            variant?.productID === product?._id
-                                        )}
-                                      >
-                                        {product.name}
-                                      </MenuItem>
-                                    );
-                                  })}
-                              </Select>
+                                label="Select Product"
+                                options={products || []}
+                                value={products?.find(
+                                  (singleProduct) =>
+                                    variant.productID === singleProduct._id
+                                )}
+                                onChange={(e, newValue) =>
+                                  variantChange(newValue, index)
+                                }
+                                getOptionLabel={(option) => option.name}
+                                isOptionEqualToValue={(option, value) =>
+                                  option?._id === value?._id
+                                }
+                                getOptionDisabled={(option) =>
+                                  currentVariants.combinations.some(
+                                    (variant) =>
+                                      variant.productID === option._id
+                                  )
+                                }
+                              />
                             </FormControl>
                           </TableCell>
-
-                          {/* <TableCell>
-                            <Tooltip title="Delete" aria-label="delete">
-                              <IconButton
-                                aria-label="Delete"
-                                className={classes.deleteicon}
-                                onClick={() => variantDelete(index)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell> */}
                         </TableRow>
                       ))}
                     </TableBody>
