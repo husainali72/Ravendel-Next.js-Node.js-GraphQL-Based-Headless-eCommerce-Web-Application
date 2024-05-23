@@ -9,7 +9,7 @@ import { client_app_route_url, isEmpty } from "../../../utils/helper";
 import theme from "../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { attributeAddAction } from "../../../store/action";
-import { validate, validatenested } from "../../components/validate";
+import { SPECIAL_CHARACTER_REGEX, validate, validatenested } from "../../components/validate";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
 import { useNavigate } from "react-router-dom";
 
@@ -61,7 +61,26 @@ const AddAttributeTheme = () => {
       });
     }
     else {
-      dispatch(attributeAddAction({ attribute: attribute }, navigate));
+      let allValid = true; // Validation flag
+
+      for (let i of attribute.values) {
+        if (!SPECIAL_CHARACTER_REGEX.test(i.name) || i.name.trim() === '') {
+          allValid = false; // Set flag to false if validation fails
+          dispatch({
+            type: ALERT_SUCCESS,
+            payload: {
+              boolean: false,
+              message: 'Attributes can only contain letters, numbers, and spaces',
+              error: true,
+            },
+          });
+          break; // Exit the loop on first validation failure
+        }
+      }
+    
+      if (allValid) {
+        dispatch(attributeAddAction({ attribute: attribute }, navigate));
+      }
     }
 
 
