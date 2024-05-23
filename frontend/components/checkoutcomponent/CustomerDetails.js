@@ -39,7 +39,7 @@ const CustomerDetail = (props) => {
 
   return (
     <>
-      <div className="d-flex justify-content-between align-items-center">
+      <div className={`d-flex ${addressBook && addressBook?.length > 0 ? 'justify-content-between' : 'justify-content-end'} align-items-center`}>
         {addressBook && addressBook?.length > 0 && (
           <h5 style={{ marginBottom: 0 }}>Customer Details</h5>
         )}
@@ -51,8 +51,8 @@ const CustomerDetail = (props) => {
         </button>
       </div>
       <div>
-        <div className="customer-detail">
           {addressBook && addressBook?.length > 0 && (
+            <div className="customer-detail">
             <>
               <div className="cust-detail-container">
                 {addressBook?.map((address, i) => (
@@ -98,8 +98,8 @@ const CustomerDetail = (props) => {
                 ))}
               </div>
             </>
+          </div>
           )}
-        </div>
       </div>
     </>
   );

@@ -11,7 +11,7 @@ const ProductCard = ({cardItems}) => {
         {
             cardItems?.map((product)=>(
                 <div className='p-card' key={product?.productId}>
-                    <div className='d-flex'>
+                    <div className='d-flex align-items-center'>
                         <Link href={"/product/" + product.url}>
                         <a>
                             <ProductImage

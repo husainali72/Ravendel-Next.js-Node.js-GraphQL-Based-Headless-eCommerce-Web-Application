@@ -961,11 +961,11 @@ export const CheckOut = () => {
                         />
                         <button
                           type="submit"
-                          className="btn btn-success primary-btn-color checkout-continue-btn"
+                          className="btn btn-success primary-btn-color checkout-continue-btn mt-4"
                           onClick={handlePlacedOrder}
                           disabled={!billingInfo.paymentMethod}
                         >
-                          Place Order{" "}
+                          PLACE ORDER
                         </button>
                       </div>
                       <div className="checkout-order-summary-container">
