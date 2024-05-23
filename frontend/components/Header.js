@@ -9,7 +9,11 @@ import { Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { useSession } from "next-auth/react";
 import { logoutDispatch } from "../redux/actions/userlogoutAction";
-import { getItemFromLocalStorage, logoutAndClearData, query } from "../utills/helpers";
+import {
+  getItemFromLocalStorage,
+  logoutAndClearData,
+  query,
+} from "../utills/helpers";
 import { getSettings } from "../redux/actions/settingAction";
 import { calculateUserCart } from "../redux/actions/cartAction";
 import { get } from "lodash";
@@ -85,9 +89,7 @@ const Header = ({ setOpenMenu }) => {
     if (data?.status === "authenticated") {
       let id = get(data, "data.user.accessToken.customer._id");
       if (id) {
-        // dispatch(calculateUserCart(id));
-        console.log("fghfdjk,")
-        query(GET_USER_CART_COUNT,{userId:id})
+        query(GET_USER_CART_COUNT, { userId: id })
           .then((response) => {
             let count = get(response, "data.getCartDetails.data.totalQuantity");
             setCartItem(count);
@@ -96,116 +98,21 @@ const Header = ({ setOpenMenu }) => {
             console.log(error);
           });
       }
-    }else{
-      let item=getItemFromLocalStorage('cart')
-      console.log(item)
-      setCartItem(item?.length||0)
+    } else {
+      let item = getItemFromLocalStorage("cart");
+      setCartItem(item?.length || 0);
     }
   };
   useEffect(() => {
     dispatch(getSettings());
     getCartLength();
-  }, [data?.status,cart]);
+  }, [data?.status, cart]);
   const alertHandleConfirm = async () => {
     setShowModal(false);
     await logoutAndClearData(dispatch, router);
   };
   return (
     <header className="header-area header-style-5 mt-0">
-      {/* <div className="header-top">
-        <Container className="align-items-center">
-          <Toaster />
-          {showModal && (
-            <AlertModal
-              confirmAction={alertHandleConfirm}
-              icon="error"
-              title="Oops..."
-              text={expiredTimeErrorMessage}
-              showConfirmButton={true}
-              confirmButtonText="OK"
-              confirmButtonColor="#dc3545"
-              allowOutsideClick={false}
-            />
-          )}
-          <div className="row header-smartphone">
-            <div className="col-xl-3 col-lg-4 col-sm-6 col-xs-6 align-items-center">
-              <div className="header-info">
-                <div className="header-contact-info">
-                  <p>
-                    <i className="fi-rs-smartphone"></i>
-                    <Link href="tel: +1234567890">
-                      <a>(+01) - 2345 - 6789</a>
-                    </Link>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-9 col-lg-8 col-sm-6 col-xs-6">
-              <div className="text-center float-right">
-                <div className="header-info align-items-center">
-                  <div className="align-items-center user-info">
-                    {data?.status === "authenticated" ? (
-                      <>
-                        <div className="logout-btn">
-                          <p>
-                            <i className="far fa-user"></i>
-                            <Link href="/">
-                              <a className="logout-link" onClick={logOutUser}>
-                                {" "}
-                                Log Out
-                              </a>
-                            </Link>
-                          </p>
-                          {!isDropdownOpen ? (
-                            <span className="mx-1">
-                              <i
-                                className="fas fa-angle-down"
-                                onClick={() => setDropdownOpen(!isDropdownOpen)}
-                              ></i>
-                            </span>
-                          ) : (
-                            <span className="mx-1">
-                              <i
-                                className="fas fa-angle-up"
-                                onClick={() => setDropdownOpen(!isDropdownOpen)}
-                              ></i>
-                            </span>
-                          )}
-                          {isDropdownOpen ? (
-                            <div className="logout-dropdown" ref={dropdownRef}>
-                              <ui>
-                                <li onClick={() => setDropdownOpen(false)}>
-                                  <Link href="/">Account</Link>
-                                </li>
-                                <li onClick={() => setDropdownOpen(false)}>
-                                  <Link href="/account/profile">Profile </Link>
-                                </li>
-                                <li onClick={() => setDropdownOpen(false)}>
-                                  <Link href="/account/order">Your Order</Link>
-                                </li>
-                                <li onClick={() => setDropdownOpen(false)}>
-                                  <Link href="/account/address">Address</Link>
-                                </li>
-                              </ui>
-                            </div>
-                          ) : null}
-                        </div>
-                      </>
-                    ) : (
-                      <p>
-                        <i className="far fa-user"></i>
-                        <Link href="/login">
-                          <a className="login-link"> Log In / Sign Up</a>
-                        </Link>
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Container>
-      </div> */}
       <div className="header-bottom sticky-white-bg">
         {showModal && (
           <AlertModal
@@ -227,7 +134,7 @@ const Header = ({ setOpenMenu }) => {
                   <ProductImage
                     src={get(settings, "setting.appearance.theme.logo")}
                     className="logo-image"
-                    alt=""
+                    alt="logo"
                   />
                 </a>
               </Link>
@@ -236,29 +143,6 @@ const Header = ({ setOpenMenu }) => {
               className="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding hover-boder"
               id="navigation"
             >
-              {/* <nav>
-                <ul className="nav list" id="list">
-                  <li className="nav-item">
-                    <Link href="/">
-                      <a
-                        id=""
-                        className="nav-link"
-                        aria-current="page"
-                        aria-selected="true"
-                      >
-                        Home
-                      </a>
-                    </Link>
-                  </li>
-                  <li className="nav-header">
-                    <Link href="/contact">
-                      <a className="nav-link" aria-selected="false">
-                        Contact
-                      </a>
-                    </Link>
-                  </li>
-                </ul>
-              </nav>      */}
               <NavBar setOpenMenu={setOpenMenu} />
               <div className="nav-actions">
                 <Search />
@@ -269,9 +153,7 @@ const Header = ({ setOpenMenu }) => {
                         <a className="cart-icon action-btn">
                           <SlHandbag />
                         </a>
-                        <span className="pro-count blue">
-                          {cartItem}
-                        </span>
+                        <span className="pro-count blue">{cartItem}</span>
                       </div>
                     </Link>
                     <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
