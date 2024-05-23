@@ -58,6 +58,15 @@ export const GET_USER_CART = gql`
     }
   }
 `;
+export const GET_USER_CART_COUNT = gql`
+query GetCartDetails($userId: ID) {
+  getCartDetails(userId: $userId) {
+    data
+    message
+    success
+  }
+}
+`;
 export const CALCULATE_CART_WITHOUT_LOGIN = gql`
   query ($cartItems: [calculateCartProducts]) {
     calculateCart(cartItems: $cartItems) {

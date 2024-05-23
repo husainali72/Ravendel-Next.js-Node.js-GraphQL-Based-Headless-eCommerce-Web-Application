@@ -68,7 +68,7 @@ const TotalSummary = ({totalSummary, couponCartDetail}) => {
                       }`}
                     >
                       <i className="ti-gift mr-5"></i>
-                      <Price
+                     - <Price
                         price={get(totalSummary,'couponDiscountTotal',0)}
                       />
                     </td>
