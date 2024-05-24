@@ -252,7 +252,7 @@ const UploadImageLocal = async (image, path, name) => {
         buffer = Buffer.from(matches[2], 'base64');
         filename = `.${matches[1]}`;
       } else {
-        return resolve({
+        return Promise.resolve({
           success: false,
           message: "Invalid Base64 string"
         });
