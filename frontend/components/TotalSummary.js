@@ -6,7 +6,7 @@ import { get } from 'lodash';
 
 const TotalSummary = ({totalSummary, couponCartDetail}) => {
   const {mrpTotal, discountTotal, totalTax, totalShipping, grandTotal} = totalSummary;
-  const {couponApplied} = couponCartDetail || {};
+  // const {couponApplied} = couponCartDetail || {};
   return (
     <div className="cart-totals">
           <div className="table-responsive">
@@ -56,16 +56,12 @@ const TotalSummary = ({totalSummary, couponCartDetail}) => {
                 {isCouponAppliedAndNotFreeShipping(couponCartDetail) && (
                   <tr>
                     <td
-                      className={`cartTotal_label ${
-                        couponApplied && "textSuccess"
-                      }`}
+                      className={`cartTotal_label `}
                     >
                       Coupon Saving{" "}
                     </td>
                     <td
-                      className={`cartTotal_amount ${
-                        couponCartDetail && "textSuccess"
-                      }`}
+                      className={`cartTotal_amount `}
                     >
                       <i className="ti-gift mr-5"></i>
                      - <Price

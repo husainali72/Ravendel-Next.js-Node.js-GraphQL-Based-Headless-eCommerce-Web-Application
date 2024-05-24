@@ -17,6 +17,7 @@ const OnSaleProductCard = ({
   removeButton,
   display_type,
   showcaseType,
+  hideNotFoundMsg
 }) => {
   const [showWishListButton, setShowWishListButton] = useState(-1);
   const [isProductInWistList, setIsProductInWistList] = useState(-1);
@@ -190,7 +191,12 @@ const OnSaleProductCard = ({
                         );
                       })
                     ) : (
-                      <p className="onsale-no-data">No Products Found</p>
+                      <>
+                        {
+                          !hideNotFoundMsg &&
+                          <p className="onsale-no-data">No Products Found</p>
+                        }
+                      </>
                     )}
                   </div>
                 </div>
@@ -330,9 +336,14 @@ const OnSaleProductCard = ({
                   })}
                 </>
               ) : (
-                <div className="onsale-no-data">
-                  <p>No Products Found</p>
-                </div>
+                <>
+                  {
+                    !hideNotFoundMsg &&
+                    <div className="onsale-no-data">
+                      <p>No Products Found</p>
+                    </div>
+                  }
+                </>
               )}
             </div>
           )}
@@ -350,5 +361,6 @@ OnSaleProductCard.propTypes = {
   removeButton: PropTypes.func,
   display_type: PropTypes.string,
   showcaseType: PropTypes.string,
+  hideNotFoundMsg: PropTypes.bool
 };
 export default OnSaleProductCard;

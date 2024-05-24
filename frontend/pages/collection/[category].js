@@ -7,6 +7,7 @@ import { ARRAY, CHOICE, LIMIT } from "../../components/categoryFilter/constant";
 import SubCategoryProducts from "../../components/category/subCategories";
 import ParentCategories from "../../components/category/parentCategories";
 import { clearAllFilter } from "../../components/categoryFilter/component/urlFilter";
+import LoadingSpinner from "../../components/breadcrumb/loading";
 import Meta from "../../components/Meta";
 
 const SingleCategoryProduct = () => {
@@ -15,6 +16,7 @@ const SingleCategoryProduct = () => {
   const [filterPayload, setFilterPayload] = useState({});
   const dispatch = useDispatch();
   const router = useRouter();
+
   useEffect(() => {
     const { category } = get(router, "query");
     let variable = {
@@ -26,10 +28,13 @@ const SingleCategoryProduct = () => {
     };
     setFilterPayload({ ...variable });
   }, [router]);
-  useEffect(() => {
+  const getCategoryData = async() => {
     if (get(filterPayload, "mainFilter.categoryUrl")) {
-      dispatch(getFilteredProductsAction(filterPayload));
+      await dispatch(getFilteredProductsAction(filterPayload));
     }
+  }
+  useEffect(() => {
+    getCategoryData();
   }, [filterPayload]);
   useEffect(() => {
     setFilteredProductData({
@@ -115,11 +120,14 @@ const SingleCategoryProduct = () => {
   );
   return (
     <div>
-      <Meta title={title} description={description} keywords={keywords} />
+      {/* <Meta title={singlecategory?.meta?.title} description={singlecategory?.meta?.description} keywords={singlecategory?.meta?.keywords}/> */}
+      {/* <PageTitle title={"Collection"} /> */}
+      {productFilterData.loading && <LoadingSpinner />}
       {get(filteredProductData, "isMostParentCategory") ? (
         <ParentCategories
           categories={get(filteredProductData, "mostParentCategoryData", {})}
-          categoryName={get(router, "query.category", "")}
+          categoryName={get(router, 'query.category', '')}
+          loading={productFilterData.loading}
         />
       ) : (
         <SubCategoryProducts

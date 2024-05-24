@@ -80,32 +80,34 @@ export default function Home({
         />
       </Head>
       {openMenu && <MegaMenu openMenu={openMenu} setOpenMenu={setOpenMenu} />}
-      {get(homePageSliderInfo, "slider")?.length > 0 ? (
-        <Homebanner
-          settings={settings}
-          slider={get(homePageSliderInfo, "slider")}
-        />
-      ) : null}
-
-      {parentCategories && parentCategories?.length > 0 ? (
-        <Category category={parentCategories} />
-      ) : null}
-      {homePageSections &&
-        homePageSections?.length > 0 &&
-        homePageSections?.map((section) => (
-          <>
-            {get(section, "section_img") && (
-              <CustomBanner variant={get(section, "section_img")} />
-            )}
-            {get(section, "products", [])?.length > 0 && (
-              <OnSaleProductCard
-                titleShow={get(section, "name")}
-                onSaleProduct={get(section, "products", [])}
-                display_type={get(section, "display_type", [])}
-              />
-            )}
-          </>
-        ))}
+      <div className="home-page">
+        {get(homePageSliderInfo, "slider")?.length > 0 ? (
+          <Homebanner
+            settings={settings}
+            slider={get(homePageSliderInfo, "slider")}
+          />
+        ) : null}
+        {console.log(parentCategories)}
+        {parentCategories && parentCategories?.length > 0 ? (
+          <Category category={parentCategories} />
+        ) : null}
+        {homePageSections &&
+          homePageSections?.length > 0 &&
+          homePageSections?.map((section) => (
+            <>
+              {get(section, "section_img") && (
+                <CustomBanner variant={get(section, "section_img")} />
+              )}
+              {get(section, "products", [])?.length > 0 && (
+                <OnSaleProductCard
+                  titleShow={get(section, "name")}
+                  onSaleProduct={get(section, "products", [])}
+                  display_type={get(section, "display_type", [])}
+                />
+              )}
+            </>
+          ))}
+      </div>
     </div>
   );
 }

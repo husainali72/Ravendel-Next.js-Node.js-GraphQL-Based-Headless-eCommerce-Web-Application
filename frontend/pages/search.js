@@ -2,15 +2,16 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { SEARCH_PRODUCTS_QUERY } from "../queries/productquery";
 import { queryWithoutToken } from "../utills/helpers";
-import { capitalize, get } from "lodash";
+import { get } from "lodash";
 import OnSaleProductCard from "../components/category/onSaleProductCard";
 import Pagination from "../components/pagination";
+import { Container } from "react-bootstrap";
 
 const SearchResult = () => {
   const router = useRouter();
   const [products, setProducts] = useState([]);
-  const limit = 10;
-  const [currentPage, setCurrentPage] = useState(0); // Start from page 1
+  const limit = 14;
+  const [currentPage, setCurrentPage] = useState(1); // Start from page 1
   const [totalPages, setTotalPages] = useState(0);
   const { query } = router.query;
   useEffect(() => {
@@ -47,17 +48,21 @@ const SearchResult = () => {
   };
 
   return (
-    <div>
+    <div className="search-page">
       <h5 className="search-page-title">
-        {capitalize(query)}- {products?.length?`${products?.length} Products`:`No results found for ${query}`}
+        {products?.length?`${products?.length} results for`:`No results found for`} <span>'{query}'</span>
       </h5>
-      <OnSaleProductCard onSaleProduct={products} hideTitle={true} />
+      <OnSaleProductCard onSaleProduct={products} hideTitle={true} hideNotFoundMsg={true} />
       {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          handlePageChange={handlePageChange}
-        />
+        <Container>
+          <div className="search-pagination">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </Container>
       )}
     </div>
   );

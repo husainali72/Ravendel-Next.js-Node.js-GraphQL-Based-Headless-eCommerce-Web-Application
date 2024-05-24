@@ -51,23 +51,23 @@ const GalleryImagesComponents = (props) => {
   useEffect(() => {
     setSingleproduct({ ...singleproduct });
   }, [singleProducts]);
-  // useEffect(() => {
-  //   const productQuantity = get(singleProducts, "quantity");
-  //   const isLowStock = singleProducts && productQuantity <= lowStockThreshold;
-  //   const isOutOfStock =
-  //     singleProducts && productQuantity <= outOfStockThreshold;
-  //   const inStock = singleProducts && productQuantity > lowStockThreshold;
-  //   if (isLowStock && !isOutOfStock) {
-  //     setStockClass("low-stock");
-  //     setLable("Low Stock");
-  //   } else if (isOutOfStock) {
-  //     setStockClass("out-of-stock");
-  //     setLable("Out Of Stock");
-  //   } else if (inStock) {
-  //     setStockClass("in-stock");
-  //     setLable("In Stock");
-  //   }
-  // }, [singleProducts?.quantity, lowStockThreshold, outOfStockThreshold]);
+  useEffect(() => {
+    const productQuantity = get(singleProducts, "quantity");
+    const isLowStock = singleProducts && productQuantity <= lowStockThreshold;
+    const isOutOfStock =
+      singleProducts && productQuantity <= outOfStockThreshold;
+    const inStock = singleProducts && productQuantity > lowStockThreshold;
+    if (isLowStock && !isOutOfStock) {
+      setStockClass("low-stock");
+      setLable("Low Stock");
+    } else if (isOutOfStock) {
+      setStockClass("out-of-stock");
+      setLable("Out Of Stock");
+    } else if (inStock) {
+      setStockClass("in-stock");
+      setLable("In Stock");
+    }
+  }, [singleProducts?.quantity, lowStockThreshold, outOfStockThreshold]);
   const getSelectedAttributes = (attributes) => {
     setSelectedAttributes(attributes);
   };
@@ -223,16 +223,16 @@ const GalleryImagesComponents = (props) => {
             </div>
             <CheckZipcode checkzipcode={checkzipcode} />
             <ul className="product-meta font-xs color-grey mt-50">
-              {/* <div className="stock-availabilty">
+              <div className="stock-availabilty">
                 <div className="singleproduct-stock">
-                  Availablity: <span className={stockClass}>{Lable}</span>
+                  <p>Availablity: <span className={stockClass} style={{}}>{Lable}</span></p>
                 </div>
                 <div>
                   <RemainingQuantity
                     quantity={get(singleproduct, "quantity", 0)}
                   />
                 </div>
-              </div> */}
+              </div>
 
               {/* {Lable !== "Out Of Stock" && ( */}
                 <>

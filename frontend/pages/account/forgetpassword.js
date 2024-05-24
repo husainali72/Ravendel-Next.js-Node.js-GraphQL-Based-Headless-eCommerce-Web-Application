@@ -31,8 +31,8 @@ const ForgetPassword = () => {
   }, [router.query]);
 
   return (
-    <div>
-      <PageTitle title="Forget Password" />
+    <div className="forget-password-container">
+      {/* <PageTitle title="Forget Password" /> */}
       <BreadCrumb title={"Forget Password"} />
       <Container>
         <Toaster />

@@ -62,6 +62,9 @@ const ChangePassword = ({ token }) => {
   return (
     <>
       <div className="forgotPassword-container">
+        <div>
+          <h3>Forgot Password</h3>
+        </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           {token && (
             <>

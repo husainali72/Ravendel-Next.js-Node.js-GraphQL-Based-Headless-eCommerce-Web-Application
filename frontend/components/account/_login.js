@@ -35,20 +35,15 @@ const LogIn = () => {
             password: loginUser.password,
             redirect: false,
         })
-        console.log("res=====",res)
         const session = await getSession()
-        console.log("Session======session", session)
         if (res?.error) {
             setError(res.error);
         } else {
             setError(null);
         }
-        console.log("Successfully logged in", res)
-        console.log("session==========",session)
         if (res?.ok) {
             /////////////////////////////////////////////////////////////
             const productsInCart=JSON.parse(localStorage.getItem("persistantState"))
-            console.log("product in cart======", productsInCart.cart)
             /////////////////////////////////////////////////////////////
             const id = session?.user.accessToken.customer._id
             const token = session?.user.accessToken.token
@@ -58,11 +53,9 @@ const LogIn = () => {
                 const cart_id = response.data.cartbyUser.id
                 setCart_Id(cart_id)
                 dispatch(userCartAction(cart_id));
-                // console.log("userCart", userCart)
+            
                 if (userCart && userCart?.length > 0) {
-                    console.log("UserCart===========",userCart)
                     if(productsInCart.cart && productsInCart.cart?.length>0){
-                        console.log("greater than zero")
                         var cart = productsInCart.cart.map(product => {
                             return {
                                 feature_image: { original: product.feature_image.original },
@@ -73,7 +66,6 @@ const LogIn = () => {
                             }
                         })
                     }else{
-                        console.log("equal to zero")
                         var cart = userCart.map(product => {
                             return {
                                 feature_image: { original: product.productImage },
@@ -84,19 +76,16 @@ const LogIn = () => {
                             }
                         })
                     }
-                    console.log("Cart???????===========",cart)
                     let list = cart.map((item) => {
-                        console.log("item============", item)
                         let quantity = item.quantity
                         dispatch(addToCart(item, quantity, token, id))
 
                     })
                     const newCartList = await Promise.all(list)
-                    // console.log(newCartList)
+                
                     // localStorage.setItem("userCart", JSON.stringify(userCart))
                 } else {
                     if(productsInCart.cart?.length > 0){
-                        console.log("greater than zero")
                         var localCart = productsInCart.cart.map(product => {
                             return {
                                 productId: product._id,
@@ -107,7 +96,6 @@ const LogIn = () => {
                             }
                         });
                     }else{
-                        console.log("equal to zero")
                         var localCart = localCartItem.map(product => {
                             return {
                                 productId: product._id,
@@ -124,6 +112,7 @@ const LogIn = () => {
                             total: 0,
                         }
                         mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("update res", res))
+                        
                 }
             })
         }
