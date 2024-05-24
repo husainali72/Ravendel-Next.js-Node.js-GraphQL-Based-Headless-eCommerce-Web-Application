@@ -226,6 +226,7 @@ const YourCard = () => {
     return (
       <>
         <BreadCrumb title={"Cart"} />
+        <Toaster />
         <section className="shopcart-table">
           <Container>
             {isQuantityBtnLoading && <Loading />}
