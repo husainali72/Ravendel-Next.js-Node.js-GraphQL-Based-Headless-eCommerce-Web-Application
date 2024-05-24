@@ -6976,3 +6976,7 @@ button.btn-outline-primary:hover {
   align-items: center;
   justify-content: center;
 }
+.emptyCartImage{
+  width: 100px;
+  height:100px
+}
