@@ -847,6 +847,7 @@ export const CheckOut = () => {
       case 1:
         return (
           <>
+           <Toaster />
             <div>
               <BreadCrumb title={"checkout"} />
               <section className="checkout-section">
@@ -926,6 +927,7 @@ export const CheckOut = () => {
       case 2:
         return (
           <>
+           <Toaster />
             <div>
               <BreadCrumb title={"checkout"} />
               <section className="checkout-section">
