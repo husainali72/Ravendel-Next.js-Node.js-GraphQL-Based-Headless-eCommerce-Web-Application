@@ -410,18 +410,13 @@ const SeetingSchema = new Schema(
   }
 );
 
-var Settings = (module.exports = mongoose.model("Setting", SeetingSchema));
+const Settings = (module.exports = mongoose.model("Setting", SeetingSchema));
 
-module.exports.createSettings = async () => {
-  const settings = await Settings.findOne({});
-  if (settings) {
-    return;
-  }
-
-  var newSettings = new Settings({
+const defaultSettings = [
+  {
     general: {
       date_format: "1",
-      time_zone: "Africa/Addis_Ababa",
+      time_zone: "Europe/London",
     },
     media: {
       thumbnail: {
@@ -444,9 +439,9 @@ module.exports.createSettings = async () => {
       port: 587,
     },
     seo: {
-      meta_title: "Meta Title",
+      meta_title: "Ravendel",
       meta_tag: "Ecommerce, Shop",
-      meta_description: "Description comes here",
+      meta_description: "One stop destination for all your needs.",
     },
     store: {
       currency_options: {
@@ -476,14 +471,6 @@ module.exports.createSettings = async () => {
             handle: "",
           },
           {
-            name: "Pinterest",
-            handle: "",
-          },
-          {
-            name: "Youtube",
-            handle: "",
-          },
-          {
             name: "Twitter",
             handle: "",
           }
@@ -494,7 +481,7 @@ module.exports.createSettings = async () => {
         dimensions_unit: "cm",
       },
       inventory: {
-        manage_stock: true,
+        manage_stock: false,
         notifications: {
           show_out_of_stock: true,
           alert_for_minimum_stock: true,
@@ -512,13 +499,13 @@ module.exports.createSettings = async () => {
     payment: {
       cash_on_delivery: {
         enable: true,
-        title: "Title comes here",
-        description: "Description comes here",
+        title: "Cash On Delivery",
+        description: "Pay at your doorstep",
       },
       bank_transfer: {
-        enable: true,
-        title: "Title comes here",
-        description: "Description comes here",
+        enable: false,
+        title: "T",
+        description: "",
         account_details: {
           account_name: "",
           account_number: "",
@@ -529,7 +516,7 @@ module.exports.createSettings = async () => {
         },
       },
       stripe: {
-        enable: true,
+        enable: false,
         title: "",
         description: "",
         test_mode: true,
@@ -539,7 +526,7 @@ module.exports.createSettings = async () => {
         live_publishable_key: ""
       },
       paypal: {
-        enable: true,
+        enable: false,
         title: "",
         description: "",
         test_mode: true,
@@ -549,7 +536,7 @@ module.exports.createSettings = async () => {
         live_client_id: ""
       },
       razorpay: {
-        enable: true,
+        enable: false,
         title: "",
         description: "",
         test_mode: true,
@@ -576,11 +563,11 @@ module.exports.createSettings = async () => {
         ],
         add_section_in_home: {
           feature_product: true,
+          products_on_sales: true,
           recently_added_products: false,
           most_viewed_products: false,
           recently_bought_products: false,
           product_recommendation: false,
-          products_on_sales: false,
           product_from_specific_categories: false,
         },
 
@@ -591,26 +578,10 @@ module.exports.createSettings = async () => {
             visible: true,
           },
           {
-            label: "Recently Added Products",
-            name: "recently_added_products",
-            visible: true,
-          },
-          {
             label: "Products On Sales",
             name: "products_on_sales",
             visible: true,
-          },
-          // {
-          //   label: "Product Recommendation",
-          //   name: "product_recommendation",
-          //   visible: true,
-          // },
-          {
-            label: "Product from Specific Category",
-            name: "product_from_specific_category",
-            category: null,
-            visible: true,
-          },
+          }
         ],
 
       },
@@ -637,34 +608,22 @@ module.exports.createSettings = async () => {
             url: "feature_product",
           },
           {
-            label: "Recently Added Products",
-            section_img: "",
-            visible: false,
-            url: "recently_added_products",
-          },
-          {
             label: "Products On Sales",
             section_img: "",
             visible: false,
             url: "products_on_sales",
-          },
-          // {
-          //   label: "Product Recommendation",
-          //   section_img: "",
-          //   visible: false,
-          //   url: "product_recommendation",
-          // },
-          {
-            label: "Product from Specific Category",
-            section_img: "",
-            visible: false,
-            url: "product_from_specific_categories",
-            category: null
-          },
+          }
         ],
       }
     }
-  });
+  }
+]
 
-  await newSettings.save();
+module.exports.createDefaultSettings = async () => {
+  const existingSettings = await Settings.findOne({});
+  if (existingSettings) {
+    return;
+  }
+  
+  const settings = await Settings.insertMany(defaultSettings)
 };

@@ -45,4 +45,30 @@ const UserSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model("User", UserSchema);
+const User = (module.exports = mongoose.model("User", UserSchema));
+
+const defaultUsers = [
+  {
+    _id: "65c4912e58129189c44881c5",
+    name: "Manager",
+    password: "$2a$10$wRjf7XYZWXalxsKotoPev.cIynav1Y0yNcezKTXM3T0ng5CFadJeS",
+    email: "manager@ravendel.com",
+    role: "MANAGER",
+    image: "",
+    meta: [
+      {
+        key: "User",
+        value: "Manager"
+      }
+    ],
+  }
+]
+
+module.exports.createDefaultUsers = async () => {
+  const existingUsers = await User.findOne({});
+  if (existingUsers) {
+    return;
+  }
+  
+  const users = await User.insertMany(defaultUsers)
+};
