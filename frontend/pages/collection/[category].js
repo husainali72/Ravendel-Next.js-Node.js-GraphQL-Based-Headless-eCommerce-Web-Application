@@ -113,11 +113,11 @@ const SingleCategoryProduct = () => {
     setFilterPayload({ ...variable });
     clearAllFilter(router);
   };
-  const { title, description, keywords } = get(
-    filteredProductData,
-    "mostParentCategoryData.meta",
-    {}
-  );
+  // const { title, description, keywords } = get(
+  //   filteredProductData,
+  //   "mostParentCategoryData.meta",
+  //   {}
+  // );
   return (
     <div>
       {/* <Meta title={singlecategory?.meta?.title} description={singlecategory?.meta?.description} keywords={singlecategory?.meta?.keywords}/> */}

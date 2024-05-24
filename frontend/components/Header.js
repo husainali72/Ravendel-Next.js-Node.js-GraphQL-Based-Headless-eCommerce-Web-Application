@@ -36,6 +36,7 @@ const Header = ({ setOpenMenu }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false);
+  const [cartItem, setCartItem] = useState(0)
   const isLogin = data?.status === "authenticated"
   const router=useRouter()
   useEffect(() => {
