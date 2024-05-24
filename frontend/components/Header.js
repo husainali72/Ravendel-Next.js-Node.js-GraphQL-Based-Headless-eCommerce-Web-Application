@@ -8,7 +8,11 @@ import { Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { useSession } from "next-auth/react";
 import { logoutDispatch } from "../redux/actions/userlogoutAction";
-import { logoutAndClearData } from "../utills/helpers";
+import {
+  getItemFromLocalStorage,
+  logoutAndClearData,
+  query,
+} from "../utills/helpers";
 import { getSettings } from "../redux/actions/settingAction";
 import { calculateUserCart } from "../redux/actions/cartAction";
 import { get } from "lodash";
@@ -19,10 +23,11 @@ import Search from "./globalSearch/globalSearch";
 import { useRouter } from "next/router";
 import { expiredTimeErrorMessage } from "./validationMessages";
 import AlertModal from "./alert/alertModal";
+import { GET_USER_CART_COUNT } from "../queries/cartquery";
 const SessionCheckInterval = 60000;
 const Header = ({ setOpenMenu }) => {
   const data = useSession();
-  const cartItem = useSelector((state) => state.cart.cartItems);
+  const cart = useSelector((state) => state.cart.cartItems);
   const addedCart = useSelector((state) => state.addedCart);
   const settings = useSelector((state) => state.setting);
   const dispatch = useDispatch();
@@ -56,7 +61,7 @@ const Header = ({ setOpenMenu }) => {
     }
   };
   const logOutUser = async () => {
-    await logoutAndClearData(dispatch,router);
+    await logoutAndClearData(dispatch, router);
     window.location.pathname = "/login";
   };
 
@@ -83,33 +88,43 @@ const Header = ({ setOpenMenu }) => {
     if (data?.status === "authenticated") {
       let id = get(data, "data.user.accessToken.customer._id");
       if (id) {
-        dispatch(calculateUserCart(id));
+        query(GET_USER_CART_COUNT, { userId: id })
+          .then((response) => {
+            let count = get(response, "data.getCartDetails.data.totalQuantity");
+            setCartItem(count);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       }
+    } else {
+      let item = getItemFromLocalStorage("cart");
+      setCartItem(item?.length || 0);
     }
   };
   useEffect(() => {
-    getCartLength();
     dispatch(getSettings());
-  }, [data]);
+    getCartLength();
+  }, [data?.status, cart]);
   const alertHandleConfirm = async () => {
     setShowModal(false);
-    await logoutAndClearData(dispatch,router);
+    await logoutAndClearData(dispatch, router);
   };
   return (
     <header className="header-area header-style-5 mt-0">
       <div className="header-bottom sticky-white-bg">
-      {showModal && (
-            <AlertModal
-              confirmAction={alertHandleConfirm}
-              icon="error"
-              title="Oops..."
-              text={expiredTimeErrorMessage}
-              showConfirmButton={true}
-              confirmButtonText="OK"
-              confirmButtonColor="#dc3545"
-              allowOutsideClick={false}
-            />
-          )}
+        {showModal && (
+          <AlertModal
+            confirmAction={alertHandleConfirm}
+            icon="error"
+            title="Oops..."
+            text={expiredTimeErrorMessage}
+            showConfirmButton={true}
+            confirmButtonText="OK"
+            confirmButtonColor="#dc3545"
+            allowOutsideClick={false}
+          />
+        )}
         <Container>
           <div className="header-container header-wrap">
             <div className="app-logo">
@@ -118,9 +133,9 @@ const Header = ({ setOpenMenu }) => {
                   <ProductImage
                     src={get(settings, "setting.appearance.theme.logo")}
                     className="logo-image"
-                    alt=""
+                    alt="logo"
                   />
-                </a>  
+                </a>
               </Link>
             </div>
             <div
@@ -152,7 +167,7 @@ const Header = ({ setOpenMenu }) => {
               </nav>      */}
               <NavBar openMenu={isOpenMobileMenu} setIsOpenMobileMenu={setIsOpenMobileMenu}/>
               <div className="nav-actions">
-                <Search/>
+                <Search />
                 <div className="action-btn-wrapper">
                     <div className="dropdown cart-btn">
                       <Link href="/shopcart">

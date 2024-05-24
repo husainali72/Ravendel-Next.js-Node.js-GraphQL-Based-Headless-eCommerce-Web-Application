@@ -44,6 +44,7 @@ const ProductGroupSchema = new Schema({
     type: String,
     required: true
   },
+  status: String,
   attributes: [attributeSchema],
   variations: [variationSchema],
   productIds: [

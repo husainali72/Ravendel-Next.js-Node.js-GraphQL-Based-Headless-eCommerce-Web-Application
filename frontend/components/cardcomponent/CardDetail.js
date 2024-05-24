@@ -122,10 +122,9 @@ const CartTable = (props) => {
                     {product?.available ? (
                       <RemaningQuantity quantity={get(product,'productQuantity',0)} />
                     ) : (
-                      <></>
-                      // <div className="itemComponents-base-lowUnitCount">
-                      //   OUT OF STOCK
-                      // </div>
+                      <div className="itemComponents-base-lowUnitCount">
+                        OUT OF STOCK
+                      </div>
                     )}
                   </div>
                 </div>

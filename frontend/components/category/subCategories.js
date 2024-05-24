@@ -7,6 +7,7 @@ import OnSaleProductCard from "./onSaleProductCard";
 import PropTypes from "prop-types";
 import { get } from "lodash";
 import CategorySorting from "../categorySorting/categorySorting";
+import Meta from "../Meta";
 const SubCategoryProducts = ({
   filteredProductData,
   handleFilter,
@@ -14,9 +15,10 @@ const SubCategoryProducts = ({
   handleSorting,
   clearFilter
 }) => {
-
+  const {title,description,keywords}=get(filteredProductData,'categoryTree.subCategories.meta',{})
   return (
     <section className="product-cart-section">
+            <Meta title={title} description={description} keywords={keywords}/>
       <Container>
         <div className="single-category-page">
           {get(filteredProductData, "filterData", [])?.length > 0 && (

@@ -58,7 +58,6 @@ var SingleCustomerObject = {
   _id: "",
   firstName: "",
   lastName: "",
-  company: "",
   phone: "",
   addressLine1: "",
   addressLine2: "",
@@ -73,7 +72,6 @@ var customerObj = {
   lastName: "",
   email: "",
   password: "",
-  company: "",
   phone: "",
 };
 
@@ -278,7 +276,6 @@ const EditCustomerComponent = ({ params }) => {
         "state",
         "city",
         "addressLine1",
-        "company",
         "lastName",
         "firstName",
       ],
@@ -384,16 +381,6 @@ const EditCustomerComponent = ({ params }) => {
                     onInputChange={handleChange}
                   />
                 </Grid>
-
-                <Grid item md={3} sm={6} xs={12}>
-                  <TextInput
-                    value={customer.company}
-                    label="Company"
-                    name="company"
-                    onInputChange={handleChange}
-                  />
-                </Grid>
-
                 <Grid item md={3} sm={6} xs={12}>
                   <PhoneNumber
                     handleOnChange={handleOnChange}
@@ -414,8 +401,6 @@ const EditCustomerComponent = ({ params }) => {
                     {addressInput("First Name", "firstName")}
 
                     {addressInput("Last Name", "lastName")}
-
-                    {addressInput("Company", "company")}
 
                     {addressInput("Phone", "phone","phone")}
 
@@ -551,12 +536,6 @@ const EditCustomerComponent = ({ params }) => {
                                       address.firstName + " " + address.lastName
                                     }
                                   />
-                                </ListItem>
-                                <ListItem>
-                                  <ListItemIcon>
-                                    <BusinessIcon />
-                                  </ListItemIcon>
-                                  <ListItemText primary={address.company} />
                                 </ListItem>
                                 <ListItem>
                                   <ListItemIcon>

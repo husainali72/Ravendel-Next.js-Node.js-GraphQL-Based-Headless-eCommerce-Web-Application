@@ -438,6 +438,11 @@ const DELETE_PRODUCT = gql`
     }
   }
 `;
+const AVAILABLE_PRODUCTS = gql`
+query Query($groupId: ID) {
+  availableProducts(groupId: $groupId)
+}
+`;
 
 export {
   GET_CATEGORIES,
@@ -450,5 +455,6 @@ export {
   ADD_PRODUCT,
   UPDATE_PRODUCT,
   DELETE_PRODUCT,
-  CHECK_VALID_URL
+  CHECK_VALID_URL,
+  AVAILABLE_PRODUCTS
 };

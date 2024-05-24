@@ -27,7 +27,7 @@ const prepareOrderDetailRowData = (orderInfo) => {
   const couponDiscount = get(couponCard, "appliedCouponDiscount");
   const couponCode = get(couponCard, "appliedCouponCode");
   let orderInfoDetail = [
-    { label: "Order Number", value: get(orderInfo, "id", ""), type: "text" },
+    { label: "Order Number", value: get(orderInfo, "orderNumber", ""), type: "text" },
     { label: "Date", value: get(orderInfo, "date", ""), type: "date" },
     {
       label: "SubTotal",

@@ -8,6 +8,7 @@ import {
   ADD_PRODUCT,
   UPDATE_PRODUCT,
   DELETE_PRODUCT,
+  AVAILABLE_PRODUCTS,
 } from "../../queries/productQuery";
 import {
   client_app_route_url,
@@ -16,6 +17,7 @@ import {
 } from "../../utils/helper";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
+import { get } from "lodash";
 
 export const categoriesAction = () => (dispatch) => {
   dispatch({
@@ -228,6 +230,22 @@ export const productsAction = () => (dispatch) => {
       });
     });
 };
+export const availbleProductsAction = (variables) => (dispatch) => {
+  query(AVAILABLE_PRODUCTS,variables)
+    .then((response) => {
+      const  data = get(response,'data.availableProducts',[])
+        return dispatch({
+          type: AVAILABLE_PRODUCTS_SUCCESS,
+          payload: data,
+        });
+    })
+    .catch((error) => {
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: error, error: true },
+      });
+    });
+};
 
 export const productAction = (id) => (dispatch) => {
   dispatch({
@@ -419,3 +437,4 @@ export const CAT_LOADING = "CAT_LOADING";
 export const CATS_SUCCESS = "CATS_SUCCESS";
 export const CAT_FAIL = "CAT_FAIL";
 export const CAT_SUCCESS = "CAT_SUCCESS";
+export const AVAILABLE_PRODUCTS_SUCCESS = "AVAILABLE_PRODUCTS_SUCCESS";

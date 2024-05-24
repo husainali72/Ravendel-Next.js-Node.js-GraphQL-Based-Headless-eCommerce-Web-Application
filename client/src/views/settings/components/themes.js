@@ -23,7 +23,7 @@ const ThemesComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [themeSetting, setThemeSetting] = useState({});
+  const [themeSetting, setThemeSetting] = useState({}); 
   useEffect(() => {
     if (!isEmpty(get(settingState,'settings.appearance.theme'))) {
       setThemeSetting({
@@ -32,27 +32,11 @@ const ThemesComponent = () => {
     }
   }, [get(settingState, "settings.appearance.theme")]);
   const updateTheme = () => {
-    let errors = validate(
-      ["playstore", "appstore", "hours"],
-      themeSetting
-    );
-    if (!isEmpty(errors)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: errors,
-          error: true,
-        },
-      });
-    } else {
       dispatch(appearanceThemeUpdateAction(themeSetting));
-    }
   };
   const fileChange = (e) => {
     const files = get(e, "target.files", []);
     const { name } = get(e, "target");
-    console.log(name, "=========");
     if (files?.length > 0 && name === "placeholder_image") {
       themeSetting.placeholder_image = URL.createObjectURL(files[0]);
       themeSetting.new_placeholder_image = files;
@@ -144,7 +128,7 @@ const ThemesComponent = () => {
               onChange={(e) => fileChange(e)}
             />
             <label htmlFor="placeholder_image" className={classes.feautedImage}>
-              {themeSetting.placeholder_image ? "Change Image" : "Add Image"}
+              {themeSetting.placeholder_image ? "Change Placeholder Image" : "Add Placeholder Image"}
             </label>
           </Box>
           <Box component="div">

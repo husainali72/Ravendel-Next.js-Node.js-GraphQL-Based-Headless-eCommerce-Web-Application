@@ -32,7 +32,7 @@ import {
   attributesAction,
   productsAction,
 } from "../../store/action/";
-import { getUpdatedUrl, query } from "../../utils/service";
+import { query } from "../../utils/service";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import {
   validatSpecification,
@@ -43,8 +43,6 @@ import {
 import {
   isEmpty,
   client_app_route_url,
-  bucketBaseURL,
-  baseUrl,
   getBaseUrl,
   getCheckedIds,
   calculateDiscount,
@@ -57,7 +55,6 @@ import {
   TinymceEditor,
   CardBlocks,
   FeaturedImageComponent,
-  URLComponent,
   TextInput,
 } from "../components";
 import { productAddAction } from "../../store/action/";
@@ -65,10 +62,8 @@ import {
   BrandSelection,
   EditGalleryImageSelection,
   GalleryImageSelection,
-  Attributes,
   TaxComponent,
   ShippingComponent,
-  CategoriesComponent,
   EditCategoriesComponent,
 } from "./components";
 import viewStyles from "../viewStyles";
@@ -80,6 +75,7 @@ import { get } from "lodash";
 import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
 import { CHECK_VALID_URL, GET_PRODUCT } from "../../queries/productQuery";
 import ValidUrlComponent from "../components/ValidUrlComponent";
+import CustomAutocomplete from "../components/autoComplete";
 let defaultobj = {
   _id: "",
   name: "",
@@ -115,7 +111,7 @@ let defaultobj = {
   // custom_field: [],
   specifications: [
     {
-      group: "Specification 1",
+      group: "",
       customFields: [{ key: null, value: null }],
     },
   ],
@@ -137,15 +133,14 @@ const EditProductComponent = ({ params }) => {
   const navigate = useNavigate();
   const brandState = useSelector((state) => state.brands);
   const [featureImage, setfeatureImage] = useState(null);
-  const [combination, setCombination] = useState([]);
   const [loading, setloading] = useState(false);
   const [gallery, setGallery] = useState([]);
   const [taxClass, setTaxClass] = useState("");
+  const [shippingClass, setShippingClass] = useState(defaultobj.shipping);
   const [product, setProduct] = useState(defaultobj);
   const [isUrlChanged, setIsUrlChanged] = useState(false);
   const setting = useSelector((state) => state.settings);
   const { attributes } = useSelector((state) => state.productAttributes);
-  const attributeState = useSelector((state) => state.productAttributes);
   const baseURl = getBaseUrl(setting);
   useEffect(() => {
     if (productId) {
@@ -247,6 +242,7 @@ const EditProductComponent = ({ params }) => {
           }
           let defaultBrand = {};
           setTaxClass(productState.product.taxClass);
+          setShippingClass({...get(productState,'product.shipping',{})});
           if (productState.product.brand) {
             if (!isEmpty(get(brandState, "brands"))) {
               for (let i in brandState.brands) {
@@ -303,9 +299,7 @@ const EditProductComponent = ({ params }) => {
 
       if (category?.checked) {
         acc.push(filteredCategory);
-      }
-
-     else if (category?.children && category?.children?.length > 0) {
+      } else if (category?.children && category?.children?.length > 0) {
         filteredCategory.children = filterTreeData(category?.children);
         if (filteredCategory.children.length > 0) {
           acc.push(filteredCategory);
@@ -318,6 +312,7 @@ const EditProductComponent = ({ params }) => {
   const addUpdateProduct = (e) => {
     // product.combinations = combination;
     product.taxClass = taxClass;
+    product.shipping = shippingClass;
     let combination_error = "";
     let combination_price_error = "";
     e.preventDefault();
@@ -419,7 +414,17 @@ const EditProductComponent = ({ params }) => {
       let sellprice = get(product, "pricing.sellprice");
       if (price >= sellprice && sellprice <= price) {
         const filteredData = filterTreeData(get(product, "categoryTree", []));
-        let singleProductPayload = { ...product, categoryTree: filteredData };
+        let singleProductPayload = {
+          ...product,
+          categoryTree: filteredData,
+          shipping: {
+            ...product.shipping,
+            height: String(product.shipping?.height ?? ""),
+            width: String(product.shipping?.width ?? ""),
+            depth: String(product.shipping?.depth ?? ""),
+            weight: String(product.shipping?.weight ?? ""),
+          },
+        };
         if (productId) {
           singleProductPayload.update_gallery_image = gallery;
           dispatch(
@@ -480,7 +485,6 @@ const EditProductComponent = ({ params }) => {
       setfeatureImage(featureImage);
     }
   };
-
   const updateUrl = async (url, setEditPermalink) => {
     if (productId) {
       await query(CHECK_VALID_URL, { url: url, entryId: productId }).then(
@@ -552,26 +556,26 @@ const EditProductComponent = ({ params }) => {
       },
     });
   };
-  const handleSpecificationKeyChange = (e, index, secIndex) => {
-    const { value } = e.target;
+  const handleSpecificationKeyChange = (e, newValue, index, secIndex) => {
     // Create a copy of the product state
     const updatedProduct = { ...product };
 
     // Update the selected value in the specifications array
-    updatedProduct.specifications[index].customFields[secIndex].key = value;
+    updatedProduct.specifications[index].customFields[secIndex].key = newValue;
     updatedProduct.specifications[index].customFields[secIndex].attributeId =
-      value?.id;
+      newValue?.id;
     updatedProduct.specifications[index].customFields[secIndex].keyLabel =
-      value?.name;
+      newValue?.name;
 
-    // clear value if selected
+    // Clear the value if it is selected
     const selectedValue = get(
-      product,
+      updatedProduct,
       `specifications[${index}].customFields[${secIndex}].value`
     );
     if (selectedValue) {
       updatedProduct.specifications[index].customFields[secIndex].value = "";
     }
+
     // Set the updated product state
     setProduct(updatedProduct);
   };
@@ -581,39 +585,38 @@ const EditProductComponent = ({ params }) => {
     updatedProduct.specifications[index].group = value;
     setProduct(updatedProduct);
   };
-  const handleSpecificationValueChange = (e, index, secIndex) => {
-    const { value } = e.target;
+
+  const handleSpecificationValueChange = (e, newValue, index, secIndex) => {
     // Create a copy of the product state
     const updatedProduct = { ...product };
 
     // Update the selected value in the specifications array
-    updatedProduct.specifications[index].customFields[secIndex].value = value;
+    updatedProduct.specifications[index].customFields[secIndex].value =
+      newValue;
     updatedProduct.specifications[index].customFields[secIndex].valueLabel =
-      value?.name;
+      newValue?.name;
     updatedProduct.specifications[index].customFields[
       secIndex
-    ].attributeValueId = value?._id;
+    ].attributeValueId = newValue?._id;
 
     // Set the updated product state
     setProduct(updatedProduct);
   };
-
   const getSpecificationValueOptions = (index, secIndex) => {
     const selectedKey = get(
       product,
       `specifications[${index}].customFields[${secIndex}].attributeId`
     );
     if (!selectedKey) {
-      return <MenuItem value="">Select any attribute first</MenuItem>;
+      return [{ id: "", name: "Select any attribute first", type:"default" }];
     }
     const selectedAttribute = attributes?.find(
       (attribute) => attribute?.id === selectedKey
     );
     if (selectedAttribute?.values && selectedAttribute?.values?.length) {
-      return selectedAttribute?.values?.map((val) => (
-        <MenuItem value={val}>{val?.name}</MenuItem>
-      ));
+      return selectedAttribute.values;
     }
+    return [];
   };
   const cloneProject = async (event, value) => {
     let groupedSpecifications = [];
@@ -671,6 +674,7 @@ const EditProductComponent = ({ params }) => {
         }
         let defaultBrand = {};
         setTaxClass(productToClone?.taxClass);
+        setShippingClass({...get(productToClone,'shipping',{})})
         if (productToClone.brand) {
           if (!isEmpty(get(brandState, "brands"))) {
             for (let i in brandState.brands) {
@@ -700,10 +704,10 @@ const EditProductComponent = ({ params }) => {
           name: productToClone?.name && `${productToClone.name} copy`,
           specifications: groupedSpecifications,
           categoryId: categoryIds,
+          categoryTree: get(productToClone, "categoryTree", []),
           brand: defaultBrand || "",
           shipping,
         });
-
         if (productToClone.feature_image) {
           setfeatureImage(baseURl + productToClone.feature_image);
         } else {
@@ -732,11 +736,8 @@ const EditProductComponent = ({ params }) => {
   };
   const addSpecificationGroup = () => {
     const updatedProduct = { ...product };
-    const specificationsLength = get(product, "specifications")?.length + 1;
     updatedProduct.specifications.push({
-      group: `Specification ${
-        specificationsLength ? specificationsLength : ""
-      }`,
+      group: "",
       customFields: [{ key: null, value: null }],
     });
     setProduct(updatedProduct);
@@ -997,24 +998,12 @@ const EditProductComponent = ({ params }) => {
             {!product.product_type?.virtual && (
               <CardBlocks title="Shipping">
                 <ShippingComponent
-                  product={product}
+                  product={shippingClass}
                   onShippingInputChange={(name, value) => {
-                    setProduct({
-                      ...product,
-                      shipping: {
-                        ...product.shipping,
-                        [name]: value,
-                      },
-                    });
+                    setShippingClass({...shippingClass,  [name]: value,})
                   }}
                   onShippingClassChange={(value) => {
-                    setProduct({
-                      ...product,
-                      shipping: {
-                        ...product.shipping,
-                        shippingClass: value,
-                      },
-                    });
+                    setShippingClass({...shippingClass,  'shippingClass': value,})
                   }}
                 />
               </CardBlocks>
@@ -1028,10 +1017,7 @@ const EditProductComponent = ({ params }) => {
                   setTaxClass(value);
                 }}
                 onTaxClassChange={(value) => {
-                  setProduct({
-                    ...product,
-                    ["taxClass"]: value,
-                  });
+                  setTaxClass(value);
                 }}
               />
             </CardBlocks>
@@ -1060,7 +1046,6 @@ const EditProductComponent = ({ params }) => {
                 )}
               </Grid>
             </CardBlocks>
-
 
             {/* ===================Specifications=================== */}
 
@@ -1133,91 +1118,78 @@ const EditProductComponent = ({ params }) => {
                                               className={classes.cstmSelect}
                                               variant="standard"
                                             >
-                                              <InputLabel id="key">
-                                                Key
-                                              </InputLabel>
-                                              <Select
-                                                label="Key"
-                                                labelId="key"
-                                                id="tax-name"
+                                              <CustomAutocomplete
+                                                id="key"
                                                 name="key"
-                                                // value={product?.specifications[index]?.customFields[secIndex].key}
+                                                label="Key"
+                                                options={attributes || []}
                                                 value={get(
                                                   product,
                                                   `specifications[${index}].customFields[${secIndex}].key`,
                                                   ""
                                                 )}
-                                                onChange={(e) =>
+                                                onChange={(e, newValue) =>
                                                   handleSpecificationKeyChange(
                                                     e,
+                                                    newValue,
                                                     index,
                                                     secIndex
                                                   )
                                                 }
-                                              >
-                                                {attributes &&
-                                                  !!attributes?.length &&
-                                                  attributes.map(
-                                                    (attribute, i) => (
-                                                      <MenuItem
-                                                        disabled={get(
-                                                          product,
-                                                          `specifications[${index}].customFields`
-                                                        )?.some(
-                                                          (attri) =>
-                                                            attri?.attributeId ===
-                                                            attribute?.id
-                                                        )}
-                                                        value={attribute}
-                                                        key={attribute?.id}
-                                                      >
-                                                        {attribute?.name}
-                                                      </MenuItem>
-                                                    )
-                                                  )}
-                                              </Select>
+                                                getOptionLabel={(option) =>
+                                                  option.name || ""
+                                                }
+                                                isOptionEqualToValue={(
+                                                  option,
+                                                  value
+                                                ) => option.id === value.id}
+                                                getOptionDisabled={(option) =>
+                                                  get(
+                                                    product,
+                                                    `specifications[${index}].customFields`,
+                                                    []
+                                                  ).some(
+                                                    (attri) =>
+                                                      attri.attributeId ===
+                                                      option.id
+                                                  )
+                                                }
+                                              />
                                             </FormControl>
                                             <FormControl
                                               className={classes.cstmSelect}
                                               variant="standard"
                                             >
-                                              <InputLabel id="value">
-                                                Value
-                                              </InputLabel>
-                                              <Select
-                                                label="Value"
-                                                labelId="value"
-                                                id="tax-name"
+                                              <CustomAutocomplete
+                                                id="value"
                                                 name="value"
-                                                // value={product?.specifications[index]?.customFields[secIndex].key}
+                                                label="Value"
+                                                options={getSpecificationValueOptions(
+                                                  index,
+                                                  secIndex
+                                                )}
                                                 value={get(
                                                   product,
                                                   `specifications[${index}].customFields[${secIndex}].value`,
                                                   ""
                                                 )}
-                                                onChange={(e) =>
+                                                onChange={(e, newValue) =>
                                                   handleSpecificationValueChange(
                                                     e,
+                                                    newValue,
                                                     index,
                                                     secIndex
                                                   )
                                                 }
-                                              >
-                                                {getSpecificationValueOptions(
-                                                  index,
-                                                  secIndex
-                                                )}
-                                                {/* {attributes &&
-                                      !!attributes?.length &&
-                                      attributes.map((attribute, index) => (
-                                        <MenuItem
-                                          value={attribute?.id}
-                                          key={attribute?.id}
-                                        >
-                                          {attribute?.name}
-                                        </MenuItem>
-                                      ))} */}
-                                              </Select>
+                                                getOptionLabel={(option) =>
+                                                  option.name || ""
+                                                }
+                                                getOptionDisabled={(option)=>option?.type==='default'}
+                                                isOptionEqualToValue={(
+                                                  option,
+                                                  value
+                                                ) => option._id === value._id}
+                                              />
                                             </FormControl>
                                             <Tooltip
                                               title="Remove Field"
@@ -1299,7 +1271,7 @@ const EditProductComponent = ({ params }) => {
               <Grid container spacing={isSmall ? 1 : 2}>
                 <Grid item md={6} xs={12}>
                   <TextInput
-                    value={product?.meta?.title}
+                    value={product?.meta?.title || ""}
                     label="Meta Title"
                     name="title"
                     onInputChange={onMetaChange}
@@ -1308,7 +1280,7 @@ const EditProductComponent = ({ params }) => {
 
                 <Grid item md={6} xs={12}>
                   <TextInput
-                    value={product?.meta?.keyword}
+                    value={product?.meta?.keywords || ""}
                     label="Meta Keywords"
                     name="keywords"
                     onInputChange={onMetaChange}
@@ -1317,7 +1289,7 @@ const EditProductComponent = ({ params }) => {
 
                 <Grid item xs={12}>
                   <TextInput
-                    value={product?.meta?.descriptio}
+                    value={product?.meta?.description || ""}
                     label="Meta Description"
                     name="description"
                     onInputChange={onMetaChange}
@@ -1331,42 +1303,21 @@ const EditProductComponent = ({ params }) => {
 
           <Grid item lg={3} md={12}>
             {/* ===================Clone=================== */}
-            <Box mb={1}>
-              <CardBlocks title="Clone Project" nomargin>
-                <Autocomplete
-                  disablePortal
-                  id="select-product"
-                  options={productsOptions}
-                  sx={{ width: 300 }}
-                  onChange={cloneProject}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Select product" />
-                  )}
-                />
-                {/* <FormControl variant="outlined" sx={{ width: "100%" }}>
-                  <InputLabel id="product">Select product</InputLabel>
-                  <Select
-                    label="Select product"
-                    labelId="Select product"
+            {!productId && (
+              <Box component="span" m={1}>
+                <CardBlocks title="Clone Product" >
+                  <Autocomplete
+                    disablePortal
                     id="select-product"
-                    name="product"
-                    // value={product?.specifications[index]?.customFields[secIndex].key}
-                    // value={get(product, `specifications[${index}].customFields[${secIndex}].key`, '')}
-                    // onChange={(e) => handleSpecificationKeyChange(e, index, secIndex)}
-                  >
-                    {productsOptions?.length > 0 ? (
-                      productsOptions.map((option) => (
-                        <MenuItem value={option?.value}>
-                          {option?.label}
-                        </MenuItem>
-                      ))
-                    ) : (
-                      <MenuItem value="">No products found</MenuItem>
+                    options={productsOptions}
+                    onChange={cloneProject}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Select product" />
                     )}
-                  </Select>
-                </FormControl> */}
-              </CardBlocks>
-            </Box>
+                  />
+                </CardBlocks>
+              </Box>
+            )}
             {/* ===================Status=================== */}
             <Box component="span">
               <CardBlocks title="Status" nomargin>
@@ -1415,7 +1366,7 @@ const EditProductComponent = ({ params }) => {
             <Box component="span" m={1}>
               <CardBlocks title="Featured Image">
                 <FeaturedImageComponent
-                name='feature_image'
+                  name="feature_image"
                   image={featureImage}
                   feautedImageChange={(e) => onFeatureImageChange(e)}
                 />
@@ -1424,7 +1375,7 @@ const EditProductComponent = ({ params }) => {
             {/* ===================Gallery Images=================== */}
             <Box component="span" m={1}>
               <CardBlocks title="Gallery Image">
-                {productId ? (
+                {productId || clonedId ? (
                   <EditGalleryImageSelection
                     onAddGalleryImage={(e) => {
                       var imagesRes = [...e.target.files];
@@ -1451,6 +1402,7 @@ const EditProductComponent = ({ params }) => {
                   <GalleryImageSelection
                     onAddGalleryImage={(e) => {
                       var imagesRes = [...e.target.files];
+
                       var images = [];
                       for (let i in imagesRes) {
                         if (get(imagesRes, [i])) {

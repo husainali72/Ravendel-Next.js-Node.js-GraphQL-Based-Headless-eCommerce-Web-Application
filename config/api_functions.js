@@ -144,11 +144,13 @@ const GET_BY_URL = async (modal, url, name) => {
   }
 };
 
-const GET_ALL_FUNC = async (modal, name, admin) => {
+const GET_ALL_FUNC = async (modal, name, admin, sortField = "date") => {
   try {
     let response;
-    if (modal === Product && !admin) response = await modal.find({ status: "Publish" }).sort({ date: -1 });
-    else response = await modal.find({}).sort({ date: -1 });
+    const sortObj = { [sortField]: -1 };
+
+    if (modal === Product && !admin) response = await modal.find({ status: "Publish" }).sort(sortObj);
+    else response = await modal.find({}).sort(sortObj);
 
     if(response.length) {
       return {

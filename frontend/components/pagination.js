@@ -20,14 +20,13 @@ const Pagination = ({ currentPage, totalPages, handlePageChange }) => {
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
       pageNumbers.push(
-        <button key={i} onClick={() => handlePageChange(i)} className={`page-number ${currentPage === i - 1 ? 'active' : ''}`}>
+        <button key={i} onClick={() => handlePageChange(i)} className={`page-number ${currentPage === i ? 'active' : ''}`}>
           {i}
         </button>
       );
     }
     return pageNumbers;
   };
-
   return (
     <div className="pagination-container">
       <button onClick={handlePrevPage} disabled={currentPage === 1}>

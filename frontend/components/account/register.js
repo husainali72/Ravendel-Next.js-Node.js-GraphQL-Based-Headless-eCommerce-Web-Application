@@ -4,7 +4,7 @@ import { ADD_CUSTOMER } from "../../queries/customerquery";
 import Link from "next/link";
 import { loginCustomer, mutation } from "../../utills/helpers";
 import toast, { Toaster } from "react-hot-toast";
-import { validateEmail, passwordValidation } from "../../utills/Validation";
+import { validateEmail, passwordValidation, confirmPasswordValidation } from "../../utills/Validation";
 import { get } from "lodash";
 import { useForm } from "react-hook-form";
 import InputField from "../inputField";
@@ -51,7 +51,7 @@ const Register = () => {
   } = useForm();
   const onSubmit = (e) => {
     setLoading(true);
-    const { conditions, ...variable } = registerUser;
+    const { conditions,confirmPassword, ...variable } = registerUser;
     mutation(ADD_CUSTOMER, variable)
       .then((res) => {
         setLoading(false);
@@ -90,6 +90,7 @@ const Register = () => {
     if (type === "checkbox") {
       setRegisterUser({ ...registerUser, [name]: !registerUser[name] });
     } else {
+      console.log(name,value)
       setRegisterUser({ ...registerUser, [name]: value });
     }
   };
@@ -208,15 +209,15 @@ const Register = () => {
               className="form-control register-top-space"
               id="confirm-password"
               placeholder="Confirm Password"
-              value={password}
+              value={get(registerUser,'confirmPassword')}
               name="confirmPassword"
               registerRef={register("confirmPassword", {
                 required: {
-                  value: !password,
+                  value: !get(registerUser,'confirmPassword'),
                   message: passwordErrorMessage,
                 },
                 validate: () => {
-                  return passwordValidation(password);
+                  return confirmPasswordValidation(password,get(registerUser,'confirmPassword'));
                 },
               })}
               errors={errors}
