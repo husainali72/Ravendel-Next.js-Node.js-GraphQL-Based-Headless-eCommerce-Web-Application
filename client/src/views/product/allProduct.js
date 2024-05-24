@@ -39,15 +39,15 @@ const AllproductComponent = () => {
       sortingactive: true
     },
     {
-      name: "date",
-      type: "date",
-      title: "date",
-      sortingactive: true
-    },
-    {
       name: "brand",
       type: "brand",
       title: "Brand",
+      sortingactive: true
+    },
+    {
+      name: "date",
+      type: "date",
+      title: "date",
       sortingactive: true
     },
     {
