@@ -400,7 +400,7 @@ const AttributesComponent = ({
                   id="attribute-name"
                   name="attribute"
                   label="Select Attribute"
-                  options={get(attributeState,'attributes',[])}
+                  options={get(attributeState, "attributes", [])}
                   value={
                     attributeState?.attributes?.find(
                       (attr) => attr?.id === currentAttribute?.id
@@ -412,7 +412,7 @@ const AttributesComponent = ({
                     option.id === value.id
                   }
                   getOptionDisabled={(option) =>
-                    get(currentAttribute,'attribute_list',[])?.some(
+                    get(currentAttribute, "attribute_list", [])?.some(
                       (i) => i?.id === option?.id
                     )
                   }
@@ -529,29 +529,33 @@ const AttributesComponent = ({
                               style={{ width: 250 }}
                               variant="outlined"
                             >
-                              <CustomAutocomplete
-                                id="productID"
-                                name="productID"
-                                label="Select Product"
-                                options={products || []}
-                                value={products?.find(
-                                  (singleProduct) =>
-                                    variant.productID === singleProduct._id
-                                )}
-                                onChange={(e, newValue) =>
-                                  variantChange(newValue, index)
-                                }
-                                getOptionLabel={(option) => option.name}
-                                isOptionEqualToValue={(option, value) =>
-                                  option?._id === value?._id
-                                }
-                                getOptionDisabled={(option) =>
-                                  currentVariants.combinations.some(
-                                    (variant) =>
-                                      variant.productID === option._id
-                                  )
-                                }
-                              />
+                              {products?.length > 0 ? (
+                                <CustomAutocomplete
+                                  id="productID"
+                                  name="productID"
+                                  label="Select Product"
+                                  options={products || []}
+                                  value={products?.find(
+                                    (singleProduct) =>
+                                      variant.productID === singleProduct._id
+                                  )}
+                                  onChange={(e, newValue) =>
+                                    variantChange(newValue, index)
+                                  }
+                                  getOptionLabel={(option) => option.name}
+                                  isOptionEqualToValue={(option, value) =>
+                                    option?._id === value?._id
+                                  }
+                                  getOptionDisabled={(option) =>
+                                    currentVariants.combinations.some(
+                                      (variant) =>
+                                        variant.productID === option._id
+                                    )
+                                  }
+                                />
+                              ) : (
+                                <>No Product</>
+                              )}
                             </FormControl>
                           </TableCell>
                         </TableRow>
