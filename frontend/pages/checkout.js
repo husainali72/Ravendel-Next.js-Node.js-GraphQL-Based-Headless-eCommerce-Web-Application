@@ -347,7 +347,7 @@ export const CheckOut = () => {
       ZipMessage?.zipSuccess
     ) {
       let isAddressAlready = get(billingDetails, "billing.id") ? true : false;
-      if (!isAddressAlready&&isAddNewAddressForm) {
+      if (!isAddressAlready) {
         addNewAddress();
       }else if(isEditAddress){
         updateCustomerAddress()
@@ -847,7 +847,6 @@ export const CheckOut = () => {
       case 1:
         return (
           <>
-            <Toaster />
             <div>
               <BreadCrumb title={"checkout"} />
               <section className="checkout-section">
@@ -927,8 +926,6 @@ export const CheckOut = () => {
       case 2:
         return (
           <>
-            <Toaster />
-
             <div>
               <BreadCrumb title={"checkout"} />
               <section className="checkout-section">
