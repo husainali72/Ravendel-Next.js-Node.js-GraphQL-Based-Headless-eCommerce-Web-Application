@@ -63,7 +63,7 @@ const AttributesComponent = ({
     combinations: [],
     allValues: {},
   });
-  const [currentAttribute, setcurrentAttribute] = useState({
+  const [currentAttribute, setCurrentAttribute] = useState({
     id: "",
     attribute_list: [],
   });
@@ -80,7 +80,7 @@ const AttributesComponent = ({
   }, []);
 
   useEffect(() => {
-    setLabelWidth(inputLabel.current.offsetWidth);
+    // setLabelWidth(inputLabel.current.offsetWidth);
     if (!isEmpty(attributeState)) {
       dispatch(attributesAction());
     }
@@ -146,7 +146,7 @@ const AttributesComponent = ({
       }
       currentVariants.combinations = selected_variants;
 
-      setcurrentAttribute({
+      setCurrentAttribute({
         ...currentAttribute,
       });
 
@@ -169,7 +169,7 @@ const AttributesComponent = ({
 
   const changeSelectedValue = (e, i) => {
     currentAttribute.attribute_list[i].selected_values = e;
-    setcurrentAttribute({
+    setCurrentAttribute({
       ...currentAttribute,
     });
 
@@ -178,7 +178,7 @@ const AttributesComponent = ({
 
   const deleteAttribute = (i) => {
     currentAttribute.attribute_list.splice(i, 1);
-    setcurrentAttribute({
+    setCurrentAttribute({
       ...currentAttribute,
     });
     saveAttribute();
@@ -218,7 +218,7 @@ const AttributesComponent = ({
 
     currentAttribute.attribute_list.push(attribute_list);
     currentAttribute.id = "";
-    setcurrentAttribute({
+    setCurrentAttribute({
       ...currentAttribute,
     });
   };
@@ -377,7 +377,14 @@ const AttributesComponent = ({
       ...currentVariants,
     });
   };
-
+  const handleAttributeChange = (event, newValue) => {
+    if (newValue) {
+      setCurrentAttribute({
+        ...currentAttribute,
+        id: newValue.id,
+      });
+    }
+  };
   return (
     <>
       {loading ? (
@@ -389,35 +396,27 @@ const AttributesComponent = ({
           <Grid container spacing={1} alignItems="center">
             <Grid item>
               <FormControl style={{ width: 250 }} variant="outlined">
-                <InputLabel ref={inputLabel} id="attribute-name">
-                  Select Attribute
-                </InputLabel>
-                <Select
+                <CustomAutocomplete
+                  id="attribute-name"
+                  name="attribute"
                   label="Select Attribute"
-                  labelWidth={labelWidth}
-                  labelId="attribute-name"
-                  value={currentAttribute.id}
-                  onChange={(e) =>
-                    setcurrentAttribute({
-                      ...currentAttribute,
-                      id: e.target.value,
-                    })
+                  options={get(attributeState,'attributes',[])}
+                  value={
+                    attributeState?.attributes?.find(
+                      (attr) => attr?.id === currentAttribute?.id
+                    ) || null
                   }
-                >
-                  {attributeState.attributes.map((attr, index) => {
-                    return (
-                      <MenuItem
-                        disabled={currentAttribute.attribute_list.some(
-                          (i) => i.id === attr.id
-                        )}
-                        value={attr.id}
-                        key={index}
-                      >
-                        {attr.name}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
+                  onChange={handleAttributeChange}
+                  getOptionLabel={(option) => option.name}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
+                  getOptionDisabled={(option) =>
+                    get(currentAttribute,'attribute_list',[])?.some(
+                      (i) => i?.id === option?.id
+                    )
+                  }
+                />
               </FormControl>
             </Grid>
             <Grid item>
@@ -472,18 +471,6 @@ const AttributesComponent = ({
                                 )}
                               />
                             </TableCell>
-                            {/* <TableCell>
-                              <Checkbox
-                                color="primary"
-                                checked={attribute.isVariant}
-                                onChange={(e) => {
-                                  attribute.isVariant = e.target.checked;
-                                  setcurrentAttribute({
-                                    ...currentAttribute,
-                                  });
-                                }}
-                              />
-                            </TableCell> */}
                             <TableCell>
                               <Tooltip title="Delete" aria-label="delete">
                                 <IconButton
