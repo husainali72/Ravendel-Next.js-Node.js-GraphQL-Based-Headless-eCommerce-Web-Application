@@ -5,7 +5,7 @@ const EmptyCart = () => {
     <>
       <div className="emptyCart">
         <div>
-          <img src={emptyCart.src} />
+          <img src={emptyCart.src} className="emptyCartImage"/>
           <h5>Your cart is empty</h5>
           <p>Just relax, let us help you find some first class products</p>
           <div className="card-btons text-align-center outline">
