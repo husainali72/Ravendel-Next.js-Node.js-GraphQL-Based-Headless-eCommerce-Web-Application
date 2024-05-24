@@ -291,6 +291,7 @@ const EditProductComponent = ({ params }) => {
       const filteredCategory = {
         id: category?.id,
         name: category.name,
+        url: category.url,
         checked: category.checked,
       };
       if (category?.children && category?.children?.length > 0) {

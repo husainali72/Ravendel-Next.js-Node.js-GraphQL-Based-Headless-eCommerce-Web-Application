@@ -70,7 +70,7 @@ const AddAttributeTheme = () => {
             type: ALERT_SUCCESS,
             payload: {
               boolean: false,
-              message: 'Attributes can only contain letters, numbers, and spaces',
+              message: 'Attributes can only contain letters, numbers,',
               error: true,
             },
           });

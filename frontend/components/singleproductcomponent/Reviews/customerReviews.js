@@ -12,62 +12,72 @@ const CustomerReviews = ({ productId }) => {
   //   setReviews("productReviews");
   let limit = 5;
   const [reviews, setReviews] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const setting=useSelector((state)=>state.setting)
+  const setting = useSelector((state) => state.setting);
   const getCustomerReviews = async () => {
     try {
       const { data: productReviewData } = await queryWithoutToken(
         GET_PRODUCT_REVIEWS,
-        { productId: productId, page: currentPage + 1, limit }
+        { productId: productId, page: currentPage, limit }
       );
-      const productReviews = get(productReviewData, "productwisereview.reviews");
+      const productReviews = get(
+        productReviewData,
+        "productwisereview.reviews"
+      );
       const totalpages = get(productReviewData, "productwisereview.count");
       setTotalPages(Math.ceil(totalpages / limit));
       setReviews(productReviews);
     } catch (e) {}
   };
-  const handlePageChange = ({ selected }) => {
+  const handlePageChange = (selected) => {
     setCurrentPage(selected);
   };
   useEffect(() => {
     getCustomerReviews();
   }, [productId, currentPage]);
-  
+
   return (
     <>
-    {
-      reviews && reviews?.length > 0 &&
-      <>
-        <h5>Customer Reviews</h5>
-        <div>
-          {reviews?.map((review, i) => (
-            <div className="customer-review" key={i}>
-              <div className="rating">
-                <p>{get(review, "rating")}</p>
-                <FaStar />
-              </div>
-              <div className="review">
-                <p>{get(review, "review")}</p>
-                <div>
-                  { (review.customerId.firstName || review.customerId.lastName) &&
-                    <span className="name">{review.customerId.firstName} {" "} {review.customerId.lastName}</span> }
-                    { (review.date) && <span>{convertDateToStringFormat(review.date,setting)}</span>}
+      {reviews && reviews?.length > 0 && (
+        <>
+          <h5>Customer Reviews</h5>
+          <div>
+            {reviews?.map((review, i) => (
+              <div className="customer-review" key={i}>
+                <div className="rating">
+                  <p>{get(review, "rating")}</p>
+                  <FaStar />
+                </div>
+                <div className="review">
+                  <p>{get(review, "review")}</p>
+                  <div>
+                    {(review.customerId.firstName ||
+                      review.customerId.lastName) && (
+                      <span className="name">
+                        {review.customerId.firstName}{" "}
+                        {review.customerId.lastName}
+                      </span>
+                    )}
+                    {review.date && (
+                      <span>
+                        {convertDateToStringFormat(review.date, setting)}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-          {
-            reviews.length > 5 &&
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              handlePageChange={handlePageChange}
-            />
-          }
-        </div>
-      </>
-    }
+            ))}
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                handlePageChange={handlePageChange}
+              />
+            )}
+          </div>
+        </>
+      )}
     </>
   );
 };
