@@ -87,7 +87,6 @@ export default function Home({
             slider={get(homePageSliderInfo, "slider")}
           />
         ) : null}
-        {console.log(parentCategories)}
         {parentCategories && parentCategories?.length > 0 ? (
           <Category category={parentCategories} />
         ) : null}

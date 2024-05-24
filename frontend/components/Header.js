@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { SlHandbag } from "react-icons/sl";
-import { OpenNav, CloseNav } from "../utills/app";
 import ShopCartProducts from "./cardcomponent/ShopCartProduct";
 import { HiOutlineUserCircle } from "react-icons/hi2";
 import { Container } from "react-bootstrap";
@@ -31,6 +30,7 @@ const Header = ({ setOpenMenu }) => {
   const [timerId, setTimerId] = useState(null);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false);
   const isLogin = data?.status === "authenticated"
   const router=useRouter()
   useEffect(() => {
@@ -97,100 +97,6 @@ const Header = ({ setOpenMenu }) => {
   };
   return (
     <header className="header-area header-style-5 mt-0">
-      {/* <div className="header-top">
-        <Container className="align-items-center">
-          <Toaster />
-          {showModal && (
-            <AlertModal
-              confirmAction={alertHandleConfirm}
-              icon="error"
-              title="Oops..."
-              text={expiredTimeErrorMessage}
-              showConfirmButton={true}
-              confirmButtonText="OK"
-              confirmButtonColor="#dc3545"
-              allowOutsideClick={false}
-            />
-          )}
-          <div className="row header-smartphone">
-            <div className="col-xl-3 col-lg-4 col-sm-6 col-xs-6 align-items-center">
-              <div className="header-info">
-                <div className="header-contact-info">
-                  <p>
-                    <i className="fi-rs-smartphone"></i>
-                    <Link href="tel: +1234567890">
-                      <a>(+01) - 2345 - 6789</a>
-                    </Link>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-9 col-lg-8 col-sm-6 col-xs-6">
-              <div className="text-center float-right">
-                <div className="header-info align-items-center">
-                  <div className="align-items-center user-info">
-                    {data?.status === "authenticated" ? (
-                      <>
-                        <div className="logout-btn">
-                          <p>
-                            <i className="far fa-user"></i>
-                            <Link href="/">
-                              <a className="logout-link" onClick={logOutUser}>
-                                {" "}
-                                Log Out
-                              </a>
-                            </Link>
-                          </p>
-                          {!isDropdownOpen ? (
-                            <span className="mx-1">
-                              <i
-                                className="fas fa-angle-down"
-                                onClick={() => setDropdownOpen(!isDropdownOpen)}
-                              ></i>
-                            </span>
-                          ) : (
-                            <span className="mx-1">
-                              <i
-                                className="fas fa-angle-up"
-                                onClick={() => setDropdownOpen(!isDropdownOpen)}
-                              ></i>
-                            </span>
-                          )}
-                          {isDropdownOpen ? (
-                            <div className="logout-dropdown" ref={dropdownRef}>
-                              <ui>
-                                <li onClick={() => setDropdownOpen(false)}>
-                                  <Link href="/">Account</Link>
-                                </li>
-                                <li onClick={() => setDropdownOpen(false)}>
-                                  <Link href="/account/profile">Profile </Link>
-                                </li>
-                                <li onClick={() => setDropdownOpen(false)}>
-                                  <Link href="/account/order">Your Order</Link>
-                                </li>
-                                <li onClick={() => setDropdownOpen(false)}>
-                                  <Link href="/account/address">Address</Link>
-                                </li>
-                              </ui>
-                            </div>
-                          ) : null}
-                        </div>
-                      </>
-                    ) : (
-                      <p>
-                        <i className="far fa-user"></i>
-                        <Link href="/login">
-                          <a className="login-link"> Log In / Sign Up</a>
-                        </Link>
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Container>
-      </div> */}
       <div className="header-bottom sticky-white-bg">
       {showModal && (
             <AlertModal
@@ -244,7 +150,7 @@ const Header = ({ setOpenMenu }) => {
                   </li>
                 </ul>
               </nav>      */}
-              <NavBar setOpenMenu={setOpenMenu}/>
+              <NavBar openMenu={isOpenMobileMenu} setIsOpenMobileMenu={setIsOpenMobileMenu}/>
               <div className="nav-actions">
                 <Search/>
                 <div className="action-btn-wrapper">
@@ -282,12 +188,7 @@ const Header = ({ setOpenMenu }) => {
                       <i
                         className="fas fa-bars open-nav"
                         id="openNav"
-                        onClick={() => OpenNav()}
-                      ></i>
-                      <i
-                        className="fas fa-times close-nav"
-                        id="closeNav"
-                        onClick={() => CloseNav()}
+                        onClick={() => setIsOpenMobileMenu(true)}
                       ></i>
                     </div>
                   </div>
