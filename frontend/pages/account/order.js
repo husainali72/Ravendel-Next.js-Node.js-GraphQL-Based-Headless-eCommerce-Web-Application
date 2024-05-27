@@ -17,7 +17,7 @@ import OrdersDetails from "../../components/account/component/orders-details";
 const Order = () => {
   const [viewOrderDetails, setViewOrderDetails] = useState(false);
   const [customerOrder, setCustomerOrder] = useState([]);
-  const [loading, setloading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [session, setSession] = useState({});
   const [order, setOrder] = useState();
@@ -42,13 +42,15 @@ const Order = () => {
     };
     query(GET_CUSTOMER_ORDERS_QUERY, variable, token).then((response) => {
       if (response) {
+        setLoading(false)
         if (response.data.orderbyUser.data) {
           let customeradd = get(response, "data.orderbyUser.data", []);
           customeradd = customeradd.map((item)=> ({...item, date: formatDate(item.date)}))
-          setloading(false);
           setCustomerOrder([...customeradd]);
         }
       }
+    }).catch((error)=>{
+      setLoading(false)
     });
   };
 
@@ -63,11 +65,11 @@ const Order = () => {
   }
 
   const columns = [
-    { field: 'orderNumber', headerName: 'Order Number', minWidth: 140, flex: 1, filterable: false, sortable: true },
-    { field: 'date', headerName: 'Date', minWidth: 140, flex: 1, filterable: false, sortable: true },
-    { field: 'paymentStatus', headerName: 'Payment Status', minWidth: 140, flex: 1, filterable: false, sortable: true },
-    { field: 'shippingStatus', headerName: 'Shipping Status', minWidth: 140, flex: 1, filterable: false, sortable: true },
-    { headerName: 'Action', width: 60, filterable: false, sortable: false, renderCell: (params) => (
+    { field: 'orderNumber', headerName: 'Order Number', minWidth: 140, flex: 1, filterable: false, sortable: true,type:'text' },
+    { field: 'date', headerName: 'Date', minWidth: 140, flex: 1, filterable: false, sortable: true,type:'date' },
+    { field: 'paymentStatus', headerName: 'Payment Status', minWidth: 140, flex: 1, filterable: false, sortable: true,type:'badge' },
+    { field: 'shippingStatus', headerName: 'Shipping Status', minWidth: 140, flex: 1, filterable: false, sortable: true,type:'badge' },
+    {type:'action', field:'action',headerName: 'Action', width: 60, filterable: false, sortable: false, renderCell: (params) => (
       <>
         <IconButton color="tertiary" aria-label="edit" onClick={() => handleShowDetailsPopup(params.row.id)}>
           <VisibilityIcon style={{fontSize: '20px'}} />
@@ -86,7 +88,7 @@ const Order = () => {
         :
         <>
         {
-          !open ? 
+          !open ?
             <DataTable
               rows={customerOrder}
               columns={columns}

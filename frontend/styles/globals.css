@@ -6973,3 +6973,7 @@ margin-bottom: 4px !important;
   margin-top: 50px;
   justify-content: center;
 }
+.sorting-icon{
+  font-size: 16px;
+  color: grey;
+}
