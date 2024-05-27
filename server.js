@@ -23,14 +23,23 @@ const {
 
 connectDB();
 async function startServer() {
+  const User = require("./models/User");
+  const Brand = require("./models/Brand");
+  const ProductCat = require("./models/ProductCat");
+  const ProductAttribute = require("./models/ProductAttribute");
+  const Product = require("./models/Product");
   const Tax = require("./models/Tax");
-  Tax.createTax();
-
   const Shipping = require("./models/Shipping");
-  Shipping.createShipping();
-
   const Settings = require("./models/Setting");
-  Settings.createSettings();
+
+  User.createDefaultUsers();
+  Brand.createDefaultBrands();
+  ProductCat.createDefaultProductCats();
+  ProductAttribute.createDefaultProductAttributes();
+  Product.createDefaultProducts();
+  Tax.createDefaultTaxes();
+  Shipping.createDefaultShippings();
+  Settings.createDefaultSettings();
 
   var port = process.env.PORT || 8000;
 
