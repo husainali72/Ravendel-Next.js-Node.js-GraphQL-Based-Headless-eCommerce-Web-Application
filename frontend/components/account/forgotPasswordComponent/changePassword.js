@@ -87,7 +87,7 @@ const ChangePassword = ({ token }) => {
                 className="btn btn-primary mt-3 primary-btn-color"
                 disabled={isButtonDisabled}
               >
-                Change password
+              Submit
               </button>
             </>
           )}
