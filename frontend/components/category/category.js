@@ -27,7 +27,7 @@ const Category = ({ category }) => {
     setInlineSize(inlineSize);
   });
   return (
-    <section className="product-cart-section">
+    <section className="product-cart-section category">
       <Container className="container">
         {showSlider ? (
           <MdChevronLeft
