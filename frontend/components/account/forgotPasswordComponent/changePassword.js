@@ -16,7 +16,6 @@ const ChangePassword = ({ token }) => {
     register,
     handleSubmit,
     formState: { errors },
-    reset
   } = useForm();
   const router=useRouter()
   const handleChange = (e) => {
@@ -54,16 +53,12 @@ const ChangePassword = ({ token }) => {
       console.error("Error:", error);
     }
   };
-  const resetEmail = () => {
-    reset()
-    setIsButtonDisabled(false);
-    setPassword("");
-  };
+
   return (
     <>
       <div className="forgotPassword-container">
         <div>
-          <h3>Forgot Password</h3>
+          <h3>Reset Password</h3>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           {token && (
@@ -93,12 +88,6 @@ const ChangePassword = ({ token }) => {
                 disabled={isButtonDisabled}
               >
                 Change password
-              </button>
-              <button
-                className="btn btn-primary mt-3 primary-btn-color reset-btn"
-                onClick={resetEmail}
-              >
-                Reset
               </button>
             </>
           )}
