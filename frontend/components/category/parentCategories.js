@@ -3,12 +3,10 @@ import PropTypes from "prop-types";
 import CategoryCard from "../card/roundCard";
 import ProductImage from "../imageComponent";
 import CategoryLink from "./categoryLink";
-// import { CircularProgress } from "@mui/material";
-import LoadingSpinner from "../breadcrumb/loading";
-const ParentCategories = ({ categories, categoryName, loading }) => {
+
+const ParentCategories = ({ categories, categoryName }) => {
   return (
     <>
-      {loading && <LoadingSpinner />}
         <div className={`banner-container section-banner`}>
           <ProductImage className="banner-image" src={get(categories, "image", '')} />
           <h2>{categoryName}</h2>

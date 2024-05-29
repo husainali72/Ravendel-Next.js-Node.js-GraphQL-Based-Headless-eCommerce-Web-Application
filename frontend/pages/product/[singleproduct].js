@@ -61,7 +61,6 @@ const SingleProduct = ({
         <Toaster />
         <Container>
           <div className="row">
-            <div className="col-lg-12">
               <div className="product-detail accordion-detail">
                 <div>
                   <GalleryImagesComponents
@@ -83,7 +82,6 @@ const SingleProduct = ({
                 </div>
                 <AddionalDetail singleProduct={singleproducts} />
               </div>
-            </div>
           </div>
         </Container>
       </section>
