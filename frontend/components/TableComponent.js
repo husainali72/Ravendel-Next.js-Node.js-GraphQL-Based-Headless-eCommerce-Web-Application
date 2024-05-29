@@ -13,12 +13,23 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { convertDateToStringFormat } from "../utills/helpers";
 import { useSelector } from "react-redux";
 import CustomBadge from "./badge";
+import CustomPagination from "./tablePagination";
 
-export default function DataTable({ rows = [], columns = [] }) {
+export default function DataTable({
+  rows = [],
+  columns = [],
+  rowsPerPageOptions = [5, 10, 25],
+  defaultRowsPerPage = 5,
+}) {
   const [sortColumn, setSortColumn] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
   const [hoveredColumn, setHoveredColumn] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(defaultRowsPerPage);
   const setting = useSelector((state) => state.setting);
+
+  const totalPages = Math.ceil(rows.length / rowsPerPage);
+
   const handleSort = (field) => {
     if (sortColumn === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -34,6 +45,21 @@ export default function DataTable({ rows = [], columns = [] }) {
 
   const handleMouseLeave = () => {
     setHoveredColumn(null);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(Number(event.target.value));
+    setCurrentPage(1); // Reset to the first page when rows per page changes
+  };
+
+  const getPaginatedData = () => {
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    return rows?.slice(startIndex, endIndex);
   };
 
   const renderCellContent = (column, row) => {
@@ -82,9 +108,8 @@ export default function DataTable({ rows = [], columns = [] }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows && rows?.length >0 ? (
-            rows
-              ?.slice()
+          {rows && rows?.length > 0 ? (
+            getPaginatedData()
               ?.sort((a, b) =>
                 sortDirection === "asc"
                   ? a[sortColumn] > b[sortColumn]
@@ -110,6 +135,23 @@ export default function DataTable({ rows = [], columns = [] }) {
           )}
         </TableBody>
       </Table>
+      <div className="pagination-container">
+        <div className="rows-per-page-selector">
+          Rows per page:
+          <select value={rowsPerPage} onChange={handleRowsPerPageChange}>
+            {rowsPerPageOptions?.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+        <CustomPagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </TableContainer>
   );
 }
@@ -117,5 +159,10 @@ export default function DataTable({ rows = [], columns = [] }) {
 DataTable.propTypes = {
   rows: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
-  handleShowDetailsPopup: PropTypes.func.isRequired,
+  rowsPerPageOptions: PropTypes.arrayOf(PropTypes.number).isRequired,
+  defaultRowsPerPage: PropTypes.number,
+};
+
+DataTable.defaultProps = {
+  defaultRowsPerPage: 5,
 };
