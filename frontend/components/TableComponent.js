@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -26,17 +26,15 @@ export default function DataTable({
   const [hoveredColumn, setHoveredColumn] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(defaultRowsPerPage);
+  const [sortedRows, setSortedRows] = useState([...rows]);
   const setting = useSelector((state) => state.setting);
 
   const totalPages = Math.ceil(rows.length / rowsPerPage);
 
   const handleSort = (field) => {
-    if (sortColumn === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(field);
-      setSortDirection("asc");
-    }
+    const newSortDirection = sortColumn === field && sortDirection === "asc" ? "desc" : "asc";
+    setSortColumn(field);
+    setSortDirection(newSortDirection);
   };
 
   const handleMouseEnter = (field) => {
@@ -56,10 +54,22 @@ export default function DataTable({
     setCurrentPage(1); // Reset to the first page when rows per page changes
   };
 
+  useEffect(() => {
+    const sorted = [...rows].sort((a, b) => {
+      if (!sortColumn) return 0;
+      if (sortDirection === "asc") {
+        return a[sortColumn] > b[sortColumn] ? 1 : -1;
+      } else {
+        return a[sortColumn] < b[sortColumn] ? 1 : -1;
+      }
+    });
+    setSortedRows(sorted);
+  }, [rows, sortColumn, sortDirection]);
+
   const getPaginatedData = () => {
     const startIndex = (currentPage - 1) * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
-    return rows?.slice(startIndex, endIndex);
+    return sortedRows.slice(startIndex, endIndex);
   };
 
   const renderCellContent = (column, row) => {
@@ -109,25 +119,15 @@ export default function DataTable({
         </TableHead>
         <TableBody>
           {rows && rows?.length > 0 ? (
-            getPaginatedData()
-              ?.sort((a, b) =>
-                sortDirection === "asc"
-                  ? a[sortColumn] > b[sortColumn]
-                    ? 1
-                    : -1
-                  : a[sortColumn] < b[sortColumn]
-                  ? 1
-                  : -1
-              )
-              ?.map((row) => (
-                <TableRow key={row.id}>
-                  {columns?.map((column) => (
-                    <TableCell key={column?.field}>
-                      {renderCellContent(column, row)}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+            getPaginatedData().map((row) => (
+              <TableRow key={row.id}>
+                {columns?.map((column) => (
+                  <TableCell key={column?.field}>
+                    {renderCellContent(column, row)}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
           ) : (
             <TableRow>
               <TableCell>No data found</TableCell>
