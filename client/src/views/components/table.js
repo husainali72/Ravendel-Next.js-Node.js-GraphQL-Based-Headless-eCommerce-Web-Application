@@ -114,7 +114,7 @@ const Tablecomponent = ({
         />
         <Divider />
         <CardContent>
-          <TableContainer>
+          <TableContainer className={classes.tableContainer}>
             <Table stickyHeader aria-label="all-products" size="small">
               <TableHead>
                 <TableRow>
