@@ -29,9 +29,10 @@ const EditCategoriesComponent = ({
       if (matchingCategory) {
         if (matchingCategory.checked) {
           category.checked = true;
+          updateChildCheckedStatus(category, category?.checked);
         }
 
-        if (category.children) {
+        if (!matchingCategory?.checked && category.children) {
           updateCategoryData(category.children, matchingCategory.children);
         }
       }
