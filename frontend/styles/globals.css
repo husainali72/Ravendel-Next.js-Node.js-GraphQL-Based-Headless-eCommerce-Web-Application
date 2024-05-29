@@ -2460,7 +2460,7 @@ footer .btn:hover a {
   font-size: 13px;
 }
 .product-detail-rating i{
-  color: var(--primary-color);
+  color: #faaf00;
   font-size: 14px;
 }
 
@@ -5884,7 +5884,7 @@ margin-bottom: 4px !important;
   font-size: 12px;
 }
 .card-rating i {
-  color: var(--primary-color);
+  color: #faaf00;
 }
 .active-nav-link{
   color: var(--primary-color) !important;
@@ -6130,7 +6130,7 @@ margin-bottom: 4px !important;
 }
 .product-review .ratings h2 svg{
   font-size: 20px;
-  color: var(--primary-color);
+  color: #faaf00;
 }
 .level-wise-ratings-progress{
   width: 62%;
@@ -6163,7 +6163,7 @@ margin-bottom: 4px !important;
   font-size: 14px;
 }
 .customer-review svg{
-  color: var(--primary-color);
+  color: #faaf00;
   font-size: 13px;
   margin-top: 1px;
 }
