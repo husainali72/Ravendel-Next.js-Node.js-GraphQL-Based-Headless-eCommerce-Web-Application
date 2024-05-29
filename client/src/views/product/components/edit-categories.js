@@ -24,7 +24,7 @@ const EditCategoriesComponent = ({
   const updateCategoryData = (categoriesData, selectedCategoyTree) => {
     categoriesData.forEach((category) => {
       const matchingCategory = selectedCategoyTree?.find((cat) => {
-        return cat.name === category.name;
+        return cat.id === category.id;
       });
       if (matchingCategory) {
         if (matchingCategory.checked) {
