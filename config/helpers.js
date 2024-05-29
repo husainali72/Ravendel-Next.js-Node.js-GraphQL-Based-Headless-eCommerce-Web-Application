@@ -2314,9 +2314,7 @@ module.exports.getRelatedProducts = getRelatedProducts
 const getBoughtTogetherProducts = async (productId, model) => {
   const pipeline = [
     {
-      $match: {
-        _id: toObjectID(productId)
-      }
+      $match: { }
     },
     {
       $lookup: {
@@ -2410,8 +2408,24 @@ const getBoughtTogetherProducts = async (productId, model) => {
       }
     }
   ]
+  if(Array.isArray(productId)) {
+    pipeline[0]["$match"]["_id"] = {$in: toObjectID(productId)}
+  } else {
+    pipeline[0]["$match"]["_id"] = toObjectID(productId) 
+  }
   
   const boughtTogetherProducts = await model.aggregate(pipeline)
-  return boughtTogetherProducts[0]
+  if(Array.isArray(productId)) {
+    return {
+      Bought_Together_Products: boughtTogetherProducts
+      .flatMap(item => item.Bought_Together_Products)
+      .filter(item => !productId.includes(item._id.toString()))
+      .filter((product, index, self) =>
+        index === self.findIndex(p => p._id.toString() === product._id.toString())// Ensure uniqueness
+      )
+    }
+  } else {
+    return boughtTogetherProducts[0]
+  }
 }
 module.exports.getBoughtTogetherProducts = getBoughtTogetherProducts

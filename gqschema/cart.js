@@ -155,6 +155,7 @@ module.exports = `
     carts: CartRES
     cart(id: ID!): Cart
     calculateCart(userId: ID, cartItems: [calculateCartProducts]): Cart
+    cartAdditionalDetails(productIds: [ID]): customArray
     #calculateCart(cartItems: [calculateCartProducts]): calculatedCart
     #calculateCoupon(couponCode: String,cartItem: [couponCartProducts], totalShipping : String
       #totalTax : String,grandTotal:String,cartTotal:String): calculateCoupon
