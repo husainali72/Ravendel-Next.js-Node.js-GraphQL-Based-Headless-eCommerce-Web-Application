@@ -19,6 +19,9 @@ const EmailTemplateSchema = new Schema(
     looping_text: {
       type: String,
     },
+    social_html: {
+      type: String,
+    },
     placeholders: [
       {
         name: String,
@@ -26,7 +29,7 @@ const EmailTemplateSchema = new Schema(
         html: String,
         type: {
           type: String,
-          enum: ["MONEY", "DATE", "FIRST_CAP", "STRING", "CONDITIONAL"],
+          enum: ["MONEY", "DATE", "FIRST_CAP", "STRING", "CONDITIONAL", "IMAGE"],
           default: "STRING",
         },
         description: String,
