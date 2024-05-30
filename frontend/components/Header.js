@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { SlHandbag } from "react-icons/sl";
-import { OpenNav, CloseNav } from "../utills/app";
 import ShopCartProducts from "./cardcomponent/ShopCartProduct";
 import { HiOutlineUserCircle } from "react-icons/hi2";
 import { Container } from "react-bootstrap";
@@ -36,9 +35,10 @@ const Header = ({ setOpenMenu }) => {
   const [timerId, setTimerId] = useState(null);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [cartItem, setCartItem] = useState(0);
-  const isLogin = data?.status === "authenticated";
-  const router = useRouter();
+  const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false);
+  const [cartItem, setCartItem] = useState(0)
+  const isLogin = data?.status === "authenticated"
+  const router=useRouter()
   useEffect(() => {
     checkSessionExpiration();
     const intervalId = setInterval(
@@ -143,53 +143,73 @@ const Header = ({ setOpenMenu }) => {
               className="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding hover-boder"
               id="navigation"
             >
-              <NavBar setOpenMenu={setOpenMenu} />
+              {/* <nav>
+                <ul className="nav list" id="list">
+                  <li className="nav-item">
+                    <Link href="/">
+                      <a
+                        id=""
+                        className="nav-link"
+                        aria-current="page"
+                        aria-selected="true"
+                      >
+                        Home
+                      </a>
+                    </Link>
+                  </li>
+                  <li className="nav-header">
+                    <Link href="/contact">
+                      <a className="nav-link" aria-selected="false">
+                        Contact
+                      </a>
+                    </Link>
+                  </li>
+                </ul>
+              </nav>      */}
+              <NavBar openMenu={isOpenMobileMenu} setIsOpenMobileMenu={setIsOpenMobileMenu}/>
               <div className="nav-actions">
                 <Search />
                 <div className="action-btn-wrapper">
-                  <div className="dropdown cart-btn">
-                    <Link href="/shopcart">
-                      <div className="add-to-cart-header">
-                        <a className="cart-icon action-btn">
-                          <SlHandbag />
-                        </a>
-                        <span className="pro-count blue">{cartItem}</span>
+                    <div className="dropdown cart-btn">
+                      <Link href="/shopcart">
+                        <div className="add-to-cart-header">
+                          <a className="cart-icon action-btn">
+                            <SlHandbag />
+                          </a>
+                          <span className="pro-count blue">{cartItem?.length}</span>
+                        </div>
+                      </Link>
+                      <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
+                        <ShopCartProducts />
                       </div>
-                    </Link>
-                    <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
-                      <ShopCartProducts />
+                      
                     </div>
-                  </div>
-                  <div className="profile-btn">
-                    <a className="action-btn profile">
-                      <HiOutlineUserCircle />
-                    </a>
-                    <div className="dropdown-content">
-                      {isLogin ? (
-                        <>
-                          <Link href="/account">My Account</Link>
-                          <a onClick={logOutUser}>Logout</a>
-                        </>
-                      ) : (
-                        <Link href="/login">Login/Signup</Link>
-                      )}
+                    <div className="profile-btn">
+                      <a className="action-btn profile">
+                        <HiOutlineUserCircle/>
+                      </a>
+                      <div className="dropdown-content">
+                        {isLogin ? (
+                          <>
+                            <Link href='/account'>My Account</Link>
+                            <a onClick={logOutUser}>Logout</a>
+                          </>
+                          ):(
+                            <Link href='/login'>Login/Signup</Link>
+                          )
+                        }
+                      </div>
                     </div>
-                  </div>
-                  <div className="navigation-icon">
-                    <i
-                      className="fas fa-bars open-nav"
-                      id="openNav"
-                      onClick={() => OpenNav()}
-                    ></i>
-                    <i
-                      className="fas fa-times close-nav"
-                      id="closeNav"
-                      onClick={() => CloseNav()}
-                    ></i>
+                    <div className="navigation-icon">
+                      <i
+                        className="fas fa-bars open-nav"
+                        id="openNav"
+                        onClick={() => setIsOpenMobileMenu(true)}
+                      ></i>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
           </div>
         </Container>
       </div>

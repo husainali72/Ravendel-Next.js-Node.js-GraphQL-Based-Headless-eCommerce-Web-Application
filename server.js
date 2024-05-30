@@ -20,7 +20,7 @@ const jwt = require("jsonwebtoken");
 const {
   abandonedCartsNotification,
 } = require("./config/crons");
-
+ 
 connectDB();
 async function startServer() {
   const Tax = require("./models/Tax");
