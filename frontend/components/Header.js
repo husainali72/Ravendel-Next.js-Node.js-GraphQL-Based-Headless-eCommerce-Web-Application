@@ -156,9 +156,9 @@ const Header = ({ setOpenMenu }) => {
                         <span className="pro-count blue">{cartItem}</span>
                       </div>
                     </Link>
-                    {/* <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
+                    <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
                       <ShopCartProducts />
-                    </div> */}
+                    </div>
                   </div>
                   <div className="profile-btn">
                     <a className="action-btn profile">
