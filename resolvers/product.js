@@ -22,6 +22,8 @@ const {
   addCategoryAttributes,
   getParentChildren,
   productScript,
+  getRelatedProducts,
+  getBoughtTogetherProducts,
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -1499,186 +1501,18 @@ module.exports = {
         const { parentChildren, checkedCategoryIDs } = getParentChildren(categoryTree, {}, [])
         const parentIDs = [...new Set([...checkedCategoryIDs, ...Object.keys(parentChildren).reverse()])]
 
-        let previousFacets = [];
-        const facetStage = { $facet: {
-          boughtTogetherProducts: [
-            {
-              $match: {
-                _id: toObjectID(productId)
-              }
-            },
-            {
-              $lookup: {
-                from: "orders",
-                let: { productId: "$_id" },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: {
-                        $in: [
-                          "$$productId",
-                          "$products.productId"
-                        ]
-                      }
-                    }
-                  },
-                  {
-                    $lookup: {
-                      from: "products",
-                      localField: "products.productId",
-                      foreignField: "_id",
-                      as: "products"
-                    }
-                  },
-                  {
-                    $project: {
-                      filteredProducts: {
-                        $filter: {
-                          input: "$products",
-                          as: "product",
-                          cond: {
-                            $ne: [
-                              "$$product._id",
-                              "$$productId"
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  }
-                ],
-                as: "orders"
-              }
-            },
-            {
-              $unwind: "$orders"
-            },
-            {
-              $sort: {
-                "orders.date": -1
-              }
-            },
-            {
-              $match: {
-                $expr: {
-                  $gt: [
-                    {
-                      $size:
-                        "$orders.filteredProducts"
-                    },
-                    0
-                  ]
-                }
-              }
-            },
-            {
-              $group: {
-                _id: "$_id",
-                allFilteredProducts: {
-                  $push: "$orders.filteredProducts"
-                }
-              }
-            },
-            {
-              $set: {
-                concatenatedFilteredProducts: {
-                  $reduce: {
-                    input: "$allFilteredProducts",
-                    initialValue: [],
-                    in: { $concatArrays: ["$$value", "$$this"] }
-                  }
-                }
-              }
-            },
-            {
-              $project: {
-                boughtTogetherProducts: {
-                  $slice: [{ $setUnion: ["$concatenatedFilteredProducts"] }, 10]
-                },
-              }
-            }
-          ]
-        } };
-        const setStage = { $set: { combinedResults: { $concatArrays: [] } } };
-        const addFieldsStage = { $addFields: {} };
-        const projectStage = { $project: {
-          boughtTogetherProducts: {
-            $arrayElemAt: ["$boughtTogetherProducts.boughtTogetherProducts", 0]
-          }
-        } };
-        parentIDs.forEach((parentID, index) => {
-          const facetName = `categoryId_${parentID}`;
-          const matchStage = {
-            $match: {
-              categoryId: parentID,
-              _id: { $ne: toObjectID(productId) }
-            }
-          };
-          const groupStage = {
-            $group: {
-              _id: null,
-              productIds: { $push: "$_id" },
-              products: { $push: "$$ROOT" }
-            }
-          };
+        const relatedProducts = await getRelatedProducts(parentIDs, productId, Product)
+        const boughtTogetherProducts = await getBoughtTogetherProducts(productId, Product)   
 
-          facetStage["$facet"][facetName] = [matchStage, groupStage];
-
-          if (index > 0) {
-            const prevFacetNames = parentIDs.slice(0, index).map(id => `categoryId_${id}`);
-            const filterCondition = {
-              $filter: {
-                input: `$${facetName}.products`,
-                as: "product",
-                cond: {
-                  $not: {
-                    $in: ["$$product._id", prevFacetNames.map(name => `$${name}.productIds`)]
-                  }
-                }
-              }
-            };
-
-            projectStage["$project"][`categoryId_${parentID}`] = {
-              products: filterCondition
-            };
-          } else {
-            projectStage["$project"][`categoryId_${parentID}`] = {
-              products: `$${facetName}.products`,
-              productIds: `$${facetName}.productIds`
-            };
-          }
-
-          addFieldsStage["$addFields"][`categoryId_${parentID}`] = {
-            $arrayElemAt: [`$categoryId_${parentID}`, 0]
-          }
-
-          previousFacets.push(facetName);
-          setStage["$set"]["combinedResults"]["$concatArrays"].push(`$${facetName}.products`);
-        });
-
-        const pipeline = [
-          facetStage,
-          addFieldsStage,
-          projectStage,
-          setStage,
-          {
-            $project: {
-              Related_Products: {
-                $ifNull: ["$combinedResults", []]
-              },
-              Bought_Together_Products: {
-                $ifNull: ["$boughtTogetherProducts", []]
-              },
-            }
-          }
-        ];
-        const additionalDetails = await Product.aggregate(pipeline)
+        const additionalDetails = [relatedProducts, boughtTogetherProducts]
         
-        for(const key in additionalDetails[0]) {
-          response.push({
-            title: `${key}`.replace(/_/g, " "),
-            products: additionalDetails[0][key]
-          })
+        for(const details of additionalDetails) {
+          for(const key in details) {
+            response.push({
+              title: `${key}`.replace(/_/g, " "),
+              products: details[key]
+            })
+          }
         }
 
         return response

@@ -2006,8 +2006,6 @@ const fillPlaceholders = async (template, data) => {
   return emailTemplate;
 };
 
-
-
 const fillproductDetails = (looping_text, products) => {
   let output = "";
   for (unit of products)
@@ -2205,3 +2203,229 @@ const getParentChildren = (category, parentChildren, checkedCategoryIDs) => {
   }
 }
 module.exports.getParentChildren = getParentChildren
+
+const getRelatedProducts = async (categoryIds, productId, model) => {
+  const facetStage = { $facet: {} }
+  const addFieldsStage = { $addFields: {} }
+  const projectStage = { $project: {} }
+  const setStage = { $set: { combinedResults: { $concatArrays: [] } } }
+
+  categoryIds.forEach((categoryId, index) => {
+    // populate data in facet stage
+    const facetName = `categoryId_${categoryId}`;
+    const matchStage = {
+      $match: {
+        categoryId: categoryId,
+        _id: { $ne: toObjectID(productId) }
+      }
+    };
+    const groupStage = {
+      $group: {
+        _id: null,
+        productIds: { $push: "$_id" },
+        products: { $push: "$$ROOT" }
+      }
+    };
+    facetStage["$facet"][facetName] = [matchStage, groupStage];
+
+    // populate data in add fields stage
+    addFieldsStage["$addFields"][`categoryId_${categoryId}`] = {
+      $arrayElemAt: [`$categoryId_${categoryId}`, 0]
+    }
+
+    // populate data in project stage
+    if (index > 0) {
+      const prevFacetNames = categoryIds.slice(0, index).map(id => `categoryId_${id}`);
+      const productsFilterCondition = {
+        $filter: {
+          input: `$${facetName}.products`,
+          as: "product",
+          cond: {
+            $not: {
+              $in: ["$$product._id", {
+                $reduce: {
+                  input: prevFacetNames.map(name => `$${name}.productIds`),
+                  initialValue: [],
+                  in: { $setUnion: ["$$value", "$$this"] }
+                }
+              }]
+            }
+          }
+        }
+      };
+      const productIdsFilterCondition = {
+        $filter: {
+          input: `$${facetName}.productIds`,
+          as: "productId",
+          cond: {
+            $not: {
+              // $in: ["$$product._id", prevFacetNames.map(name => `$${name}.productIds`)]
+              $in: ["$$productId", {
+                $reduce: {
+                  input: prevFacetNames.map(name => `$${name}.productIds`),
+                  initialValue: [],
+                  in: { $setUnion: ["$$value", "$$this"] }
+                }
+              }]
+            }
+          }
+        }
+      };
+
+      projectStage["$project"][`categoryId_${categoryId}`] = {
+        products: productsFilterCondition,
+        productIds: productIdsFilterCondition,
+      };
+    } else {
+      projectStage["$project"][`categoryId_${categoryId}`] = {
+        products: `$${facetName}.products`,
+        productIds: `$${facetName}.productIds`
+      };
+    }
+
+    // populate data in set stage
+    setStage["$set"]["combinedResults"]["$concatArrays"].push(`$${facetName}.products`);
+  });
+
+  const pipeline = [
+    facetStage,
+    addFieldsStage,
+    projectStage,
+    setStage,
+    {
+      $project: {
+        Related_Products: {
+          $slice: [
+            {
+              $ifNull: ["$combinedResults", []]
+            },
+            10
+          ]
+        }
+      }
+    }
+  ]
+
+  const relatedProducts = await model.aggregate(pipeline)
+  return relatedProducts[0]
+}
+module.exports.getRelatedProducts = getRelatedProducts
+
+const getBoughtTogetherProducts = async (productId, model) => {
+  const pipeline = [
+    {
+      $match: { }
+    },
+    {
+      $lookup: {
+        from: "orders",
+        let: { productId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $in: [
+                  "$$productId",
+                  "$products.productId"
+                ]
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: "products",
+              localField: "products.productId",
+              foreignField: "_id",
+              as: "products"
+            }
+          },
+          {
+            $project: {
+              filteredProducts: {
+                $filter: {
+                  input: "$products",
+                  as: "product",
+                  cond: {
+                    $ne: [
+                      "$$product._id",
+                      "$$productId"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ],
+        as: "orders"
+      }
+    },
+    { $unwind: "$orders" },
+    { $sort: { "orders.date": -1 } },
+    {
+      $match: {
+        $expr: {
+          $gt: [
+            { $size: "$orders.filteredProducts" },
+            0
+          ]
+        }
+      }
+    },
+    {
+      $group: {
+        _id: "$_id",
+        allFilteredProducts: {
+          $push: "$orders.filteredProducts"
+        }
+      }
+    },
+    {
+      $set: {
+        concatenatedFilteredProducts: {
+          $reduce: {
+            input: "$allFilteredProducts",
+            initialValue: [],
+            in: {
+              $concatArrays: ["$$value", "$$this"]
+            }
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        Bought_Together_Products: {
+          $slice: [
+            {
+              $setUnion: [
+                "$concatenatedFilteredProducts"
+              ]
+            },
+            10
+          ]
+        }
+      }
+    }
+  ]
+  if(Array.isArray(productId)) {
+    pipeline[0]["$match"]["_id"] = {$in: toObjectID(productId)}
+  } else {
+    pipeline[0]["$match"]["_id"] = toObjectID(productId) 
+  }
+  
+  const boughtTogetherProducts = await model.aggregate(pipeline)
+  if(Array.isArray(productId)) {
+    return {
+      Bought_Together_Products: boughtTogetherProducts
+      .flatMap(item => item.Bought_Together_Products)
+      .filter(item => !productId.includes(item._id.toString()))
+      .filter((product, index, self) =>
+        index === self.findIndex(p => p._id.toString() === product._id.toString())// Ensure uniqueness
+      )
+    }
+  } else {
+    return boughtTogetherProducts[0]
+  }
+}
+module.exports.getBoughtTogetherProducts = getBoughtTogetherProducts

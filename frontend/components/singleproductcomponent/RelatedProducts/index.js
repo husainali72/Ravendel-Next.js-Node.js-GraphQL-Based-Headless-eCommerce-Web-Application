@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { ADDITIONA_DETAIL } from "../../../queries/productquery";
 import { get } from "lodash";
 import { queryWithoutToken } from "../../../utills/helpers";
-import OnSaleProductCard from "../../category/onSaleProductCard";
+import AddionalProductDetail from "../../additionalProductDetail";
 const AddionalDetail = ({ singleProduct }) => {
   const [additionalDetails, setAdditionalDetails] = useState([]);
   const getAdditionalProduct = async () => {
@@ -23,22 +23,13 @@ const AddionalDetail = ({ singleProduct }) => {
   }, [singleProduct]);
   return (
     <>
-      {additionalDetails?.map((additionalDetail) => {
+      {additionalDetails?.map((additionalDetail, index) => {
         return (
           <>
-            <div className="related-products-slider">
-              {
-                get(additionalDetail, "products") && get(additionalDetail, "products")?.length > 0 &&
-                <>
-                  <h5>{get(additionalDetail, "title")}</h5>
-                  <OnSaleProductCard
-                    onSaleProduct={get(additionalDetail, "products", [])}
-                    hideTitle
-                    showcaseType='slider'
-                  />
-                </>
-              }
-            </div>
+            <AddionalProductDetail
+              key={index}
+              additionalDetail={additionalDetail}
+            />
           </>
         );
       })}

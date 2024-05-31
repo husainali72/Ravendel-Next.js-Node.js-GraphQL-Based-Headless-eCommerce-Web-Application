@@ -59,13 +59,13 @@ export const GET_USER_CART = gql`
   }
 `;
 export const GET_USER_CART_COUNT = gql`
-query GetCartDetails($userId: ID) {
-  getCartDetails(userId: $userId) {
-    data
-    message
-    success
+  query GetCartDetails($userId: ID) {
+    getCartDetails(userId: $userId) {
+      data
+      message
+      success
+    }
   }
-}
 `;
 export const CALCULATE_CART_WITHOUT_LOGIN = gql`
   query ($cartItems: [calculateCartProducts]) {
@@ -180,5 +180,10 @@ export const CALCULATE_CART_TOTAL = gql`
         productTax
       }
     }
+  }
+`;
+export const CART_ADDITIONAL_DETAIL = gql`
+  query Query($productIds: [ID]) {
+    cartAdditionalDetails(productIds: $productIds)
   }
 `;
