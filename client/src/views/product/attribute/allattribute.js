@@ -60,7 +60,7 @@ const AllAttributeComponent = () => {
       attributeState.attributes.map((attribute) => {
         let object = {
           id: attribute.id,
-          values: attribute.values.map((val) => val.name).join(","),
+          values: attribute.values.map((val) => val.name).join(" , "),
           name: attribute.name,
         }
         data.push(object)
