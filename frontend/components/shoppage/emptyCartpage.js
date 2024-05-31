@@ -7,7 +7,7 @@ const EmptyCart = () => {
         <div>
           <img src={emptyCart.src} className="emptyCartImage"/>
           <h5>Your cart is empty</h5>
-          <p>Just relax, let us help you find some first class products</p>
+          <p>Looks like your hunt for the perfect item is still on! Keep browsing to explore our top products.</p>
           <Link href="/">
           <div  className="card-btons text-align-center primary-btn-color">
           Start Shopping
