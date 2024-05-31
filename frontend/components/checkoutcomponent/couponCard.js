@@ -6,7 +6,6 @@ import Price from "../priceWithCurrency";
 const CouponCard = ({ couponCartDetail, removeCoupon }) => {
   return (
     <>
-      {get(couponCartDetail, "appliedCouponDiscount", 0) > 0 && (
         <div className="applied-coupon-section">
           <span>
             <p>
@@ -26,7 +25,6 @@ const CouponCard = ({ couponCartDetail, removeCoupon }) => {
             />
           </span>
         </div>
-      )}
     </>
   );
 };

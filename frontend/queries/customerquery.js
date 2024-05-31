@@ -170,6 +170,18 @@ export const DELETE_ADDRESSBOOK = gql`
     }
   }
 `;
+export const RESET_PASSWORD = gql`
+  mutation ($email: String, $oldPassword: String, $newPassword: String) {
+    resetPassword(
+      email: $email
+      oldPassword: $oldPassword
+      newPassword: $newPassword
+    ) {
+      message
+      success
+    }
+  }
+`;
 
 export const GET_ORDER_BY_CUSTOMER = gql`
   query ($id: ID!) {

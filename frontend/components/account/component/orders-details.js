@@ -36,27 +36,27 @@ const OrdersDetails = ({
         <div className="row">
           <div className="col-md-7">
             <ProductCard
-              cardItems={get(order[0], 'products', [])}
+              cardItems={get(order, '[0].products', [])}
             />
-            <TotalSummary totalSummary={get(order[0], 'totalSummary', {})} couponCartDetail={get(order[0], 'couponCard', {})} />
+            <TotalSummary totalSummary={get(order, '[0].totalSummary', {})} couponCartDetail={get(order, '[0].couponCard', {})} />
           </div>
           <div className="col-md-5">
             {
-              get(order[0], 'billing') &&
+              get(order, '[0].billing') &&
               <div className="order-address">
                 <DetailsCard
                   title="Billing Address"
-                  info={get(order[0], 'billing', {})}
+                  info={get(order, '[0].billing', {})}
                   type='order'
                 />
               </div>
             }
             {
-              get(order[0], 'shipping') &&
+              get(order, '[0].shipping') &&
               <div className="order-address">
                 <DetailsCard
                   title="Shipping Address"
-                  info={get(order[0], 'shipping', {})}
+                  info={get(order, '[0].shipping', {})}
                 />
               </div>
             }
@@ -80,7 +80,7 @@ const OrdersDetails = ({
                 </div>
                 <div className="checkout-shipping-address ">
                   <div className="checkout-list-content">
-                    <b>Payment Mode: {order[0]?.billing.paymentMethod}</b>
+                    <b>Payment Mode: {get(order,'[0].billing.paymentMethod','')}</b>
                   </div>
                 </div>
               </div>

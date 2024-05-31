@@ -33,14 +33,14 @@ const DetailsCard = ({info, btnAction, btnText, title, type, style}) => {
                 <div className='info'>
                     <h6 style={{ fontWeight: "600" }}>
                         {" "}
-                        {capitalize(info.firstname)}{" "}
-                        {capitalize(info.lastname)}
+                        {capitalize(get(info,'firstname',''))}{" "}
+                        {capitalize(get(info,'lastname',''))}
                     </h6>
                     <p>{info.phone}</p>
                 </div>
                 <p>
-                    {capitalize(info.city)} {capitalize(info.state)}{" "}
-                    {capitalize(info.zip)} {capitalize(info.country)}
+                    {capitalize(info?.city||'')} {capitalize(info?.state||'')}{" "}
+                    {capitalize(info?.zip||'')} {capitalize(info?.country||'')}
                 </p>
             </div>
             <div className="checkout-shipping-edit-btn">
