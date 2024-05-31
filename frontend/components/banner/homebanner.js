@@ -17,7 +17,7 @@ const Homebanner = ({ settings, slider }) => {
   };
   return (
     <>
-      <Carousel>
+      <Carousel >
         {slider.map((slide, i) => (
           <Carousel.Item key={i}>
             <a href={slide.link} rel="noreferrer" target={slide.open_in_tab ? '_blank' : ''}>
