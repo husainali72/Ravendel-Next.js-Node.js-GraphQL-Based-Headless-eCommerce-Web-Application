@@ -184,7 +184,7 @@ const Tablecomponent = ({
                                 return (
                                   <TableCell>
                                     {convertDateToStringFormat(
-                                      get(data,'date',null),
+                                      get(data,`${[column?.name]}`,null),
                                       setting
                                     )}
                                   </TableCell>
