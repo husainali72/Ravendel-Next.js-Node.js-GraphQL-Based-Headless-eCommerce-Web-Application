@@ -2460,7 +2460,7 @@ footer .btn:hover a {
   font-size: 13px;
 }
 .product-detail-rating i{
-  color: var(--primary-color);
+  color: #faaf00;
   font-size: 14px;
 }
 
@@ -5884,7 +5884,7 @@ margin-bottom: 4px !important;
   font-size: 12px;
 }
 .card-rating i {
-  color: var(--primary-color);
+  color: #faaf00;
 }
 .active-nav-link{
   color: var(--primary-color) !important;
@@ -6130,7 +6130,7 @@ margin-bottom: 4px !important;
 }
 .product-review .ratings h2 svg{
   font-size: 20px;
-  color: var(--primary-color);
+  color: #faaf00;
 }
 .level-wise-ratings-progress{
   width: 62%;
@@ -6163,7 +6163,7 @@ margin-bottom: 4px !important;
   font-size: 14px;
 }
 .customer-review svg{
-  color: var(--primary-color);
+  color: #faaf00;
   font-size: 13px;
   margin-top: 1px;
 }
@@ -7095,6 +7095,39 @@ margin-bottom: 4px !important;
     padding: 8px 16px;
     font-size: 15px;
   }
+}
+.search-pagination .pagination-container{
+  margin-top: 50px;
+  justify-content: center;
+}
+.sorting-icon{
+  font-size: 16px;
+  color: grey;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.pagination button {
+  border: 1px solid #ddd;
+  background-color: #fff;
+  cursor: pointer;
+}
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.rows-per-page-selector select {
+  margin-left: 0.5rem;
 }
 
 @media only screen and (max-width: 440px) {

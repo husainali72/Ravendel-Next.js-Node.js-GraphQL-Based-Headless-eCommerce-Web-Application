@@ -13,7 +13,8 @@ const {
   MESSAGE_RESPONSE,
   againCalculateCart,
   _validate, getdate, addCart, calculateCart, calculateCoupon,
-  toObjectID
+  toObjectID,
+  getBoughtTogetherProducts
 } = require("../config/helpers");
 const validate = require("../validations/cart");
 
@@ -33,6 +34,29 @@ module.exports = {
       // }
       try {
         return calculateCart(args.userId, args.cartItems);
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+
+    cartAdditionalDetails: async (root, args, { id }) => {
+      try {
+        const response = []
+        const boughtTogetherProducts = await getBoughtTogetherProducts(args.productIds, Product)
+
+        const additionalDetails = [boughtTogetherProducts]
+        
+        for(const details of additionalDetails) {
+          for(const key in details) {
+            response.push({
+              title: `${key}`.replace(/_/g, " "),
+              products: details[key]
+            })
+          }
+        }
+
+        return response
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
