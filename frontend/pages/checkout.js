@@ -347,10 +347,10 @@ export const CheckOut = () => {
       ZipMessage?.zipSuccess
     ) {
       let isAddressAlready = get(billingDetails, "billing.id") ? true : false;
-      if (!isAddressAlready&&isAddNewAddressForm) {
+      if (!isAddressAlready) {
         addNewAddress();
-      }else if(isEditAddress){
-        updateCustomerAddress()
+      } else if (isEditAddress) {
+        updateCustomerAddress();
       } else {
         setIsAddNewAddressForm(false);
         nextFormStep();
@@ -414,7 +414,7 @@ export const CheckOut = () => {
         firstname: firstName || "",
         country: country || "",
         id: _id || "",
-        defaultAddress:defaultAddress||false
+        defaultAddress: defaultAddress || false,
       };
 
       checkCode(get(defaultAddressInfo, "zip"));
@@ -606,7 +606,9 @@ export const CheckOut = () => {
     };
     if (!shippingAdd) {
       setShippingInfo(shipping);
-      checkCode(get(address, "pincode", ""));
+      if (get(address, "_id") !== get(billingInfo, "_id")) {
+        checkCode(get(address, "pincode", ""));
+      }
     }
     setBillingInfo(billing);
     reset();
@@ -865,9 +867,10 @@ export const CheckOut = () => {
                         getBillingInfo={getBillingData}
                         editCustomerAddress={editCustomerAddress}
                       />
-                      {(isAddNewAddressForm ||
-                        addressList?.length === 0 ) && <h5>Add New Address</h5>}
-                        { isEditAddress&&<h5>Edit Address</h5>}
+                      {(isAddNewAddressForm || addressList?.length === 0) && (
+                        <h5>Add New Address</h5>
+                      )}
+                      {isEditAddress && <h5>Edit Address</h5>}
                       <form onSubmit={handleSubmit(onSubmit)}>
                         <BillingDetails
                           isEditAddress={isEditAddress}
