@@ -39,33 +39,26 @@ const CustomerReviews = ({ productId }) => {
 
   return (
     <>
-      {reviews && reviews?.length > 0 && (
-        <>
-          <h5>Customer Reviews</h5>
-          <div>
-            {reviews?.map((review, i) => (
-              <div className="customer-review" key={i}>
-                <div className="rating">
-                  <p>{get(review, "rating")}</p>
-                  <FaStar />
+    {
+      reviews && reviews?.length > 0 &&
+      <>
+        <h5>Customer Reviews</h5>
+        <div>
+          {reviews?.map((review, i) => (
+            <div className="customer-review" key={i}>
+              <div className="rating">
+                <p>{get(review, "rating")}</p>
+                <FaStar />
+              </div>
+              <div className="review">
+                <h6>{get(review, "title")}</h6>
+                <p>{get(review, "review")}</p>
+                <div>
+                  { (review.customerId.firstName || review.customerId.lastName) &&
+                    <span className="name">{review.customerId.firstName} {" "} {review.customerId.lastName}</span> }
+                    { (review.date) && <span>{convertDateToStringFormat(review.date,setting)}</span>}
                 </div>
-                <div className="review">
-                  <p>{get(review, "review")}</p>
-                  <div>
-                    {(review.customerId.firstName ||
-                      review.customerId.lastName) && (
-                      <span className="name">
-                        {review.customerId.firstName}{" "}
-                        {review.customerId.lastName}
-                      </span>
-                    )}
-                    {review.date && (
-                      <span>
-                        {convertDateToStringFormat(review.date, setting)}
-                      </span>
-                    )}
-                  </div>
-                </div>
+              </div>
               </div>
             ))}
             {totalPages > 1 && (
@@ -77,7 +70,7 @@ const CustomerReviews = ({ productId }) => {
             )}
           </div>
         </>
-      )}
+      }
     </>
   );
 };

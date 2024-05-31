@@ -7,6 +7,7 @@ import CartTotalDetails from "./cartTotal";
 import Price from "../priceWithCurrency";
 import ProductImage from "../imageComponent";
 import RemaningQuantity from "../remainingQuantity";
+import AdditionalCartDetail from "./additionalCartDetail";
 const CartTable = (props) => {
   const {
     cartItems,
@@ -134,9 +135,10 @@ const CartTable = (props) => {
               </div>
             ))}
           </div>
-          <CartTotalDetails totalSummary={totalSummary} cartItems={cartItems}/>
+          <CartTotalDetails totalSummary={totalSummary} cartItems={cartItems} />
         </div>
       </div>
+      <AdditionalCartDetail cartItems={cartItems} />
     </div>
   );
 };

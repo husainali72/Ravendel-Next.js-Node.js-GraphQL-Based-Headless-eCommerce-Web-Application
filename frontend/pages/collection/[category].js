@@ -7,7 +7,7 @@ import { ARRAY, CHOICE, LIMIT } from "../../components/categoryFilter/constant";
 import SubCategoryProducts from "../../components/category/subCategories";
 import ParentCategories from "../../components/category/parentCategories";
 import { clearAllFilter } from "../../components/categoryFilter/component/urlFilter";
-import LoadingSpinner from "../../components/breadcrumb/loading";
+import PageLoader from "../../components/PageLoader";
 import Meta from "../../components/Meta";
 
 const SingleCategoryProduct = () => {
@@ -121,22 +121,27 @@ const SingleCategoryProduct = () => {
   return (
     <div>
       <Meta title={title} description={description} keywords={keywords}/>
-      {productFilterData.loading && <LoadingSpinner />}
-      {get(filteredProductData, "isMostParentCategory") ? (
-        <ParentCategories
-          categories={get(filteredProductData, "mostParentCategoryData", {})}
-          categoryName={get(router, 'query.category', '')}
-          loading={productFilterData.loading}
-        />
-      ) : (
-        <SubCategoryProducts
-          clearFilter={clearFilter}
-          filteredProductData={filteredProductData}
-          handleFilter={handleFilter}
-          handleScroll={handleScroll}
-          handleSorting={handleSorting}
-        />
-      )}
+      {
+        productFilterData.loading &&
+          <PageLoader/>
+      }
+        <>
+          {get(filteredProductData, "isMostParentCategory") ? (
+            <ParentCategories
+              categories={get(filteredProductData, "mostParentCategoryData", {})}
+              categoryName={get(router, 'query.category', '')}
+            />
+          ) : (
+            <SubCategoryProducts
+              clearFilter={clearFilter}
+              filteredProductData={filteredProductData}
+              handleFilter={handleFilter}
+              handleScroll={handleScroll}
+              handleSorting={handleSorting}
+            />
+          )}
+        </>
+      
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import { get } from "lodash";
+import PropTypes from "prop-types";
 import CategoryLink from "../category/categoryLink";
 import { useEffect, useState } from "react";
 import { PARENT_CATEGORIES } from "../../queries/productquery";
@@ -12,7 +13,7 @@ import {
 import { useRouter } from "next/router";
 
 const LOCAL_STORAGE_EXPIRATION_TIME = 6 * 60 * 60 * 1000;
-const NavBar = () => {
+const NavBar = ({openMenu, setIsOpenMobileMenu}) => {
   const [parentCategories, setParentCategories] = useState([]);
   const router = useRouter();
   const fetchCategories = async () => {
@@ -58,7 +59,12 @@ const NavBar = () => {
 
   return (
     <>
-      <nav>
+      <nav className={openMenu ? 'active' : ''}>
+        <i
+          className="fas fa-times close-nav"
+          id="closeNav"
+          onClick={() => setIsOpenMobileMenu(false)}
+        ></i>
         <ul className="nav list" id="list">
           {parentCategories &&
             parentCategories?.length > 0 &&
@@ -82,3 +88,8 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
+NavBar.propTypes = {
+  openMenu: PropTypes.bool,
+  setIsOpenMobileMenu: PropTypes.func
+};

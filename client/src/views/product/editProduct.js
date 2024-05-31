@@ -287,7 +287,7 @@ const EditProductComponent = ({ params }) => {
     }
   }, [get(productState, "product"), productId, baseURl, attributes]);
   const filterTreeData = (data) => {
-    return data.reduce((acc, category) => {
+    return data?.reduce((acc, category) => {
       const filteredCategory = {
         id: category?.id,
         name: category.name,

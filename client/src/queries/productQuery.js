@@ -50,6 +50,26 @@ const PRODUCT_TILE_DATA = gql`
     updated
   }
 `;
+const GET_PRODUCT_TILE_DATA = gql`
+  fragment ProductTile on Product {
+    _id
+    name
+    url
+    brand {
+      id
+      name
+      url
+      brand_logo
+      meta
+      date
+      updated
+    }
+    feature_image
+    status
+    date
+    updated
+  }
+`;
 
 // const GET_CATEGORIES = gql`
 //   {
@@ -279,7 +299,7 @@ const GET_PRODUCTS = gql`
       }
     }
   }
-  ${PRODUCT_TILE_DATA}
+  ${GET_PRODUCT_TILE_DATA}
 `;
 // const GET_ORDER = gql`
 //   query ($id: ID!) {

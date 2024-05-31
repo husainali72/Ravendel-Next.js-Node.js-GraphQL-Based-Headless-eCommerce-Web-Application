@@ -103,20 +103,16 @@ function cartReducer(state = initialState, action) {
       const { id, cart, dispatch ,router} = get(action, "payload");
       let variables = { userId: id, products: cart };
       mutation(ADD_CART, variables)
-        .then((res) => {
-          dispatch({ type: "ADDED_CART", payload: true });
-          dispatch(calculateUserCart(id));
+        .then(async(res) => {
           removeItemFromLocalStorage("cart");
-          // window.location.pathname = "/";
+          await dispatch(calculateUserCart(id));
         })
         .catch((error) => {
           handleError(error, dispatch,router);
         });
       return {
         ...state,
-        cartItems: get(action, "payload.cart", []),
         loading: false,
-        totalSummary: {},
       };
     }
 
