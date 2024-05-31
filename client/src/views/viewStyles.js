@@ -674,9 +674,13 @@ const viewStyles = makeStyles((theme) => ({
   noImage: {
     width: "50px",
   },
-  emailText:{
-textTransform:'lowerCase !important'
-  }
+  emailText: {
+    textTransform: "lowerCase !important",
+  },
+  tableContainer: {
+    maxHeight: "calc(100vh - 600px)",
+    overflow: "auto",
+  },
 }));
 
 export default viewStyles;

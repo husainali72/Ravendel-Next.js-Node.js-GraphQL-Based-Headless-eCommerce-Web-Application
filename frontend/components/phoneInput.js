@@ -38,7 +38,7 @@ const PhoneInputField = ( {
         render={() => (
           <PhoneInput
             enableSearch={enableSearch}
-            country={country}
+            country={country||'us'}
             inputClass={inputClass}
             placeholder={placeholder}
             value={value}
