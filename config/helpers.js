@@ -1630,7 +1630,8 @@ const addOrder = async(args) => {
     }
 
     savedOrder.email = savedOrder.billing.email;
-    await sendEmailTemplate("ORDER_PLACED", savedOrder)
+    await sendEmailTemplate("ORDER_PLACED", savedOrder, setting);
+    await sendEmailTemplate("ADMIN_NEW_ORDER", savedOrder, setting);
     
     emptyCart(cart);
   } else if(args.billing.paymentMethod === 'stripe') {
@@ -2012,7 +2013,7 @@ const fillPlaceholders = async (template, data) => {
         }
         break;
       case "IMAGE":
-        dataValue = `https://demo1-ravendel.hbwebsol.com/${dataValue}`
+        dataValue = `${APP_KEYS.BASE_URL}${dataValue}`
         break;
       default:
         break;
@@ -2031,7 +2032,7 @@ const fillproductDetails = (looping_text, data, currency) => {
   for (unit of data.products)
   {
     let html = looping_text
-    html = html.replaceAll("{{product_url}}", `https://demo1-ravendel.hbwebsol.com/${unit.productImage}`)
+    html = html.replaceAll("{{product_url}}", `${APP_KEYS.BASE_URL}${unit.productImage}`)
     // html = html.replaceAll("{{product_url}}", `https://picsum.photos/200`)
     html = html.replaceAll("{{product_name}}", unit.productTitle)
     html = html.replaceAll("{{product_quantity}}", unit.qty)
@@ -2078,7 +2079,7 @@ const sendEmailTemplate = async (template_name, data, settings) => {
     emailTemplate.body = emailTemplate.body.replace("{{main_logo}}", settings.appearance.theme.logo);
 
     let email_data = {
-      from: "ravendel@hbwebsol.com",
+      from: APP_KEYS.FROM_EMAIL,
       to: data.email,
       subject: emailTemplate.subject,
       html: emailTemplate.body,
@@ -2243,11 +2244,13 @@ const getParentChildren = (category, parentChildren, checkedCategoryIDs) => {
   }
 }
 
-const sendLowStockEmailNotification = async (data, setting) => {
+const sendLowStockEmailNotification = async (data, setting) => { 
   try {
 
     let threshold = setting.store.inventory.low_stock_threshold;
-    if(data.quantity <= threshold) {
+    let alert = setting.store.inventory.notifications.alert_for_minimum_stock;
+    
+    if(alert && data.quantity <= threshold) {
       data.email = setting.store.inventory.notification_recipients;
       sendEmailTemplate("ADMIN_LOW_STOCK", data, setting)
     }
