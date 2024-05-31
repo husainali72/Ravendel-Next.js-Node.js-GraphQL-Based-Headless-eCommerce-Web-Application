@@ -1371,9 +1371,9 @@ const calculateCart = async (userId, cartItems) => {
           prod.shippingAmount = productShipping.amount;
           totalShipping += prod.shippingAmount;
         }
-        else {
-          console.log('product shipping class not found');
-        }
+        // else {
+        //   console.log('product shipping class not found');
+        // }
       }
       // Product Shipping calculation completed
 
@@ -1615,13 +1615,16 @@ const addOrder = async(args) => {
   const savedOrder = await newOrder.save();
 
   let environmentBool = process.env.NODE_ENV.trim() === 'production';
-
-  if (args.billing.paymentMethod === 'cashondelivery') {
+  if (args.billing.paymentMethod === 'cashondelivery' || args.billing.paymentMethod === 'banktransfer') {
     const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(args.userId) });
 
     for (let product of cart.products) {
       await Product.findByIdAndUpdate(product.productId, { $inc: { quantity: -product.qty } });
     }
+
+    savedOrder.email = savedOrder.billing.email;
+    await sendEmailTemplate("ORDER_PLACED", savedOrder)
+    
     emptyCart(cart);
   } else if(args.billing.paymentMethod === 'stripe') {
     
