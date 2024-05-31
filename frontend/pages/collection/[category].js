@@ -113,18 +113,18 @@ const SingleCategoryProduct = () => {
     setFilterPayload({ ...variable });
     clearAllFilter(router);
   };
-  // const { title, description, keywords } = get(
-  //   filteredProductData,
-  //   "mostParentCategoryData.meta",
-  //   {}
-  // );
+  const { title, description, keywords } = get(
+    filteredProductData,
+    "mostParentCategoryData.meta",
+    {}
+  );
   return (
     <div>
       <Meta title={title} description={description} keywords={keywords}/>
       {
-        productFilterData.loading ? 
+        productFilterData.loading &&
           <PageLoader/>
-        :
+      }
         <>
           {get(filteredProductData, "isMostParentCategory") ? (
             <ParentCategories
@@ -141,7 +141,7 @@ const SingleCategoryProduct = () => {
             />
           )}
         </>
-      }
+      
     </div>
   );
 };

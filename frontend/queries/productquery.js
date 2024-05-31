@@ -144,6 +144,7 @@ export const GET_PRODUCT_REVIEWS = gql`
         review
         date
         rating
+        title
         customerId {
           firstName
           lastName

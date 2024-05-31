@@ -48,6 +48,7 @@ const CustomerReviews = ({ productId }) => {
                 <FaStar />
               </div>
               <div className="review">
+                <h6>{get(review, "title")}</h6>
                 <p>{get(review, "review")}</p>
                 <div>
                   { (review.customerId.firstName || review.customerId.lastName) &&

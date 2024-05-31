@@ -114,7 +114,7 @@ const Tablecomponent = ({
         />
         <Divider />
         <CardContent>
-          <TableContainer>
+          <TableContainer className={classes.tableContainer}>
             <Table stickyHeader aria-label="all-products" size="small">
               <TableHead>
                 <TableRow>
@@ -184,7 +184,7 @@ const Tablecomponent = ({
                                 return (
                                   <TableCell>
                                     {convertDateToStringFormat(
-                                      get(data,'date',null),
+                                      get(data,`${[column?.name]}`,null),
                                       setting
                                     )}
                                   </TableCell>
