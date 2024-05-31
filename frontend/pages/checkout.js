@@ -943,6 +943,7 @@ export const CheckOut = () => {
                       billingDetails={billingDetails}
                       couponCartDetail={couponCartDetail}
                       setBillingDetails={setBillingDetails}
+                      setPaymentMethod={setPaymentMethod}
                     />
                   ) : (
                     <div className="col-lg-12 third-container-checkout">
