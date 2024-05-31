@@ -8,17 +8,23 @@ import PropTypes from "prop-types";
 import { get } from "lodash";
 import CategorySorting from "../categorySorting/categorySorting";
 import Meta from "../Meta";
+import PageLoader from "../PageLoader";
 const SubCategoryProducts = ({
   filteredProductData,
   handleFilter,
   handleScroll,
   handleSorting,
-  clearFilter
+  clearFilter,
+  loading,
 }) => {
-  const {title,description,keywords}=get(filteredProductData,'categoryTree.subCategories.meta',{})
+  const { title, description, keywords } = get(
+    filteredProductData,
+    "categoryTree.subCategories.meta",
+    {}
+  );
   return (
     <section className="product-cart-section">
-            <Meta title={title} description={description} keywords={keywords}/>
+      <Meta title={title} description={description} keywords={keywords} />
       <Container>
         <div className="single-category-page">
           {get(filteredProductData, "filterData", [])?.length > 0 && (
@@ -33,62 +39,60 @@ const SubCategoryProducts = ({
                 categoryTree={get(filteredProductData, "categoryTree", {})}
                 name={"Category"}
               />
-                <div className="primary-sidebar sticky-sidebar category-shop-cart my-1">
-                  <div className="theiaStickySidebar category-box-filler">
-                    <CategoryFilter
-                      filterCategoryData={get(
-                        filteredProductData,
-                        "filterData",
-                        []
-                      )}
-                      handleFilter={(data) => handleFilter(data)}
+              <div className="primary-sidebar sticky-sidebar category-shop-cart my-1">
+                <div className="theiaStickySidebar category-box-filler">
+                  <CategoryFilter
+                    filterCategoryData={get(
+                      filteredProductData,
+                      "filterData",
+                      []
+                    )}
+                    handleFilter={(data) => handleFilter(data)}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="shop-product-container ">
+            {!loading ? (
+              get(filteredProductData, "productData.products")?.length > 0 ? (
+                <div className="shop-product-list ">
+                  <div className="totall-product ">
+                  </div>
+                  <div className="totall-product ">
+                    <CategorySorting
+                      activeSorting={get(filteredProductData, "sort", {})}
+                      filterProductData={filteredProductData}
+                      handleSorting={handleSorting}
                     />
                   </div>
+                  <InfiniteScroll
+                    dataLength={
+                      get(filteredProductData, "productData.products")?.length
+                    }
+                    next={handleScroll}
+                    hasMore={
+                      get(filteredProductData, "productData.products")?.length <
+                      get(filteredProductData, "productData.count")
+                    }
+                    scrollableTarget="scrollableDiv"
+                  >
+                    <OnSaleProductCard
+                      onSaleProduct={get(
+                        filteredProductData,
+                        "productData.products"
+                      )}
+                      hideTitle
+                    />
+                  </InfiniteScroll>
                 </div>
-            </div>
-            )}
-          <div className="shop-product-container ">
-            {get(filteredProductData, "productData.products")?.length > 0 ? (
-              <div className="shop-product-list ">
-                <div className="totall-product ">
-                  {/* <p className="totalcount-text">
-                    Showing 1 –{" "}
-                    {get(filteredProductData, "productData.products")?.length}{" "}
-                    products of {get(filteredProductData, "productData.count")}{" "}
-                    products
-                  </p> */}
+              ) : (
+                <div className="product-no-data-container">
+                  <p className="product-no-data-text">No Data Found</p>
                 </div>
-                <div className="totall-product ">
-                  <CategorySorting
-                    activeSorting={get(filteredProductData, "sort", {})}
-                    filterProductData={filteredProductData}
-                    handleSorting={handleSorting}
-                  />
-                </div>
-                <InfiniteScroll
-                  dataLength={
-                    get(filteredProductData, "productData.products")?.length
-                  }
-                  next={handleScroll}
-                  hasMore={
-                    get(filteredProductData, "productData.products")?.length <
-                    get(filteredProductData, "productData.count")
-                  }
-                  scrollableTarget="scrollableDiv"
-                >
-                  <OnSaleProductCard
-                    onSaleProduct={get(
-                      filteredProductData,
-                      "productData.products"
-                    )}
-                    hideTitle
-                  />
-                </InfiniteScroll>
-              </div>
+              )
             ) : (
-              <div className="product-no-data-container">
-                <p className="product-no-data-text">No Data Found</p>
-              </div>
+              <PageLoader />
             )}
           </div>
         </div>
@@ -102,5 +106,6 @@ SubCategoryProducts.propTypes = {
   handleSorting: PropTypes.func.isRequired,
   handleScroll: PropTypes.func.isRequired,
   clearFilter: PropTypes.func.isRequired,
+  loading: PropTypes.boolean,
 };
 export default SubCategoryProducts;
