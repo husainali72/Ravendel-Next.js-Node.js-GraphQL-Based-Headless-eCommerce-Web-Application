@@ -59,7 +59,7 @@ const CustomerReviews = ({ productId }) => {
             </div>
           ))}
           {
-            totalPages > 5 &&
+            totalPages > 1 &&
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
