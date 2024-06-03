@@ -7157,3 +7157,10 @@ margin-bottom: 4px !important;
     width: 70vw;
   }
 }
+.paypal-error-message{
+  text-align: center;
+  
+}
+.paypal-back-btn{
+  cursor: pointer;
+}

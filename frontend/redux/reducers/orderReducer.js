@@ -19,7 +19,8 @@ import {
     switch (action?.type) {
       case ORDER_LOADING:
         return {
-         ...initialState
+         ...initialState,
+         loading:true
         };
       case ORDERS_SUCCESS:
         return {

@@ -15,6 +15,9 @@ export const getSingleOrderAction = (variable) => (dispatch) => {
   query(GET_SINGLE_ORDER_DETAILS, variable)
     .then((response) => {
       const success = get(response, "data.order.message.success");
+      dispatch({
+        type: LOADING_FALSE,
+      });
       if (success) {
         const orderDetail = get(response, "data.order.data");
         return dispatch({
@@ -24,6 +27,9 @@ export const getSingleOrderAction = (variable) => (dispatch) => {
       }
     })
     .catch((error) => {
+      dispatch({
+        type: LOADING_FALSE,
+      });
       dispatch({
         type: ORDER_FAIL,
       });

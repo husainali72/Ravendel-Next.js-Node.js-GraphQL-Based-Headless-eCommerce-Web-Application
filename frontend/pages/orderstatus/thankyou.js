@@ -15,6 +15,8 @@ import ProductCard from "../../components/ProductCard";
 import TotalSummary from "../../components/TotalSummary";
 import DetailsCard from "../../components/cardcomponent/DetailsCard";
 import Link from "next/link";
+import { calculateUserCart } from "../../redux/actions/cartAction";
+import Loading from "../../components/loadingComponent";
 const ThankYou = () => {
   const session = useSession();
   const [singleOrderDetail, setSingleOrderDetail] = useState();
@@ -36,6 +38,10 @@ const ThankYou = () => {
   }, [settings]);
 
   useEffect(() => {
+    let id = get(session, "data.user.accessToken.customer._id");
+    if(id){
+      dispatch(calculateUserCart(id))
+    }
     getOrderDetails();
   }, [session?.status]);
 
@@ -75,10 +81,10 @@ const ThankYou = () => {
       await dispatch(updatePaymentStatus(payload,customerId, orderId, session));
     }
   };
-
   return (
     <div>
       <BreadCrumb title={"Order Status"} />
+      {get(orderDetail,'loading')&&<Loading/>}
       <Container>
         <div className="thankyou-page-container">
           <div className="left-col">
@@ -130,7 +136,7 @@ const ThankYou = () => {
               <div className="order-address">
                 <div className="checkout-shipping-method">
                   <div className="checkout-details-title">
-                    <h5>Payment Datails</h5>
+                    <h5>Payment Details</h5>
                   </div>
                   <div className="checkout-shipping-address ">
                     <div className="checkout-list-content">

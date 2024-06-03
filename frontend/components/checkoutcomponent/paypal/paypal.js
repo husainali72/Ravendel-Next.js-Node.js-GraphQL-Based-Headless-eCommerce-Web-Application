@@ -8,7 +8,7 @@ import Loading from "../../loadingComponent";
 import { get } from "lodash";
 import { thankyouPageRoute } from "../../../utills/constant";
 import { handleOrderPlaced } from "../handleOrder";
-
+import { IoMdArrowRoundBack } from "react-icons/io";
 const PaypalButtonStyle = {
   layout: "vertical",
   color: "blue",
@@ -22,14 +22,19 @@ const Paypal = ({
   billingDetails,
   couponCartDetail,
   setBillingDetails,
+  setPaymentMethod
 }) => {
   const paypal = useRef();
   const router = useRouter();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-
+  const [error, setError] = useState(null);
   useEffect(() => {
     let orderId = "";
+    if (!window.paypal || !window.paypal.Buttons) {
+      setError('Unable to load PayPal.')
+    }else{
+    setError('')
     window.paypal
       .Buttons({
         style: PaypalButtonStyle,
@@ -62,11 +67,14 @@ const Paypal = ({
         onError: (err) => {},
       })
       .render(paypal.current);
+    }
   }, []);
 
   return (
     <Container className="empty-checkout-page">
+     <div className="paypal-back-btn" onClick={()=>setPaymentMethod('')}><IoMdArrowRoundBack /></div>
       {loading && <Loading />}
+      {error && <div className="error-message paypal-error-message">{error}</div>}
       <div className="checkout-unauthorised-container">
         <div ref={paypal}></div>
       </div>
@@ -81,6 +89,7 @@ Paypal.propTypes = {
   billingDetails: PropTypes.object.isRequired,
   couponCartDetail: PropTypes.object.isRequired,
   setBillingDetails: PropTypes.func.isRequired,
+  setPaymentMethod: PropTypes.func.isRequired,
 };
 
 export default Paypal;
