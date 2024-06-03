@@ -113,7 +113,6 @@ module.exports = {
             "city",
             "firstname",
             "lastname",
-            "company",
             "address",
             "zip",
             "country",
