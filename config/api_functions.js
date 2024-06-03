@@ -257,18 +257,10 @@ const CREATE_FUNC = async (
       }
 
       if (data.upload_image) {
-        if(typeof data.upload_image === "string") {
-          image = data.upload_image;
-        } else {
-          image = data.upload_image[0].file;
-        }
+        image = data.upload_image[0].file;
       }
       if (data.upload_thumbnail_image) {
-        if(typeof data.upload_thumbnail_image === "string") {
-          image2 = data.upload_thumbnail_image;
-        } else {
-          image2 = data.upload_thumbnail_image[0].file;
-        }
+        image2 = data.upload_thumbnail_image[0].file;
       }
       
       if (name && name === "User") {
