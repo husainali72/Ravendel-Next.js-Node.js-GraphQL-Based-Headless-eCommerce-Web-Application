@@ -61,8 +61,6 @@ export const handleOrderPlaced = (
             case CASH_ON_DELIVERY:
               if (success && orderId) {
                 let id = customerId;
-                let variables = { userId: id };
-                dispatch(removeAllCartItemsAction(variables,router));
                 setBillingDetails("");
                 router.push({
                   pathname: thankyouPageRoute,
@@ -80,8 +78,6 @@ export const handleOrderPlaced = (
             case BANKTRANSFER:
               if (success && orderId) {
                 let id = customerId;
-                let variables = { userId: id };
-                dispatch(removeAllCartItemsAction(variables,router));
                 setBillingDetails("");
                 router.push({
                   pathname: thankyouPageRoute,

@@ -293,6 +293,7 @@ const EditProductComponent = ({ params }) => {
         name: category.name,
         url: category.url,
         checked: category.checked,
+        url: category.url,
       };
       if (category?.children && category?.children?.length > 0) {
         filteredCategory.children = category?.children;
