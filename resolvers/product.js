@@ -1916,7 +1916,9 @@ module.exports = {
           return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
         } else {
           let imgObject = "";
-          if (args.feature_image) {
+          if (typeof args.feature_image === "string") {
+            imgObject = args.feature_image
+          } else if(args.feature_image) {
             // console.log('fimage',args.feature_image);
             imgObject = await imageUpload(
               args.feature_image[0].file,
@@ -1936,15 +1938,19 @@ module.exports = {
           if (args.gallery_image) {
             let galleryObject = "";
             for (let i in args.gallery_image) {
-              console.log( args.gallery_image[i].file,' args.gallery_image[i].file')
-              galleryObject = await imageUpload(
-                args.gallery_image[i].file,
-                "assets/images/product/gallery/", 
-                "productgallery",
-                args.url
-              );
-              if (galleryObject.success) {
-                imgArray.push(galleryObject.data);
+              if(typeof args.gallery_image[i] === "string") {
+                imgArray.push(args.gallery_image[i]);
+              } else if (args.gallery_image[i].file) {
+                console.log( args.gallery_image[i].file,' args.gallery_image[i].file')
+                galleryObject = await imageUpload(
+                  args.gallery_image[i].file,
+                  "assets/images/product/gallery/", 
+                  "productgallery",
+                  args.url
+                );
+                if (galleryObject.success) {
+                  imgArray.push(galleryObject.data);
+                }
               }
             }
           }
