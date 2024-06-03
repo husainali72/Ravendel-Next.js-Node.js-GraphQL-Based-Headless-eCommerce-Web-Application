@@ -40,34 +40,16 @@ const GalleryImagesComponents = (props) => {
   const session = useSession();
   const router = useRouter();
   const [available, setavailable] = useState(true);
-  const [Lable, setLable] = useState("In Stock");
   const cart = useSelector((state) => state.cart);
   const [singleproduct, setSingleproduct] = useState(singleProducts);
   const [selectedAttributes, setSelectedAttributes] = useState([]);
   const [itemInCart, setItemInCart] = useState(false);
-  const [showMagnifiedImage, setShowMagnifiedImage] = useState(false)
+  const [showMagnifiedImage, setShowMagnifiedImage] = useState(false);
   const [id, setId] = useState("");
   const [token, setToken] = useState("");
   useEffect(() => {
-    setSingleproduct({ ...singleproduct });
+    setSingleproduct({ ...singleproduct, qty: 1 });
   }, [singleProducts]);
-  useEffect(() => {
-    const productQuantity = get(singleProducts, "quantity");
-    const isLowStock = singleProducts && productQuantity <= lowStockThreshold;
-    const isOutOfStock =
-      singleProducts && productQuantity <= outOfStockThreshold;
-    const inStock = singleProducts && productQuantity > lowStockThreshold;
-    if (isLowStock && !isOutOfStock) {
-      setStockClass("low-stock");
-      setLable("Low Stock");
-    } else if (isOutOfStock) {
-      setStockClass("out-of-stock");
-      setLable("Out Of Stock");
-    } else if (inStock) {
-      setStockClass("in-stock");
-      setLable("In Stock");
-    }
-  }, [singleProducts?.quantity, lowStockThreshold, outOfStockThreshold]);
   const getSelectedAttributes = (attributes) => {
     setSelectedAttributes(attributes);
   };
@@ -179,12 +161,25 @@ const GalleryImagesComponents = (props) => {
     <>
       <div className="single-product row mb-50 single-product-container">
         <div className="single-product-image col-md-6 col-sm-12 col-xs-12">
-          <div className="singleroduct-gallery-slider" onMouseEnter={()=> setShowMagnifiedImage(true)} onMouseLeave={()=> setShowMagnifiedImage(false)}>
-            <GalleryImageSlider galleryImages={galleryImages} showMagnifiedImageState={[showMagnifiedImage, setShowMagnifiedImage]}/>
+          <div
+            className="singleroduct-gallery-slider"
+            onMouseEnter={() => setShowMagnifiedImage(true)}
+            onMouseLeave={() => setShowMagnifiedImage(false)}
+          >
+            <GalleryImageSlider
+              galleryImages={galleryImages}
+              showMagnifiedImageState={[
+                showMagnifiedImage,
+                setShowMagnifiedImage,
+              ]}
+            />
           </div>
         </div>
         <div className="single-product-detail col-md-6 col-sm-12 col-xs-12">
-          <div id='myPortal' className={`magnify-portal ${showMagnifiedImage ? 'active' : ''}`}></div>
+          <div
+            id="myPortal"
+            className={`magnify-portal ${showMagnifiedImage ? "active" : ""}`}
+          ></div>
           <div className="detail-info">
             <h2>{capitalize(get(singleproduct, "name"))}</h2>
             <div className="short-desc mb-30">
@@ -204,8 +199,10 @@ const GalleryImagesComponents = (props) => {
                 cart.
               </p>
             )}
-            {
-              (get(singleproduct, "variations") && get(singleproduct, "variations")?.length > 0) || (get(singleproduct, "attributes") && get(singleproduct, "attributes")?.length > 0) ?
+            {(get(singleproduct, "variations") &&
+              get(singleproduct, "variations")?.length > 0) ||
+            (get(singleproduct, "attributes") &&
+              get(singleproduct, "attributes")?.length > 0) ? (
               <div className="varaint-select">
                 <AttributeSelector
                   variations={get(singleproduct, "variations", [])}
@@ -213,48 +210,51 @@ const GalleryImagesComponents = (props) => {
                   getSelectedAttributes={getSelectedAttributes}
                 />
               </div>
-              : ''
-            }
+            ) : (
+              ""
+            )}
             <div>
-              <QuantitySelector
-                changeQuantity={changeQuantity}
-                quantity={singleproduct?.qty}
-              />
+              {get(singleproduct, "quantity", 0) > 0 && (
+                <QuantitySelector
+                  changeQuantity={changeQuantity}
+                  quantity={singleproduct?.qty || 1}
+                />
+              )}
             </div>
             <CheckZipcode checkzipcode={checkzipcode} />
             <ul className="product-meta font-xs color-grey mt-50">
               <div className="stock-availabilty">
-                <div className="singleproduct-stock">
-                  <p>Availablity: <span className={stockClass} style={{}}>{Lable}</span></p>
-                </div>
+                {get(singleproduct, "quantity", 0) <= 0 && (
+                  <div className="singleproduct-stock">
+                    <p>
+                      Availablity:{" "}
+                      <span className="out-of-stock" style={{}}>
+                        Out of Stock
+                      </span>
+                    </p>
+                  </div>
+                )}
                 <div>
                   <RemainingQuantity
                     quantity={get(singleproduct, "quantity", 0)}
                   />
                 </div>
               </div>
-
-              {/* {Lable !== "Out Of Stock" && ( */}
-                <>
-                  <CustomButton
-                    type="button"
-                    className="btn btn-success button button-add-to-cart primary-btn-color"
-                    onClick={() =>
-                      !itemInCart
-                        ? addToCartProduct(singleproduct)
-                        : navigateToShopCart()
-                    }
-                    buttonText={!itemInCart ? "Add to Cart" : "Go To Cart"}
-                    disabled={!available}
-                  />
-                </>
-              {/* )} */}
-              {itemInCart && (
-                <p className="already-in-cart-message">
-                  You have this item in your bag and we have increased the
-                  quantity by {get(singleproduct, "qty", 1)}
-                </p>
-              )}
+              <>
+                <CustomButton
+                  type="button"
+                  className="btn btn-success button button-add-to-cart primary-btn-color"
+                  onClick={() =>
+                    !itemInCart
+                      ? addToCartProduct(singleproduct)
+                      : navigateToShopCart()
+                  }
+                  buttonText={!itemInCart ? "Add to Cart" : "Go To Cart"}
+                  disabled={
+                    !available || get(singleproduct, "quantity", 0) <= 0
+                  }
+                />
+              </>
             </ul>
           </div>
         </div>

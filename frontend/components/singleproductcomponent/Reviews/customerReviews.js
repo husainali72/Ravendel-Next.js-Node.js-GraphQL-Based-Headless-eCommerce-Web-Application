@@ -14,14 +14,17 @@ const CustomerReviews = ({ productId }) => {
   const [reviews, setReviews] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const setting=useSelector((state)=>state.setting)
+  const setting = useSelector((state) => state.setting);
   const getCustomerReviews = async () => {
     try {
       const { data: productReviewData } = await queryWithoutToken(
         GET_PRODUCT_REVIEWS,
         { productId: productId, page: currentPage, limit }
       );
-      const productReviews = get(productReviewData, "productwisereview.reviews");
+      const productReviews = get(
+        productReviewData,
+        "productwisereview.reviews"
+      );
       const totalpages = get(productReviewData, "productwisereview.count");
       setTotalPages(Math.ceil(totalpages / limit));
       setReviews(productReviews);
@@ -33,7 +36,7 @@ const CustomerReviews = ({ productId }) => {
   useEffect(() => {
     getCustomerReviews();
   }, [productId, currentPage]);
-  
+
   return (
     <>
     {
@@ -56,19 +59,18 @@ const CustomerReviews = ({ productId }) => {
                     { (review.date) && <span>{convertDateToStringFormat(review.date,setting)}</span>}
                 </div>
               </div>
-            </div>
-          ))}
-          {
-            totalPages > 1 &&
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              handlePageChange={handlePageChange}
-            />
-          }
-        </div>
-      </>
-    }
+              </div>
+            ))}
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                handlePageChange={handlePageChange}
+              />
+            )}
+          </div>
+        </>
+      }
     </>
   );
 };
