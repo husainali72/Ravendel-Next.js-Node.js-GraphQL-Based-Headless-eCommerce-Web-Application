@@ -269,7 +269,7 @@ const CREATE_FUNC = async (
       const setting = await Setting.findOne({});
 
       if (setting.imageStorage.status === 's3') {
-        imgObject = await imageUpload(image, path, name);
+        imgObject = await imageUpload(image, path, name, data.url);
       } else {
         if(args.feature_image || args.image ){
           imgObject = await UploadImageLocal(image, path, name);
