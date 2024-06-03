@@ -132,8 +132,10 @@ module.exports = {
         if (brand) {
           if (args.updated_brand_logo) {
             let imgObject = await imageUpload(
-              args.updated_brand_logo.file,
-              "assets/images/brand/", 'Brand'
+              args.updated_brand_logo[0].file,
+              "assets/images/brand/", 
+              'Brand',
+              args.url
             );
             if (imgObject.success === false) {
               throw putError(imgObject.message);
