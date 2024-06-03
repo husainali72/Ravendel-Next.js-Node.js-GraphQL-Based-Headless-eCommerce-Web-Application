@@ -76,6 +76,7 @@ import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
 import { CHECK_VALID_URL, GET_PRODUCT } from "../../queries/productQuery";
 import ValidUrlComponent from "../components/ValidUrlComponent";
 import CustomAutocomplete from "../components/autoComplete";
+import { productsCloneAction } from "../../store/action/productAction";
 let defaultobj = {
   _id: "",
   name: "",
@@ -155,7 +156,7 @@ const EditProductComponent = ({ params }) => {
       get(productState, "products") &&
       isEmpty(get(productState, "products"))
     ) {
-      dispatch(productsAction());
+      dispatch(productsCloneAction());
     }
   }, []);
   const productsOptions = useMemo(() => {
@@ -242,7 +243,7 @@ const EditProductComponent = ({ params }) => {
           }
           let defaultBrand = {};
           setTaxClass(productState.product.taxClass);
-          setShippingClass({...get(productState,'product.shipping',{})});
+          setShippingClass({ ...get(productState, "product.shipping", {}) });
           if (productState.product.brand) {
             if (!isEmpty(get(brandState, "brands"))) {
               for (let i in brandState.brands) {
@@ -610,7 +611,7 @@ const EditProductComponent = ({ params }) => {
       `specifications[${index}].customFields[${secIndex}].attributeId`
     );
     if (!selectedKey) {
-      return [{ id: "", name: "Select any attribute first", type:"default" }];
+      return [{ id: "", name: "Select any attribute first", type: "default" }];
     }
     const selectedAttribute = attributes?.find(
       (attribute) => attribute?.id === selectedKey
@@ -620,41 +621,19 @@ const EditProductComponent = ({ params }) => {
     }
     return [];
   };
-  const cloneProject = async (event, value) => {
+  useEffect(() => {
+    const productToClone = get(productState, "product", {});
     let groupedSpecifications = [];
     let shipping;
-    if (get(value, "value") && productState?.products) {
-      const productToClone = productState?.products.find(
-        (product) => product?._id === value?.value
-      );
-      if (!isEmpty(productToClone)) {
-        if (productToClone?.specifications) {
-          groupedSpecifications = productToClone?.specifications.reduce(
-            (acc, spec) => {
-              if (!acc.some((ac) => ac?.group === spec?.group)) {
-                acc.push({
-                  group: spec?.group,
-                  customFields: [
-                    {
-                      attributeId: spec?.attributeId,
-                      attributeValueId: spec?.attributeValueId,
-                      key: getAttributeKeyObject(spec?.attributeId),
-                      value: getAttributeValueObject(
-                        spec?.attributeId,
-                        spec?.attributeValueId
-                      ),
-                      keyLabel: getAttributeKeyObject(spec?.attributeId)?.name,
-                      valueLabel: getAttributeValueObject(
-                        spec?.attributeId,
-                        spec?.attributeValueId
-                      )?.name,
-                    },
-                  ],
-                });
-              } else {
-                const Index = acc.findIndex((ac) => ac?.group === spec?.group);
-                acc[Index]?.customFields &&
-                  acc[Index].customFields.push({
+    if (!isEmpty(productToClone)) {
+      if (productToClone?.specifications) {
+        groupedSpecifications = productToClone?.specifications.reduce(
+          (acc, spec) => {
+            if (!acc.some((ac) => ac?.group === spec?.group)) {
+              acc.push({
+                group: spec?.group,
+                customFields: [
+                  {
                     attributeId: spec?.attributeId,
                     attributeValueId: spec?.attributeValueId,
                     key: getAttributeKeyObject(spec?.attributeId),
@@ -667,55 +646,81 @@ const EditProductComponent = ({ params }) => {
                       spec?.attributeId,
                       spec?.attributeValueId
                     )?.name,
-                  });
-              }
-              return acc;
-            },
-            []
-          );
-        }
-        let defaultBrand = {};
-        setTaxClass(productToClone?.taxClass);
-        setShippingClass({...get(productToClone,'shipping',{})})
-        if (productToClone.brand) {
-          if (!isEmpty(get(brandState, "brands"))) {
-            for (let i in brandState.brands) {
-              if (brandState.brands[i].id === productToClone.brand.id) {
-                defaultBrand = {
-                  value: brandState.brands[i].id,
-                  label: brandState.brands[i].name,
-                };
-                break;
-              }
+                  },
+                ],
+              });
+            } else {
+              const Index = acc.findIndex((ac) => ac?.group === spec?.group);
+              acc[Index]?.customFields &&
+                acc[Index].customFields.push({
+                  attributeId: spec?.attributeId,
+                  attributeValueId: spec?.attributeValueId,
+                  key: getAttributeKeyObject(spec?.attributeId),
+                  value: getAttributeValueObject(
+                    spec?.attributeId,
+                    spec?.attributeValueId
+                  ),
+                  keyLabel: getAttributeKeyObject(spec?.attributeId)?.name,
+                  valueLabel: getAttributeValueObject(
+                    spec?.attributeId,
+                    spec?.attributeValueId
+                  )?.name,
+                });
+            }
+            return acc;
+          },
+          []
+        );
+      }
+      let defaultBrand = {};
+      setTaxClass(productToClone?.taxClass);
+      setShippingClass({ ...get(productToClone, "shipping", {}) });
+      if (productToClone.brand) {
+        if (!isEmpty(get(brandState, "brands"))) {
+          for (let i in brandState.brands) {
+            if (brandState.brands[i].id === productToClone.brand.id) {
+              defaultBrand = {
+                value: brandState.brands[i].id,
+                label: brandState.brands[i].name,
+              };
+              break;
             }
           }
         }
-        if (productToClone?.shipping) {
-          shipping = productToClone?.shipping;
-        }
-        const categoryIds =
-          !!productToClone.categoryId &&
-          productToClone.categoryId?.map((cat) => cat.id);
-        if (get(productToClone, "_id")) {
-          setClonedId(get(productToClone, "_id"));
-        }
-        const { url, ...rest } = productToClone;
-        setProduct({
-          ...product,
-          ...rest,
-          name: productToClone?.name && `${productToClone.name} copy`,
-          specifications: groupedSpecifications,
-          categoryId: categoryIds,
-          categoryTree: get(productToClone, "categoryTree", []),
-          brand: defaultBrand || "",
-          shipping,
-        });
-        if (productToClone.feature_image) {
-          setfeatureImage(baseURl + productToClone.feature_image);
-        } else {
-          setfeatureImage(NoImagePlaceHolder);
-        }
       }
+      if (productToClone?.shipping) {
+        shipping = productToClone?.shipping;
+      }
+      const categoryIds =
+        !!productToClone.categoryId &&
+        productToClone.categoryId?.map((cat) => cat.id);
+      if (get(productToClone, "_id")) {
+        setClonedId(get(productToClone, "_id"));
+      }
+      const { url, ...rest } = productToClone;
+      setProduct({
+        ...product,
+        ...rest,
+        name: productToClone?.name && `${productToClone.name} copy`,
+        specifications: groupedSpecifications,
+        categoryId: categoryIds,
+        categoryTree: get(productToClone, "categoryTree", []),
+        brand: defaultBrand && Object.keys(defaultBrand).length > 0 ? defaultBrand : null,
+        shipping,
+      });
+      if (productToClone.feature_image) {
+        setfeatureImage(baseURl + productToClone.feature_image);
+      } else {
+        setfeatureImage(NoImagePlaceHolder);
+      }
+    }
+  }, [productState?.product]);
+  const cloneProject = async (event, value) => {
+    if (get(value, "value") && productState?.products) {
+      dispatch(productAction(value?.value));
+    }else{
+      setProduct({...defaultobj})
+      setfeatureImage(null)
     }
   };
   const addSpecificationField = (index) => {
@@ -1002,10 +1007,13 @@ const EditProductComponent = ({ params }) => {
                 <ShippingComponent
                   product={shippingClass}
                   onShippingInputChange={(name, value) => {
-                    setShippingClass({...shippingClass,  [name]: value,})
+                    setShippingClass({ ...shippingClass, [name]: value });
                   }}
                   onShippingClassChange={(value) => {
-                    setShippingClass({...shippingClass,  'shippingClass': value,})
+                    setShippingClass({
+                      ...shippingClass,
+                      shippingClass: value,
+                    });
                   }}
                 />
               </CardBlocks>
@@ -1186,7 +1194,9 @@ const EditProductComponent = ({ params }) => {
                                                 getOptionLabel={(option) =>
                                                   option.name || ""
                                                 }
-                                                getOptionDisabled={(option)=>option?.type==='default'}
+                                                getOptionDisabled={(option) =>
+                                                  option?.type === "default"
+                                                }
                                                 isOptionEqualToValue={(
                                                   option,
                                                   value
@@ -1307,7 +1317,7 @@ const EditProductComponent = ({ params }) => {
             {/* ===================Clone=================== */}
             {!productId && (
               <Box component="span" m={1}>
-                <CardBlocks title="Clone Product" >
+                <CardBlocks title="Clone Product">
                   <Autocomplete
                     disablePortal
                     id="select-product"
