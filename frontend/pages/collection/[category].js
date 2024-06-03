@@ -7,7 +7,6 @@ import { ARRAY, CHOICE, LIMIT } from "../../components/categoryFilter/constant";
 import SubCategoryProducts from "../../components/category/subCategories";
 import ParentCategories from "../../components/category/parentCategories";
 import { clearAllFilter } from "../../components/categoryFilter/component/urlFilter";
-import PageLoader from "../../components/PageLoader";
 import Meta from "../../components/Meta";
 
 const SingleCategoryProduct = () => {
@@ -121,15 +120,12 @@ const SingleCategoryProduct = () => {
   return (
     <div>
       <Meta title={title} description={description} keywords={keywords}/>
-      {
-        productFilterData.loading &&
-          <PageLoader/>
-      }
         <>
           {get(filteredProductData, "isMostParentCategory") ? (
             <ParentCategories
               categories={get(filteredProductData, "mostParentCategoryData", {})}
               categoryName={get(router, 'query.category', '')}
+              loading={get(productFilterData,'loading',false)}
             />
           ) : (
             <SubCategoryProducts
@@ -138,6 +134,7 @@ const SingleCategoryProduct = () => {
               handleFilter={handleFilter}
               handleScroll={handleScroll}
               handleSorting={handleSorting}
+              loading={get(productFilterData,'loading',false)}
             />
           )}
         </>

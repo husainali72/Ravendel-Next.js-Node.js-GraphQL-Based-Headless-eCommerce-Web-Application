@@ -177,19 +177,7 @@ export const CheckOut = () => {
   }, [get(cart, "cartItems")]);
 
   const updateCartProductQuantity = (item, updatedQuantity) => {
-    // const isQuantityIncreased = cartItems?.find((cartItem) => {
-    //   let cartItemId = get(cartItem, "_id");
-    //   let cartItemVariantId = get(cartItem, "variantId");
-    //   let itemId = get(item, "_id");
-    //   let itemVariantId = get(item, "variantId");
-    //   let itemProductQuantity = get(item, "productQuantity");
-    //   console.log(itemProductQuantity, "itemProductQuantity", item);
-    //   return (
-    //     ((cartItemId === itemId && cartItemVariantId === itemVariantId) ||
-    //       (cartItemId === itemId && !cartItemVariantId === itemVariantId)) &&
-    //     itemProductQuantity >= updatedQuantity
-    //   );
-    // });
+    setLoading(true);
     let prevQuantity = null;
     let updatedCartItems = cartItems?.map((cartItem) => {
       if (cartItem?._id === item?._id) {
@@ -208,6 +196,7 @@ export const CheckOut = () => {
     };
     dispatch(changeQty(variables, router))
       .then((res) => {
+        setLoading(false);
         if (get(res, "data.changeQty.success")) {
           dispatch(calculateUserCart(id));
         } else {
@@ -222,11 +211,13 @@ export const CheckOut = () => {
         setIsQuantityBtnLoading(false);
       })
       .catch((error) => {
+        setLoading(false);
         setIsQuantityBtnLoading(false);
       });
   };
   // Function to remove an item from the cart
   const removeToCart = async (item) => {
+    setLoading(true);
     let productId = get(item, "_id", "");
     if (session?.status === "authenticated") {
       let id = get(session, "data.user.accessToken.customer._id");
@@ -238,11 +229,13 @@ export const CheckOut = () => {
 
       mutation(DELETE_CART_PRODUCTS, variables)
         .then((res) => {
+          setLoading(false);
           if (get(res, "data.deleteCartProduct.success")) {
             dispatch(calculateUserCart(id));
           }
         })
         .catch((error) => {
+          setLoading(false);
           handleError(error, dispatch, router);
         });
     }
@@ -902,6 +895,7 @@ export const CheckOut = () => {
                         </button>
                       </form>
                     </div>
+                    {loading && <Loading />}
                     <div className="cupon-cart">
                       <OrderSummary
                         cartLoading={cartLoading}
@@ -943,6 +937,7 @@ export const CheckOut = () => {
                       billingDetails={billingDetails}
                       couponCartDetail={couponCartDetail}
                       setBillingDetails={setBillingDetails}
+                      setPaymentMethod={setPaymentMethod}
                     />
                   ) : (
                     <div className="col-lg-12 third-container-checkout">

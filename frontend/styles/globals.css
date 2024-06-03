@@ -537,7 +537,7 @@ a.action-btn:after {
 
 .cart-dropdown-wrap .shopping-cart-footer .shopping-cart-total {
   border-top: 2px solid #9b9b9b;
-  margin: 25px 0;
+  margin: 20px 0;
   padding: 17px 8px 0;
 }
 
@@ -590,7 +590,14 @@ a.action-btn:after {
 .cart-dropdown-wrap
   .shopping-cart-footer
   .shopping-cart-button
-  .shopping-cart-button-view-cart {
+  .shopping-cart-button-view-cart 
+.shopping-cart-button{
+  text-align: right;
+}
+.shopping-cart-button-view-cart{
+  background-color: #fff
+}
+.cart-dropdown-wrap .shopping-cart-footer .shopping-cart-button .shopping-cart-button-view-cart {
   background-color: transparent;
   border: 2px solid var(--primary-color);
   color: var(--primary-color);
@@ -8481,6 +8488,70 @@ button.btn-outline-primary:hover {
   margin-top: 50px;
   justify-content: center;
 }
+.mini-cart-image{
+  width:80px;
+  height:80px
+}
+.mini-cart-footer{
+  display: flex;
+  justify-content: space-between;
+}
+.mini-cart-product-container{
+  display: flex;
+  justify-content: space-between;
+}
+.mini-cart-prod-title{
+  font-size: 12px!important;
+}
+.mini-cart-decrease-qty {
+  width: 20px !important;
+  height: 20px !important;
+}
+.mini-cart-input-qty{
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 14px;
+  border: none!important;
+}
+.mini-cart-qty-container{
+  display: flex;
+  justify-content: space-between;
+}
+.mini-cart-delete-product{
+  color:rgb(229, 55, 55)
+}
+.mini-cart-prod-price{
+  font-size: 12px!important;
+  margin-left: 10px;
+}
+.mini-card-btons{
+  margin: 0 auto;
+  margin-top: 15px;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 12px;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+.mini-card-btons.outline{
+  background-color: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+.mini-card-btons.outline a{
+  color: var(--primary-color);
+}
+.mini-cart-grand-total{
+  font-weight: 600;
+}
+.mini-cart-container{
+  display: flex;
+  margin-bottom: 1rem;
+  background-color: #fff;
+}
+.mini-cart-second-container{
+  width: 100%;
+}
 .sorting-icon{
   font-size: 16px;
   color: grey;
@@ -8537,4 +8608,11 @@ button.btn-outline-primary:hover {
   .main-menu nav{
     width: 70vw;
   }
+}
+.paypal-error-message{
+  text-align: center;
+  
+}
+.paypal-back-btn{
+  cursor: pointer;
 }
