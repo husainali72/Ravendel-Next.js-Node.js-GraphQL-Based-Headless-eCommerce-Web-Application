@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 import { get } from "lodash";
 import CategorySorting from "../categorySorting/categorySorting";
 import Meta from "../Meta";
-import PageLoader from "../PageLoader";
+import SubCategorySkeletoncard from "./component";
 const SubCategoryProducts = ({
   filteredProductData,
   handleFilter,
@@ -16,16 +16,22 @@ const SubCategoryProducts = ({
   handleSorting,
   clearFilter,
   loading,
+  defaultMeta,
 }) => {
   const { title, description, keywords } = get(
     filteredProductData,
     "categoryTree.subCategories.meta",
-    {}
+    defaultMeta
   );
+
   return (
     <section className="product-cart-section">
       <Meta title={title} description={description} keywords={keywords} />
       <Container>
+        {filteredProductData &&
+          Object?.keys(filteredProductData)?.length === 0 && (
+            <p className="product-no-data-text">No data Found</p>
+          )}
         <div className="single-category-page">
           {get(filteredProductData, "filterData", [])?.length > 0 && (
             <div className="category-option">
@@ -53,12 +59,12 @@ const SubCategoryProducts = ({
               </div>
             </div>
           )}
+
           <div className="shop-product-container ">
-            {!loading ? (
+            {!loading  ? (
               get(filteredProductData, "productData.products")?.length > 0 ? (
                 <div className="shop-product-list ">
-                  <div className="totall-product ">
-                  </div>
+                  <div className="totall-product "></div>
                   <div className="totall-product ">
                     <CategorySorting
                       activeSorting={get(filteredProductData, "sort", {})}
@@ -88,11 +94,15 @@ const SubCategoryProducts = ({
                 </div>
               ) : (
                 <div className="product-no-data-container">
-                  <p className="product-no-data-text">No Data Found</p>
+                  {filteredProductData &&
+                    Object?.keys(filteredProductData)?.length > 0 &&
+                    !get(filteredProductData, "isMostParentCategory") && (
+                      <p className="product-no-data-text">No Record Found</p>
+                    )}
                 </div>
               )
             ) : (
-              <PageLoader />
+              <SubCategorySkeletoncard />
             )}
           </div>
         </div>
@@ -102,6 +112,7 @@ const SubCategoryProducts = ({
 };
 SubCategoryProducts.propTypes = {
   filteredProductData: PropTypes.object.isRequired,
+  defaultMeta: PropTypes.object.isRequired,
   handleFilter: PropTypes.func.isRequired,
   handleSorting: PropTypes.func.isRequired,
   handleScroll: PropTypes.func.isRequired,

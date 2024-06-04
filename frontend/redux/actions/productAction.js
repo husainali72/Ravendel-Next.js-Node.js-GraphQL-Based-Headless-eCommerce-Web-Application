@@ -7,6 +7,7 @@ export const PRODUCT_REVIEWS_ADD = 'PRODUCT_REVIEWS_ADD';
 export const PRODUCT_LOADING = "PRODUCT_LOADING";
 export const ADD_PRODUCT_REVIEWS = "ADD_PRODUCT_REVIEWS";
 export const PRODUCT_FAIL = "PRODUCT_FAIL";
+export const LOADING_FALSE = "LOADING_FALSE";
 export const PRODUCTS_LOADING = "PRODUCTS_LOADING";
 export const PRODUCTS_SUCCESS = "PRODUCTS_SUCCESS";
 export const ATTRIBUTES_SUCCESS = "ATTRIBUTES_SUCCESS";
@@ -74,9 +75,16 @@ export const getFilteredProductsAction = (variable) => (dispatch) => {
           type: PRODUCTS_FILTER_SUCCESS,
           payload: filteredProducts,
         });
+      }else{
+        dispatch({
+          type: LOADING_FALSE,
+        });
       }
     })
     .catch((error) => {
+      dispatch({
+        type: LOADING_FALSE,
+      });
       dispatch({
         type: PRODUCT_FAIL,
       });

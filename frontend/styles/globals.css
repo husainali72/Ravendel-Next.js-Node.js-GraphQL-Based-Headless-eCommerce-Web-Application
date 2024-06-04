@@ -8616,3 +8616,63 @@ button.btn-outline-primary:hover {
 .paypal-back-btn{
   cursor: pointer;
 }
+/* src/App.css */
+#wrapper {
+  display: flex;
+  width: 100%;
+}
+
+#sidebar-wrapper {
+  width: 250px;
+}
+
+#page-content-wrapper {
+  flex: 1;
+  padding: 20px;
+}
+
+.container-fluid {
+  padding: 20px;
+}
+@keyframes shimmer {
+  0% {
+    background-position: -500px 0;
+  }
+  100% {
+    background-position: 500px 0;
+  }
+}
+
+.skeleton {
+  background: #f6f7f8;
+  background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+  background-repeat: no-repeat;
+  background-size: 1000px 100%;
+  display: inline-block;
+  position: relative;
+  animation: shimmer 2s infinite linear;
+}
+
+.skeleton-card {
+  width: 18rem;
+  height: 200px;
+}
+
+.skeleton-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+}
+
+.skeleton-text {
+  height: 20px;
+  margin-bottom: 10px;
+}
+
+.skeleton-sidebar {
+  height: 100vh;
+  width: 250px;
+}
+.product-card-loading{
+  display: flex;
+}

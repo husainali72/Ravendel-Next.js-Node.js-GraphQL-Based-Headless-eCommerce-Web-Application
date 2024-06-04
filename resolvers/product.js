@@ -359,7 +359,7 @@ module.exports = {
           sortByExpression = { "date": -1 };
           responseSortObject = {
             field:"date",
-            type:"desc"
+            type:""
           }
         }
         

@@ -8,15 +8,15 @@ import { ARRAY, CHOICE, RANGE } from "./constant";
 import AccordionComponent from "../accordian";
 import { applyFiltersFromUrl, updateUrl } from "./component/urlFilter";
 import { useRouter } from "next/router";
-
-const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
+const CategoryFilter = ({ filterCategoryData, handleFilter,activeSorting }) => {
   const [filterData, setFilteredData] = useState([]);
   const router = useRouter();
+  
   useEffect(() => {
     if (router.isReady) {
-      const initialFilterData = applyFiltersFromUrl(filterCategoryData, router);
-      setFilteredData(initialFilterData);
-      handleFilter(initialFilterData);
+      const {updatedFilters,activeSorting} = applyFiltersFromUrl(filterCategoryData, router);
+      setFilteredData(updatedFilters);
+      handleFilter(updatedFilters,activeSorting);
     }
   }, [router.isReady]);
 
@@ -43,7 +43,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
         };
         setFilteredData(updatedFilterData);
         handleFilter(updatedFilterData);
-        updateUrl(updatedFilterData, router);
+        updateUrl(updatedFilterData, router,activeSorting);
         break;
       case RANGE:
         currentValue = filterData[index];
@@ -80,7 +80,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
         };
         setFilteredData(updatedFilterData);
         handleFilter(updatedFilterData);
-        updateUrl(updatedFilterData, router);
+        updateUrl(updatedFilterData, router,activeSorting);
         break;
       default:
         break;
@@ -119,7 +119,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
                           <FilterSlider
                             data={filter}
                             onBlur={() => {
-                              updateUrl(filterData, router);
+                              updateUrl(filterData, router,activeSorting);
                               handleFilter(filterData);
                             }}
                             handleFilterChange={(e) =>
@@ -157,8 +157,10 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
 };
 CategoryFilter.propTypes = {
   handleFilter: PropTypes.func.isRequired,
+  handleSorting: PropTypes.func.isRequired,
   filterCategoryData: PropTypes.array.isRequired,
   updateUrl: PropTypes.func.isRequired,
+  activeSorting: PropTypes.object,
 };
 
 export default CategoryFilter;
