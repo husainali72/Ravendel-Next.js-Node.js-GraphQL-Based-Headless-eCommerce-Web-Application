@@ -244,18 +244,25 @@ const UploadImageLocal = async (image, path, name) => {
     let buffer;
 
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    if (typeof image === 'string' && image.startsWith('data:image')) {
-      // Handle Base64 input
-      const matches = image.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
-      if (matches) {
-        isBase64 = true;
-        buffer = Buffer.from(matches[2], 'base64');
-        filename = `.${matches[1]}`;
-      } else {
-        return Promise.resolve({
-          success: false,
-          message: "Invalid Base64 string"
-        });
+    if (typeof image === 'string') {
+      if(image.startsWith("assets/images")) {
+        return {
+          success: true,
+          data: image,
+        }
+      } else if(image.startsWith('data:image')) {
+        // Handle Base64 input
+        const matches = image.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
+        if (matches) {
+          isBase64 = true;
+          buffer = Buffer.from(matches[2], 'base64');
+          filename = `.${matches[1]}`;
+        } else {
+          return Promise.resolve({
+            success: false,
+            message: "Invalid Base64 string"
+          });
+        }
       }
     } else {
       // Handle regular file upload
@@ -360,18 +367,25 @@ const imageUpload = async (upload, uploadPath, nametype, imageName) => {
         let isBase64 = false;
         let buffer;
 
-        if (typeof upload === 'string' && upload.startsWith('data:image')) {
-          // Handle Base64 input
-          const matches = upload.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
-          if (matches) {
-            isBase64 = true;
-            buffer = Buffer.from(matches[2], 'base64');
-            filename = `.${matches[1]}`;
-          } else {
+        if (typeof upload === 'string') {
+          if(upload.startsWith("assets/images")) {
             return resolve({
-              success: false,
-              message: "Invalid Base64 string"
-            });
+              success: true,
+              data: upload,
+            })
+          } else if(upload.startsWith('data:image')) {
+            // Handle Base64 input
+            const matches = upload.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
+            if (matches) {
+              isBase64 = true;
+              buffer = Buffer.from(matches[2], 'base64');
+              filename = `.${matches[1]}`;
+            } else {
+              return resolve({
+                success: false,
+                message: "Invalid Base64 string"
+              });
+            }
           }
         } else {
           // Handle regular file upload
