@@ -32,7 +32,7 @@ import {
 } from "../redux/actions/cartAction";
 import toast, { Toaster } from "react-hot-toast";
 import { CHECK_ZIPCODE } from "../queries/productquery";
-import {  get } from "lodash";
+import { get } from "lodash";
 import Loading from "../components/loadingComponent";
 import Paypal from "../components/checkoutcomponent/paypal/paypal";
 import { PAYPAL } from "../utills/constant";
@@ -61,7 +61,7 @@ var billingInfoObject = {
   transaction_id: "",
   addressType: "",
   _id: "",
-  defaultAddress:false
+  defaultAddress: false,
 };
 var shippingObject = {
   order_notes: "",
@@ -77,7 +77,7 @@ var shippingObject = {
   country: "",
   addressType: "",
   _id: "",
-  defaultAddress:false
+  defaultAddress: false,
 };
 
 var savedShippingInfo;
@@ -392,7 +392,7 @@ export const CheckOut = () => {
         addressType,
         country,
         _id,
-        defaultAddress
+        defaultAddress,
       } = customerDefaultAddress;
       let defaultAddressInfo = {
         zip: pincode || "",
@@ -413,7 +413,14 @@ export const CheckOut = () => {
       checkCode(get(defaultAddressInfo, "zip"));
       return defaultAddressInfo;
     } else {
-      return billingInfoObject;
+      const { email, phone, firstName, lastName } = customer || {};
+      return {
+        ...billingInfoObject,
+        email,
+        firstname: firstName,
+        lastname: lastName,
+        phone,
+      };
     }
   };
   const prepareCartItemsList = (allCartItems) => {
@@ -589,8 +596,8 @@ export const CheckOut = () => {
       country: address?.country || "",
       addressType: address?.addressType || "",
       id: address?._id || "",
-      _id:address?._id||'',
-      defaultAddress:address?.defaultAddress||false
+      _id: address?._id || "",
+      defaultAddress: address?.defaultAddress || false,
     };
     let shipping = commonFields;
     let billing = {
@@ -743,7 +750,7 @@ export const CheckOut = () => {
     } = billingAddress;
     let payload = {
       id: customerId,
-      _id:_id,
+      _id: _id,
       firstName: firstname,
       lastName: lastname,
       phone,
@@ -766,7 +773,7 @@ export const CheckOut = () => {
           // setAddress(addressObject)
           notify(message, success);
           nextFormStep();
-          setIsEditAddress(false)
+          setIsEditAddress(false);
           await getAddress();
         }
         if (!success) {
@@ -842,7 +849,7 @@ export const CheckOut = () => {
       case 1:
         return (
           <>
-           <Toaster />
+            <Toaster />
             <div>
               <BreadCrumb title={"checkout"} />
               <section className="checkout-section">
@@ -924,7 +931,7 @@ export const CheckOut = () => {
       case 2:
         return (
           <>
-           <Toaster />
+            <Toaster />
             <div>
               <BreadCrumb title={"checkout"} />
               <section className="checkout-section">
