@@ -98,7 +98,6 @@ const ThankYou = () => {
             <ProductCard
               cardItems={get(singleOrderDetail, 'products', [])}
             />
-            <TotalSummary totalSummary={get(singleOrderDetail, 'totalSummary', {})} couponCartDetail={get(singleOrderDetail, 'couponCard', {})} />
           </div>
           <div className="right-col">
             {
@@ -145,9 +144,13 @@ const ThankYou = () => {
                   </div>
                 </div>
               </div>
+              <h5>Cart Total</h5>
+              <TotalSummary totalSummary={get(singleOrderDetail, 'totalSummary', {})} couponCartDetail={get(singleOrderDetail, 'couponCard', {})} />
           </div>
           {/* <OrderDetailAfter orderInfo={singleOrderDetail} /> */}
+          
         </div>
+        
         <div className='btn-wrapper d-flex justify-content-center thankyou' style={{gap: '12px'}}>
           <Link href='/'>
             <a className="card-btons text-align-center outline">

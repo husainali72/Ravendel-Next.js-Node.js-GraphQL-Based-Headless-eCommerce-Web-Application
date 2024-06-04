@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import CorporateFareOutlinedIcon from "@mui/icons-material/CorporateFareOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import { Button } from 'react-bootstrap'
+import { formatPhoneNumber } from '../../utills/helpers';
 
 const DetailsCard = ({info, btnAction, btnText, title, type, style}) => {
   return (
@@ -36,7 +37,7 @@ const DetailsCard = ({info, btnAction, btnText, title, type, style}) => {
                         {capitalize(get(info,'firstname',''))}{" "}
                         {capitalize(get(info,'lastname',''))}
                     </h6>
-                    <p>{info.phone}</p>
+                    <p>{formatPhoneNumber(get(info,'phone',''))}</p>
                 </div>
                 <p>
                     {capitalize(info?.city||'')} {capitalize(info?.state||'')}{" "}
