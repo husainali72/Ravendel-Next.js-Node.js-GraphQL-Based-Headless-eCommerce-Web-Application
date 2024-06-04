@@ -25,18 +25,20 @@ connectDB();
 async function startServer() {
   const User = require("./models/User");
   const Brand = require("./models/Brand");
-  const ProductCat = require("./models/ProductCat");
-  const ProductAttribute = require("./models/ProductAttribute");
   const Product = require("./models/Product");
+  const ProductCat = require("./models/ProductCat");
+  const ProductGroup = require("./models/ProductGroup");
+  const ProductAttribute = require("./models/ProductAttribute");
   const Tax = require("./models/Tax");
   const Shipping = require("./models/Shipping");
   const Settings = require("./models/Setting");
 
   User.createDefaultUsers();
   Brand.createDefaultBrands();
-  ProductCat.createDefaultProductCats();
-  ProductAttribute.createDefaultProductAttributes();
   Product.createDefaultProducts();
+  ProductCat.createDefaultProductCats();
+  ProductGroup.createDefaultProductGroups();
+  ProductAttribute.createDefaultProductAttributes();
   Tax.createDefaultTaxes();
   Shipping.createDefaultShippings();
   Settings.createDefaultSettings();

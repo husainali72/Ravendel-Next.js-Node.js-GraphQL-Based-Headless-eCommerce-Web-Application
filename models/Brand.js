@@ -37,46 +37,46 @@ const Brand = (module.exports = mongoose.model("Brand", BrandSchema));
 const defaultBrands = [
   {
     _id: "5ad4788c6d849d5a1465c916",
-    name: "Essence",
-    url: "essence",
+    name: "Bewakoof",
+    url: "bewakoof",
     brand_logo: "",
     meta: {
-      title: "Essence",
-      description: "Fragnance Brand",
-      keywords: "fragrance beauty odour"
+      title: "Bewakoof",
+      description: "Clothes Brand",
+      keywords: "clothing, fashion, youngsters"
     }
   },
   {
     _id: "5ad4789c6d849d5a1465c917",
-    name: "Glamour Beauty",
-    url: "glamour-beauty",
+    name: "Nestasia",
+    url: "nestasia",
     brand_logo: "",
     meta: {
-      title: "Glamour Beauty",
-      description: "Glamour Beuty Brand",
-      keywords: "glamour beauty odour"
+      title: "Nestasia",
+      description: "Nestasia Brand",
+      keywords: "mug, cup, bottle"
     }
   },
   {
     _id: "5ad4789c6d849d5a1465c918",
-    name: "Calvin Klein",
-    url: "calvin-klein",
+    name: "Redragon",
+    url: "redragon",
     brand_logo: "",
     meta: {
-      title: "Calvin Klein",
-      description: "Calvin Klein Brand",
-      keywords: "fashion clothing dress"
+      title: "Redragon",
+      description: "Redragon Brand",
+      keywords: "keyboard, rgb, switches"
     }
   },
   {
     _id: "5ad4789c6d849d5a1465c919",
-    name: "Dior",
-    url: "dior",
+    name: "Zebronics",
+    url: "zebronics",
     brand_logo: "",
     meta: {
-      title: "Dior",
-      description: "Dior Brand",
-      keywords: "fragrance beauty lipstick"
+      title: "Zebronics",
+      description: "Zebronics Brand",
+      keywords: "keyboard, mouse, elctronics"
     }
   },
 ]

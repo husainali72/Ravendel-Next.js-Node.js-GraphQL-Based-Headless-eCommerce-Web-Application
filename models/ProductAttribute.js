@@ -45,7 +45,7 @@ const ProductAttribute = (module.exports = mongoose.model(
 
 const defaultProductAttributes = [
   {
-    _id: "5bbf0eb7add8c80013dd140c",
+    _id: "5be3028e1304b8697e258e01",
     name: "Material",
     slug: "material",
     order_by: "",
@@ -53,47 +53,67 @@ const defaultProductAttributes = [
       {
         name: "Cotton",
         slug: "cotton",
-        _id: "65cb2b2ba9dfee40f9522717",
+        _id: "65cb2b2ba9dfee40f9522710",
       },
       {
-        name: "Leather",
-        slug: "leather",
-        _id: "65cb2b2ba9dfee40f9522718",
+        name: "Hard Plastic",
+        slug: "hard-plastic",
+        _id: "65cb2b2ba9dfee40f9522711",
       },
       {
-        name: "Silk",
-        slug: "silk",
-        _id: "65cb2b39a9dfee40f952272d",
+        name: "Stainless Steel",
+        slug: "stainless-steel",
+        _id: "65cb2b39a9dfee40f9522722",
       },
     ],
     allow_filter: false,
   },
   {
-    _id: "5bbf105eadd8c80013dd140d",
+    _id: "5be3028e1304b8697e258e02",
     name: "Color",
     slug: "color",
     order_by: "",
     values: [
       {
-        name: "Red",
-        slug: "red",
-        _id: "65cb2af0a9dfee40f95226da",
+        name: "Black",
+        slug: "black",
+        _id: "65cb2af0a9dfee40f95226d0",
       },
       {
-        name: "Yellow",
-        slug: "yellow",
-        _id: "65cb2af0a9dfee40f95226db",
+        name: "Red",
+        slug: "red",
+        _id: "65cb2af0a9dfee40f95226d1",
+      },
+      {
+        name: "Green",
+        slug: "green",
+        _id: "65cb2af0a9dfee40f95226d2",
       },
       {
         name: "Blue",
         slug: "blue",
-        _id: "65cb2af0a9dfee40f95226dc",
+        _id: "65cb2af0a9dfee40f95226d3",
+      },
+      {
+        name: "Pink",
+        slug: "pink",
+        _id: "65cb2af0a9dfee40f95226d4",
+      },
+      {
+        name: "Grey",
+        slug: "grey",
+        _id: "65cb2af0a9dfee40f95226d5",
+      },
+      {
+        name: "White",
+        slug: "white",
+        _id: "65cb2af0a9dfee40f95226d6",
       },
     ],
     allow_filter: false,
   },
   {
-    _id: "5be3028e1304b8697e258e05",
+    _id: "5be3028e1304b8697e258e03",
     name: "Size",
     slug: "size",
     order_by: "",
