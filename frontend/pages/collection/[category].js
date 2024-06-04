@@ -124,7 +124,7 @@ const SingleCategoryProduct = () => {
   const defaultMeta = { title: "", description: "", keywords: "" };
   const { title, description, keywords } = get(
     filteredProductData,
-    "categoryTree.subCategories.meta",
+    "mostParentCategoryData.meta",
     defaultMeta
   );
   if (router.isFallback) {
@@ -139,7 +139,7 @@ const SingleCategoryProduct = () => {
         />
       ) : (
         <>
-          <Meta title={title} description={description} keywords={keywords} />
+          <Meta title={title||get(router, "query.category",'')} description={description} keywords={keywords} />
           <>
             {get(filteredProductData, "isMostParentCategory") ? (
               <ParentCategories

@@ -47,9 +47,14 @@ const SingleProduct = ({
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
+  const getMetaTitle = () => {
+    const metaTitle = get(singleproducts, 'meta.title', '');
+    const name = get(singleproducts, 'name', '');
+    return metaTitle || name || '';
+};
   return (
     <div>
-      <Meta title={get(singleproducts, "meta.title", "")} discription={get(singleproducts, "meta.description")} keywords={get(singleproducts, "meta.keywords")}/>
+      <Meta title={getMetaTitle()} discription={get(singleproducts, "meta.description",'')} keywords={get(singleproducts, "meta.keywords",'')}/>
       <CategoryBreadCrumb className="single-product" breadCrumbs={get(singleproducts, "breadcrumb", [])} />
       <section className="product-cart-section">
         <Toaster />

@@ -9,6 +9,7 @@ import { get } from "lodash";
 import CategorySorting from "../categorySorting/categorySorting";
 import Meta from "../Meta";
 import SubCategorySkeletoncard from "./component";
+import { useRouter } from "next/router";
 const SubCategoryProducts = ({
   filteredProductData,
   handleFilter,
@@ -18,15 +19,15 @@ const SubCategoryProducts = ({
   loading,
   defaultMeta,
 }) => {
+  const router=useRouter()
   const { title, description, keywords } = get(
     filteredProductData,
     "categoryTree.subCategories.meta",
     defaultMeta
   );
-
   return (
     <section className="product-cart-section">
-      <Meta title={title} description={description} keywords={keywords} />
+      <Meta title={title||get(router,'query.category','')} description={description} keywords={keywords} />
       <Container>
         {filteredProductData &&
           Object?.keys(filteredProductData)?.length === 0 && (
