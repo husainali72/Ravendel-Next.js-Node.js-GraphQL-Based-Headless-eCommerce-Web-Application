@@ -8676,3 +8676,6 @@ button.btn-outline-primary:hover {
 .product-card-loading{
   display: flex;
 }
+.category-product-count{
+text-align: center;
+}

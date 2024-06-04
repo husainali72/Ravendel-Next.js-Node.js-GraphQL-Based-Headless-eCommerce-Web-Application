@@ -5,7 +5,7 @@ import CategoryFilter from "../categoryFilter/categoryFilter";
 import SubCategoryList from "../categoryFilter/component/subcategoryList";
 import OnSaleProductCard from "./onSaleProductCard";
 import PropTypes from "prop-types";
-import { get } from "lodash";
+import { capitalize, get } from "lodash";
 import CategorySorting from "../categorySorting/categorySorting";
 import Meta from "../Meta";
 import SubCategorySkeletoncard from "./component";
@@ -19,7 +19,7 @@ const SubCategoryProducts = ({
   loading,
   defaultMeta,
 }) => {
-  const router=useRouter()
+  const router = useRouter();
   const { title, description, keywords } = get(
     filteredProductData,
     "categoryTree.subCategories.meta",
@@ -27,7 +27,11 @@ const SubCategoryProducts = ({
   );
   return (
     <section className="product-cart-section">
-      <Meta title={title||get(router,'query.category','')} description={description} keywords={keywords} />
+      <Meta
+        title={title || get(router, "query.category", "")}
+        description={description}
+        keywords={keywords}
+      />
       <Container>
         {filteredProductData &&
           Object?.keys(filteredProductData)?.length === 0 && (
@@ -62,10 +66,20 @@ const SubCategoryProducts = ({
           )}
 
           <div className="shop-product-container ">
-            {!loading  ? (
+            {get(filteredProductData, "productData.products")?.length > 0 ||
+            !loading ? (
               get(filteredProductData, "productData.products")?.length > 0 ? (
                 <div className="shop-product-list ">
-                  <div className="totall-product "></div>
+                  <div className="totall-product category-product-count">
+                    {
+                      <p>{`${get(
+                        filteredProductData,
+                        "productData.count"
+                      )} Results for ${capitalize(
+                        get(router, "query.category", "")
+                      )}`}</p>
+                    }
+                  </div>
                   <div className="totall-product ">
                     <CategorySorting
                       activeSorting={get(filteredProductData, "sort", {})}
@@ -73,15 +87,18 @@ const SubCategoryProducts = ({
                       handleSorting={handleSorting}
                     />
                   </div>
+
                   <InfiniteScroll
                     dataLength={
                       get(filteredProductData, "productData.products")?.length
                     }
                     next={handleScroll}
                     hasMore={
-                      get(filteredProductData, "productData.products")?.length <
-                      get(filteredProductData, "productData.count")
+                      get(filteredProductData, "productData.products")
+                        ?.length ||
+                      0 < get(filteredProductData, "productData.count", 0)
                     }
+                    loader={<h4>Loading...</h4>}
                     scrollableTarget="scrollableDiv"
                   >
                     <OnSaleProductCard
