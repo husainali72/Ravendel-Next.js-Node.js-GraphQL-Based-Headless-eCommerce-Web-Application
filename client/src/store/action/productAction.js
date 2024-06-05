@@ -9,6 +9,7 @@ import {
   UPDATE_PRODUCT,
   DELETE_PRODUCT,
   AVAILABLE_PRODUCTS,
+  GET_CLONE_PRODUCTS,
 } from "../../queries/productQuery";
 import {
   client_app_route_url,
@@ -197,6 +198,44 @@ export const productsAction = () => (dispatch) => {
     type: PRODUCT_LOADING,
   });
   query(GET_PRODUCTS, {admin: true})
+    .then((response) => {
+      const [error, success, message, data] = getResponseHandler(
+        response,
+        "products"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: false, message: message, error: true },
+        });
+      }
+
+      if (success) {
+        return dispatch({
+          type: PRODUCTS_SUCCESS,
+          payload: data,
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: PRODUCT_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: error, error: true },
+      });
+    });
+};
+export const productsCloneAction = () => (dispatch) => {
+  dispatch({
+    type: PRODUCT_LOADING,
+  });
+  query(GET_CLONE_PRODUCTS, {admin: true})
     .then((response) => {
       const [error, success, message, data] = getResponseHandler(
         response,

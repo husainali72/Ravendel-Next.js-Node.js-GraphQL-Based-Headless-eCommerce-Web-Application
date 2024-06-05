@@ -11,13 +11,16 @@ import notify from "../../../utills/notifyToast";
 import PropTypes from "prop-types";
 import ProductImage from "../../imageComponent";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 const SendEmail = ({ token }) => {
   const [email, setEmail] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const settings = useSelector((state) => state.setting);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
   const handleChange = (e) => {
@@ -41,7 +44,9 @@ const SendEmail = ({ token }) => {
             {}
           );
           if (success) {
+            reset();
             notify(message, success);
+            router.push("/login");
           } else {
             setIsButtonDisabled(false);
             notify(message, false);
@@ -70,10 +75,12 @@ const SendEmail = ({ token }) => {
                 className="logo-image"
                 alt=""
               />
-            </a>  
+            </a>
           </Link>
           <h3 className="mt-4">Forgot Password</h3>
-          <p>Enter your email and we'll share a link to get back to your account.</p>
+          <p>
+            Enter your email and we'll share a link to get back to your account.
+          </p>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           {!token && (
@@ -98,7 +105,7 @@ const SendEmail = ({ token }) => {
               <Link href="/login">
                 <a className="forgot-pasword-link">Back to login</a>
               </Link>
-              
+
               <button
                 type="submit"
                 className="btn btn-primary mt-4 primary-btn-color"
