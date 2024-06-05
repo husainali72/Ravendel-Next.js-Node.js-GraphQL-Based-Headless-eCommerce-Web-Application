@@ -87,22 +87,11 @@ const getImageSrc = (gallery, imageType, variantSelect, comboData) => {
 };
   return (
     <>
-      {galleryImages?.length > 1 ? (
+      {galleryImages?.length >= 1 ? (
         <>
           <Slider {...settings}>
             {galleryImages?.map((gallery, index) => (
               <div key={index}>
-                {/* <ProductImage src={getImage(gallery, imageType)} className="gallery-image single" alt="" /> */}
-                {/* <GlassMagnifier
-                  imageSrc={getImageSrc(gallery, imageType, variantSelect, comboData)}
-                  imageAlt=""
-                  largeImageSrc={getImage(gallery, imageType)}
-                  className="gallery-image"
-                  magnifierSize={1025 > window?.innerWidth ? "60%" : "30%"}
-                  magnifierBorderSize={5}
-                  magnifierBorderColor="rgba(0, 0, 0, .5)"
-                  onError={(e)=>imageOnError(e)}
-                /> */}
                 <ReactImageMagnify {...{
                     smallImage: {
                         isFluidWidth: true,
@@ -114,9 +103,6 @@ const getImageSrc = (gallery, imageType, variantSelect, comboData) => {
                         height: 1800
                     },
                     enlargedImagePortalId: "myPortal"
-                    // enlargedImagePosition: 'over',
-                    // enlargedImageContainerStyle: { zIndex: 9999 },
-                    // imageClassName: 'gallery-image'
                 }} />
               </div>
             ))}
