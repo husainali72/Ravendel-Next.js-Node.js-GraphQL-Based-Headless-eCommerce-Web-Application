@@ -8,15 +8,19 @@ const AdditionalCartDetail = ({ cartItems }) => {
   const [additionalDetails, setAdditionalDetails] = useState([]);
   const getAdditionalProduct = async () => {
     const productIds = getProductIdsFromCartItems();
-    try {
-      const { data: additionalDetail } = await queryWithoutToken(
-        CART_ADDITIONAL_DETAIL,
-        { productIds: productIds }
-      );
+    if (productIds && productIds?.length > 0) {
+      try {
+        const { data: additionalDetail } = await queryWithoutToken(
+          CART_ADDITIONAL_DETAIL,
+          { productIds: productIds }
+        );
 
-      setAdditionalDetails(get(additionalDetail, "cartAdditionalDetails", []));
-    } catch (error) {
-      console.log(error);
+        setAdditionalDetails(
+          get(additionalDetail, "cartAdditionalDetails", [])
+        );
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
   useEffect(() => {
@@ -25,7 +29,7 @@ const AdditionalCartDetail = ({ cartItems }) => {
     }
   }, [cartItems]);
   const getProductIdsFromCartItems = () => {
-    return cartItems?.map((cartItem) => cartItem?._id) || [];
+    return (cartItems?.map(cartItem => cartItem?._id)?.filter(Boolean)) || [];
   };
   return (
     <>
