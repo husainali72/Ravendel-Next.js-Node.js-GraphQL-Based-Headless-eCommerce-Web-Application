@@ -1,5 +1,5 @@
 const dotenv = require("dotenv");
-dotenv.config({ path: "./.env" });
+dotenv.config({ path: "./.env" });  
 const express = require("express");
 const { ApolloServer } = require("@apollo/server");
 const cors = require("cors");
