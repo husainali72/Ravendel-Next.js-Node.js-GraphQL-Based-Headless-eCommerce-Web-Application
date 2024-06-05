@@ -391,7 +391,7 @@ module.exports = {
           await customerData.save()
           return MESSAGE_RESPONSE("UpdateSuccess", "Password", true);
         } else {
-          return MESSAGE_RESPONSE("Custom", "Link is expired", false);
+          return MESSAGE_RESPONSE("Custom", "Link is expired, please try again", false);
         }
 
       } catch (error) {
