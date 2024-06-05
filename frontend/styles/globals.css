@@ -110,8 +110,11 @@ strong {
 }
 
 * {
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
   font-family: "Inter", "Raleway", "Roboto", sans-serif;
+}
+*, ::after, ::before {
+  box-sizing: content-box !important;
 }
 
 section {
@@ -8615,4 +8618,8 @@ button.btn-outline-primary:hover {
 }
 .paypal-back-btn{
   cursor: pointer;
+}
+.successImage{
+  width: 40px;
+  height:40px
 }
