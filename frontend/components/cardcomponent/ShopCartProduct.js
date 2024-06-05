@@ -44,6 +44,7 @@ export const ShopCart = () => {
   const prepareCartItemsList = (allCartItems) => {
     let cartItemsList = [];
     allCartItems?.map((cart) => {
+
       let cartProduct = {
         _id: get(cart, "productId", ""),
         quantity: parseInt(get(cart, "qty")),
@@ -58,6 +59,7 @@ export const ShopCart = () => {
     });
     return cartItemsList;
   };
+  
   const getCartMiniCartData = async () => {
     if (session?.status === "authenticated") {
       let id = get(session, "data.user.accessToken.customer._id");
@@ -224,6 +226,7 @@ export const ShopCart = () => {
                         decreaseBtnClass="mini-cart-decrease-qty"
                         increaseBtnClass="mini-cart-decrease-qty"
                         inputClass="mini-cart-input-qty"
+                        actualQuantity={get(item,'productQuantity',0)}
                         hideLabel
                       />
                     </div>
