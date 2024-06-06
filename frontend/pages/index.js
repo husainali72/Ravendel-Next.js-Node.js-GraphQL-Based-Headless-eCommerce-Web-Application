@@ -42,9 +42,7 @@ export default function Home({
   }, [cart]);
 
   return (
-    <div style={{
-      boxSizing: 'content-box  !important'
-    }}>
+    <div>
       <Head>
         <title>{get(seoInfo, "meta_title", "Ravendel")}</title>
         <link rel="icon" href="/favicon.ico" />

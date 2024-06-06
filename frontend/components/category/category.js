@@ -1,14 +1,15 @@
 import Container from "react-bootstrap/Container";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
-import useResizeObserver from "@react-hook/resize-observer";
+// import useResizeObserver from "@react-hook/resize-observer";
 import { capitalize, get } from "lodash";
 import ProductImage from "../../components/imageComponent";
 import PropTypes from "prop-types";
 import CategoryLink from "./categoryLink";
 const Category = ({ category }) => {
   const [showSlider, setShowSlider] = useState(false);
-  const [inlineSize, setInlineSize] = useState(0);
+  // const [inlineSize, setInlineSize] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(0);
   const slider = useRef();
   const slideLeft = () => {
     slider.current.scrollLeft = get(slider, "current.scrollLeft") - 500;
@@ -16,16 +17,29 @@ const Category = ({ category }) => {
   const slideRight = () => {
     slider.current.scrollLeft = get(slider, "current.scrollLeft") + 500;
   };
-  const bool =
-    get(slider, "current.offsetWidth") < get(slider, "current.scrollWidth");
-  useEffect(() => {
-    setShowSlider(bool);
-  }, [inlineSize]);
 
-  useResizeObserver(slider, (entry) => {
-    const { inlineSize } = get(entry, "contentBoxSize[0]");
-    setInlineSize(inlineSize);
-  });
+ 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        setWindowWidth(window.innerWidth);
+      };
+
+      window.addEventListener("resize", handleResize);
+
+      handleResize();
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }
+  }, []);
+
+  useEffect(()=>{
+    const bool = get(slider, "current.offsetWidth") < get(slider, "current.scrollWidth");
+    setShowSlider(bool);
+  }, [windowWidth])
+
   return (
     <section className="product-cart-section category">
       <Container className="container">
