@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
@@ -59,7 +58,7 @@ export const ShopCart = () => {
     });
     return cartItemsList;
   };
-  
+
   const getCartMiniCartData = async () => {
     if (session?.status === "authenticated") {
       let id = get(session, "data.user.accessToken.customer._id");
@@ -183,13 +182,16 @@ export const ShopCart = () => {
                     href={`/product/[singleproduct]?url=${item.url || "#"}`}
                     as={`/product/${item.url || "#"}`}
                   >
-                    <ProductImage
-                      src={get(item, "feature_image", "")}
-                      className="cart-product-image cursor-pointer mini-cart-image"
-                    />
+                    <a
+                    >
+                      <ProductImage
+                        src={get(item, "feature_image", "")}
+                        className="cart-product-image cursor-pointer mini-cart-image"
+                      />
+                    </a>
                   </Link>
                 </div>
-                <div  className="mini-cart-second-container">
+                <div className="mini-cart-second-container">
                   <div className="shopping-cart-title mini-cart-product-container">
                     <div>
                       <Link

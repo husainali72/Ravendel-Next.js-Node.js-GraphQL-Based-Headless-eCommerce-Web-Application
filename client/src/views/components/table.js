@@ -113,8 +113,8 @@ const Tablecomponent = ({
           searchbydate={searchbydate}
         />
         <Divider />
-        <CardContent>
-          <TableContainer className={classes.tableContainer}>
+        <CardContent sx={{ width: '100%', overflow: 'hidden' }}>
+          <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="all-products" size="small">
               <TableHead>
                 <TableRow>
