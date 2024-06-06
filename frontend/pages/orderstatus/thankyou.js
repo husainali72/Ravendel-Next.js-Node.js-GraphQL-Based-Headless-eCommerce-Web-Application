@@ -10,7 +10,7 @@ import {
   getSingleOrderAction,
   updatePaymentStatus,
 } from "../../redux/actions/orderAction";
-import { checkPaymentMethod, currencySetter } from "../../utills/helpers";
+import { checkPaymentMethod, currencySetter, getPaymentMethodLabel } from "../../utills/helpers";
 import ProductCard from "../../components/ProductCard";
 import TotalSummary from "../../components/TotalSummary";
 import DetailsCard from "../../components/cardcomponent/DetailsCard";
@@ -139,7 +139,7 @@ const ThankYou = () => {
                   </div>
                   <div className="checkout-shipping-address ">
                     <div className="checkout-list-content">
-                      <b>Payment Mode: {singleOrderDetail?.billing?.paymentMethod}</b>
+                      <b>Payment Mode: {getPaymentMethodLabel(singleOrderDetail?.billing?.paymentMethod)}</b>
                     </div>
                   </div>
                 </div>

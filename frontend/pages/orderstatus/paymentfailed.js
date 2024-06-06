@@ -14,7 +14,7 @@ import ProductCard from "../../components/ProductCard";
 import TotalSummary from "../../components/TotalSummary";
 import DetailsCard from "../../components/cardcomponent/DetailsCard";
 import Link from "next/link";
-import { currencySetter, isObjectEmpty } from "../../utills/helpers";
+import { currencySetter, getPaymentMethodLabel, isObjectEmpty } from "../../utills/helpers";
 import { CircularProgress } from "@mui/material";
 
 const PaymentFailed = () => {
@@ -135,11 +135,11 @@ const PaymentFailed = () => {
               <div className="order-address">
                 <div className="checkout-shipping-method">
                   <div className="checkout-details-title">
-                    <h5>Payment Datails</h5>
+                    <h5>Payment Details</h5>
                   </div>
                   <div className="checkout-shipping-address ">
                     <div className="checkout-list-content">
-                      <b>Payment Mode: {singleOrderDetail?.billing?.paymentMethod}</b>
+                      <b>Payment Mode: {getPaymentMethodLabel(singleOrderDetail?.billing?.paymentMethod)}</b>
                     </div>
                   </div>
                 </div>

@@ -5710,15 +5710,9 @@ button.btn-outline-primary:hover{
   font-weight: 600;
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  color: #fff;
-  font-weight: 500;
-  background-color: #ff0505;
-  margin-right: 5px;
-  position: absolute;
-  top: 7px;
-  right: 7px;
+  gap: 8px;
+  color: #777777;
+  padding: 4px 0;
 }
 .price-detail-base-container {
   flex: 1 1 25%;
