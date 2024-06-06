@@ -31,10 +31,12 @@ const variationSchema = new Schema({
   combinations: [combinationSchema],
   productId: {
     type: Schema.Types.ObjectId,
-    ref: "Product"
+    ref: "Product",
+    default: null
   },
   productUrl: {
-    type: String
+    type: String,
+    default: null
   }
 })
 
