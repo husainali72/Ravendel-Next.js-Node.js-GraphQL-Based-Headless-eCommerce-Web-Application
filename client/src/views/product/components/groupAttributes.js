@@ -507,12 +507,12 @@ const AttributesComponent = ({
           currentVariants.combinations.length ? (
             <Box component="span" m={1}>
               <CardBlocks title="Variants">
-                <TableContainer>
+                <TableContainer >
                   <Table stickyHeader aria-label="variant-table" size="small">
-                    <TableHead>
+                    <TableHead >
                       <TableRow>
-                        <TableCell>Variant</TableCell>
-                        <TableCell>Product</TableCell>
+                        <TableCell  sx={{zIndex:1}}>Variant</TableCell>
+                        <TableCell sx={{zIndex:1}}>Product</TableCell>
                         {/* <TableCell>Remove</TableCell> */}
                       </TableRow>
                     </TableHead>
