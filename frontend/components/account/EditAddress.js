@@ -118,7 +118,7 @@ function EditAddress() {
                   className="input-filled"
                   name="firstName"
                   label="firstName"
-                  placeholder="First = Name *"
+                  placeholder="First Name *"
                   {...register("firstName", {
                     required: {
                       value: get(customerDetail, "firstName") ? false : true,
@@ -222,12 +222,12 @@ function EditAddress() {
                   className="btn-wrapper d-flex justify-content-end"
                   style={{ gap: "12px" }}
                 >
-                  {/* <button
+                  <button
                     className="card-btons text-align-center outline"
                     onClick={() => setShowChangePassword(true)}
                   >
                     <span className="text-align-center">Change Password</span>
-                  </button> */}
+                  </button>
                   <button
                     className="card-btons text-align-center primary-btn-color"
                     type="submit"

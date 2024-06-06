@@ -6,7 +6,7 @@ import TotalSummary from "../../TotalSummary";
 import DetailsCard from "../../cardcomponent/DetailsCard";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { currencySetter } from "../../../utills/helpers";
+import { currencySetter, getPaymentMethodLabel } from "../../../utills/helpers";
 
 const OrdersDetails = ({
   order,
@@ -80,7 +80,7 @@ const OrdersDetails = ({
                 </div>
                 <div className="checkout-shipping-address ">
                   <div className="checkout-list-content">
-                    <b>Payment Mode: {get(order,'[0].billing.paymentMethod','')}</b>
+                    <b>Payment Mode: {getPaymentMethodLabel(get(order,'[0].billing.paymentMethod',''))}</b>
                   </div>
                 </div>
               </div>
