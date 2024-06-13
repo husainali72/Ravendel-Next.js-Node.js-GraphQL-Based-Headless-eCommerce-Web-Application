@@ -325,6 +325,7 @@ module.exports = {
               }
             }
             else {
+              console.log('filterElement.field', filterElement.field);
               productFilter[filterElement.field] = {};
               if(filterElement.type == 'array') {
                 let values = [];
@@ -334,10 +335,13 @@ module.exports = {
                 productFilter[filterElement.field]["$in"] = values;
               }
               else if(filterElement.type == 'range' || filterElement.type == 'choice') {
+                console.log('in the range type filter');
+                console.log('productFilter[filterElement.field]', productFilter[filterElement.field]);
                 productFilter[filterElement.field]["$gte"] = filterElement.select.minValue;
                 if(filterElement.select.maxValue) {
                   productFilter[filterElement.field]["$lte"] = filterElement.select.maxValue;
                 }
+                console.log('productFilter[filterElement.field]', productFilter[filterElement.field]);
               }
             }
             productFilters.push(productFilter);
@@ -534,12 +538,14 @@ module.exports = {
           $facet: prodAggrFacets
         });
 
-        // adding unwind in the aggregation to deconstruct the price array 
-        prodAggr.push(
-          {
-            $unwind: "$price",
-          },
-        );
+        // Commented out by HSW because it is causing issue if there isn't a product exist in the requested category
+        // on 08-06-2024
+        // // adding unwind in the aggregation to deconstruct the price array 
+        // prodAggr.push(
+        //   {
+        //     $unwind: "$price",
+        //   },
+        // );
 
         // console.log('prodAggr', JSON.stringify(prodAggr));
         const aggrActualResult = await Product.aggregate(prodAggr);
@@ -599,13 +605,16 @@ module.exports = {
           valueType: "Decimal",
           data:{}
         };
-        priceFilterData.data.minPrice = aggrResult.price.minPrice;
-        priceFilterData.data.maxPrice = aggrResult.price.maxPrice;
-        let reqPriceFilter;
-        if(filters) {
-          reqPriceFilter = filters.find(filter => filter.field == "pricing.sellprice");
-          if(reqPriceFilter) {
-            priceFilterData.select = reqPriceFilter.select;
+        if(aggrResult.price && aggrResult.price.length) {
+          const priceAggrResult = aggrResult.price[0];
+          priceFilterData.data.minValue = priceAggrResult.minPrice;
+          priceFilterData.data.maxValue = priceAggrResult.maxPrice;
+          let reqPriceFilter;
+          if(filters) {
+            reqPriceFilter = filters.find(filter => filter.field == "pricing.sellprice");
+            if(reqPriceFilter) {
+              priceFilterData.select = reqPriceFilter.select;
+            }
           }
         }
         filterData.push(priceFilterData);
