@@ -4,10 +4,9 @@ import { isEmpty, client_app_route_url } from "./helper";
 import APclient from "../Client";
 import cookie from "react-cookies";
 import { get } from "lodash";
-// const location = window.location.origin;
+const location = window.location.origin;
 // const location = "http://localhost:8000";
-
-const location = "/";
+// const location = "/";
 
 export const mutation = async (query, variables) => {
   try {
