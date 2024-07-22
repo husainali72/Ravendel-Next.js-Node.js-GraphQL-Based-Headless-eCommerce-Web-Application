@@ -47,6 +47,8 @@ module.exports = `
     username: String
     password: String
     port: Int
+    from_email: String
+    from_name: String
   }
 
   type SEO {
@@ -328,6 +330,8 @@ module.exports = `
       username: String
       password: String
       port: Int
+      from_email: String
+      from_name: String
     ): Setting
     updateSEO(
       meta_title: String
