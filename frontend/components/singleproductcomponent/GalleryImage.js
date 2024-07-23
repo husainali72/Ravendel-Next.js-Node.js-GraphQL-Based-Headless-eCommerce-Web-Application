@@ -27,6 +27,7 @@ import RenderProductPrice from "./renderProductPrice";
 import AttributeSelector from "./attributes";
 import QuantitySelector from "./increaseQuantity";
 import CategoryBreadCrumb from "../breadcrumb";
+import notify from "../../utills/notifyToast";
 const GalleryImagesComponents = (props) => {
   const {
     stockClass,
@@ -40,34 +41,16 @@ const GalleryImagesComponents = (props) => {
   const session = useSession();
   const router = useRouter();
   const [available, setavailable] = useState(true);
-  const [Lable, setLable] = useState("In Stock");
   const cart = useSelector((state) => state.cart);
-  const [singleproduct, setSingleproduct] = useState(singleProducts);
+  const [singleProduct, setSingleproduct] = useState(singleProducts);
   const [selectedAttributes, setSelectedAttributes] = useState([]);
   const [itemInCart, setItemInCart] = useState(false);
-  const [showMagnifiedImage, setShowMagnifiedImage] = useState(false)
+  const [showMagnifiedImage, setShowMagnifiedImage] = useState(false);
   const [id, setId] = useState("");
   const [token, setToken] = useState("");
   useEffect(() => {
-    setSingleproduct({ ...singleproduct });
+    setSingleproduct({ ...singleProduct, qty: 1 });
   }, [singleProducts]);
-  useEffect(() => {
-    const productQuantity = get(singleProducts, "quantity");
-    const isLowStock = singleProducts && productQuantity <= lowStockThreshold;
-    const isOutOfStock =
-      singleProducts && productQuantity <= outOfStockThreshold;
-    const inStock = singleProducts && productQuantity > lowStockThreshold;
-    if (isLowStock && !isOutOfStock) {
-      setStockClass("low-stock");
-      setLable("Low Stock");
-    } else if (isOutOfStock) {
-      setStockClass("out-of-stock");
-      setLable("Out Of Stock");
-    } else if (inStock) {
-      setStockClass("in-stock");
-      setLable("In Stock");
-    }
-  }, [singleProducts?.quantity, lowStockThreshold, outOfStockThreshold]);
   const getSelectedAttributes = (attributes) => {
     setSelectedAttributes(attributes);
   };
@@ -131,46 +114,63 @@ const GalleryImagesComponents = (props) => {
   };
   const addToCartProduct = async (product) => {
     const isUserAuthenticated = session?.status === "authenticated";
-    if (isUserAuthenticated) {
-      const cartProducts = get(cart, "cartItems", []);
-      const productInCart = isProductInCart(product, cartProducts);
-      const variables = prepareCommonVariables(id, product);
-      if (!productInCart) {
-        setItemInCart(false);
+    if (checkQuantityValidation()) {
+      if (isUserAuthenticated) {
+        const cartProducts = get(cart, "cartItems", []);
+        const productInCart = isProductInCart(product, cartProducts);
+        const variables = prepareCommonVariables(id, product);
+        if (!productInCart) {
+          setItemInCart(false);
+        } else {
+          setItemInCart(true);
+        }
+        addToCartAndNavigate(variables, token, productInCart);
       } else {
-        setItemInCart(true);
-      }
-      addToCartAndNavigate(variables, token, productInCart);
-    } else {
-      const carts = getItemFromLocalStorage("cart");
-      const productInCart = carts?.some((inCartProduct) => {
-        const productIdMatch = product?._id === get(inCartProduct, "_id");
-        return productIdMatch;
-      });
-      let variables = {
-        userId: id,
-        url: get(product, "url"),
-        _id: get(product, "_id"),
-        qty: get(product, "qty", 1),
-        name: get(product, "name"),
-        feature_image: get(product, "feature_image"),
-        pricing: get(product, "pricing.sellprice", 0),
-      };
+        const carts = getItemFromLocalStorage("cart");
+        const productInCart = carts?.some((inCartProduct) => {
+          const productIdMatch = product?._id === get(inCartProduct, "_id");
+          return productIdMatch;
+        });
+        let variables = {
+          userId: id,
+          url: get(product, "url"),
+          _id: get(product, "_id"),
+          qty: get(product, "qty", 1),
+          productQuantity: get(product, "quantity", 1),
+          name: get(product, "name"),
+          feature_image: get(product, "feature_image"),
+          pricing: get(product, "pricing.sellprice", 0),
+        };
 
-      if (!productInCart) {
-        setItemInCart(false);
-      } else {
-        setItemInCart(true);
-      }
+        if (!productInCart) {
+          setItemInCart(false);
+        } else {
+          setItemInCart(true);
+        }
 
-      dispatch(addToCart(variables));
-      router.push("/shopcart");
+        dispatch(addToCart(variables));
+        router.push("/shopcart");
+      }
     }
   };
   const changeQuantity = (qty) => {
-    let product = { ...singleproduct, qty: qty };
+    let product = { ...singleProduct, qty: qty };
     setSingleproduct({ ...product });
   };
+  const checkQuantityValidation = () => {
+    const value = get(singleProduct, "qty", 0);
+    const actualQuantity = get(singleProduct, "quantity", 0);
+    if (isNaN(value) || value < 1) {
+      notify("Please enter a valid quantity greater than 0.");
+      return false;
+    } else if (value > actualQuantity) {
+      notify(`Only ${actualQuantity} item(s) available in stock.`);
+      return false;
+    }
+
+    return true;
+  };
+
   const navigateToShopCart = () => {
     router.push("/shopcart");
   };
@@ -179,24 +179,37 @@ const GalleryImagesComponents = (props) => {
     <>
       <div className="single-product row mb-50 single-product-container">
         <div className="single-product-image col-md-6 col-sm-12 col-xs-12">
-          <div className="singleroduct-gallery-slider" onMouseEnter={()=> setShowMagnifiedImage(true)} onMouseLeave={()=> setShowMagnifiedImage(false)}>
-            <GalleryImageSlider galleryImages={galleryImages} showMagnifiedImageState={[showMagnifiedImage, setShowMagnifiedImage]}/>
+          <div
+            className="singleroduct-gallery-slider"
+            onMouseEnter={() => setShowMagnifiedImage(true)}
+            onMouseLeave={() => setShowMagnifiedImage(false)}
+          >
+            <GalleryImageSlider
+              galleryImages={galleryImages}
+              showMagnifiedImageState={[
+                showMagnifiedImage,
+                setShowMagnifiedImage,
+              ]}
+            />
           </div>
         </div>
         <div className="single-product-detail col-md-6 col-sm-12 col-xs-12">
-          <div id='myPortal' className={`magnify-portal ${showMagnifiedImage ? 'active' : ''}`}></div>
+          <div
+            id="myPortal"
+            className={`magnify-portal ${showMagnifiedImage ? "active" : ""}`}
+          ></div>
           <div className="detail-info">
-            <h2>{capitalize(get(singleproduct, "name"))}</h2>
+            <h2>{capitalize(get(singleProduct, "name"))}</h2>
             <div className="short-desc mb-30">
-              <p> {singleproduct?.short_description}</p>
+              <p> {singleProduct?.short_description}</p>
             </div>
-            {get(singleproduct, "rating") > 0 && (
+            {get(singleProduct, "rating") > 0 && (
               <div className="product-detail-rating">
-                <p>{get(singleproduct, "rating", 0)}</p>
+                <p>{get(singleProduct, "rating", 0)}</p>
                 <i className="fa-solid fa-star" />
               </div>
             )}
-            <RenderProductPrice singleProducts={singleproduct} />
+            <RenderProductPrice singleProducts={singleProduct} />
 
             {itemInCart && (
               <p className="already-in-cart-message">
@@ -204,57 +217,63 @@ const GalleryImagesComponents = (props) => {
                 cart.
               </p>
             )}
-            {
-              (get(singleproduct, "variations") && get(singleproduct, "variations")?.length > 0) || (get(singleproduct, "attributes") && get(singleproduct, "attributes")?.length > 0) ?
+            {(get(singleProduct, "variations") &&
+              get(singleProduct, "variations")?.length > 0) ||
+            (get(singleProduct, "attributes") &&
+              get(singleProduct, "attributes")?.length > 0) ? (
               <div className="varaint-select">
                 <AttributeSelector
-                  variations={get(singleproduct, "variations", [])}
-                  attributes={get(singleproduct, "attributes", [])}
+                  variations={get(singleProduct, "variations", [])}
+                  attributes={get(singleProduct, "attributes", [])}
                   getSelectedAttributes={getSelectedAttributes}
                 />
               </div>
-              : ''
-            }
+            ) : (
+              ""
+            )}
             <div>
-              <QuantitySelector
-                changeQuantity={changeQuantity}
-                quantity={singleproduct?.qty}
-              />
+              {get(singleProduct, "quantity", 0) > 0 && (
+                <QuantitySelector
+                  changeQuantity={changeQuantity}
+                  quantity={singleProduct?.qty || 1}
+                  actualQuantity={singleProduct?.quantity}
+                />
+              )}
             </div>
             <CheckZipcode checkzipcode={checkzipcode} />
             <ul className="product-meta font-xs color-grey mt-50">
               <div className="stock-availabilty">
-                <div className="singleproduct-stock">
-                  <p>Availablity: <span className={stockClass} style={{}}>{Lable}</span></p>
-                </div>
+                {get(singleProduct, "quantity", 0) <= 0 && (
+                  <div className="singleProduct-stock">
+                    <p>
+                      Availablity:{" "}
+                      <span className="out-of-stock" style={{}}>
+                        Out of Stock
+                      </span>
+                    </p>
+                  </div>
+                )}
                 <div>
                   <RemainingQuantity
-                    quantity={get(singleproduct, "quantity", 0)}
+                    quantity={get(singleProduct, "quantity", 0)}
                   />
                 </div>
               </div>
-
-              {/* {Lable !== "Out Of Stock" && ( */}
-                <>
-                  <CustomButton
-                    type="button"
-                    className="btn btn-success button button-add-to-cart primary-btn-color"
-                    onClick={() =>
-                      !itemInCart
-                        ? addToCartProduct(singleproduct)
-                        : navigateToShopCart()
-                    }
-                    buttonText={!itemInCart ? "Add to Cart" : "Go To Cart"}
-                    disabled={!available}
-                  />
-                </>
-              {/* )} */}
-              {itemInCart && (
-                <p className="already-in-cart-message">
-                  You have this item in your bag and we have increased the
-                  quantity by {get(singleproduct, "qty", 1)}
-                </p>
-              )}
+              <>
+                <CustomButton
+                  type="button"
+                  className="btn btn-success button button-add-to-cart primary-btn-color"
+                  onClick={() =>
+                    !itemInCart
+                      ? addToCartProduct(singleProduct)
+                      : navigateToShopCart()
+                  }
+                  buttonText={!itemInCart ? "Add to Cart" : "Go To Cart"}
+                  disabled={
+                    !available || get(singleProduct, "quantity", 0) <= 0
+                  }
+                />
+              </>
             </ul>
           </div>
         </div>

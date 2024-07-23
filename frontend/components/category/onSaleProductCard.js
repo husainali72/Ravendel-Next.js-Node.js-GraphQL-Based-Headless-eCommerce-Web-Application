@@ -136,7 +136,7 @@ const OnSaleProductCard = ({
                                       <RemainingQuantity
                                         quantity={get(product, "quantity", 0)}
                                       />
-                                      {!product?.quantity > 0 && (
+                                      {product?.quantity<=0 && (
                                         <p className="out-of-stock-card">
                                           Out Of Stock
                                         </p>
@@ -219,6 +219,7 @@ const OnSaleProductCard = ({
                             href={`/product/[singleproduct]?url=${product.url}`}
                             as={`/product/${product.url}`}
                           >
+
                             <div
                               className="on-sale-product-card"
                               key={i}
@@ -279,7 +280,7 @@ const OnSaleProductCard = ({
                                   <RemainingQuantity
                                     quantity={get(product, "quantity", 0)}
                                   />
-                                  {!product?.quantity > 0 && (
+                                  {product?.quantity <= 0 && (
                                     <p className="itemComponents-base-lowUnitCount">
                                       Out Of Stock
                                     </p>

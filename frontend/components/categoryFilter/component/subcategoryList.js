@@ -57,10 +57,7 @@ const SubCategoryList = ({ categoryTree }) => {
   const handleToggle = () => {
     setExpanded(!expanded);
   };
-  // const handleShowMore = () => {
-  //   setShowMore(true);
-  //   setSelectedCategory({ ...get(categoryTree, "subCategories", {}) });
-  // };
+
   return (
     <div>
       {categoryTree && Object.keys(categoryTree)?.length > 0 && (

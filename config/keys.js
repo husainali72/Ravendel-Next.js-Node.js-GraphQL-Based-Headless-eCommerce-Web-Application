@@ -1,5 +1,6 @@
 
 module.exports = {
+  BASE_URL: process.env.BASE_URL,
   mongoURI: process.env.MONGODB_URI,
   jwtSecret: process.env.JWT_SECRET_KEY,
   JWT_ACCESS_EXPIRATION_MINUTES: process.env.JWT_ACCESS_EXPIRATION_MINUTES,
@@ -17,6 +18,7 @@ module.exports = {
   frontendBaseUrl: process.env.FRONTEND_BASEURL,
   noImagePlaceHolder: process.env.NO_IMAGE_PLACE_HOLDER,
   
+  FROM_EMAIL: process.env.FROM_EMAIL,
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASSWORD: process.env.SMTP_PASSWORD
 };

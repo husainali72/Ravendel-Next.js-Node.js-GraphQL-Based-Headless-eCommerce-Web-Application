@@ -32,7 +32,7 @@ import {
 } from "../redux/actions/cartAction";
 import toast, { Toaster } from "react-hot-toast";
 import { CHECK_ZIPCODE } from "../queries/productquery";
-import {  get } from "lodash";
+import { get } from "lodash";
 import Loading from "../components/loadingComponent";
 import Paypal from "../components/checkoutcomponent/paypal/paypal";
 import { PAYPAL } from "../utills/constant";
@@ -61,7 +61,7 @@ var billingInfoObject = {
   transaction_id: "",
   addressType: "",
   _id: "",
-  defaultAddress:false
+  defaultAddress: false,
 };
 var shippingObject = {
   order_notes: "",
@@ -77,7 +77,7 @@ var shippingObject = {
   country: "",
   addressType: "",
   _id: "",
-  defaultAddress:false
+  defaultAddress: false,
 };
 
 var savedShippingInfo;
@@ -177,19 +177,7 @@ export const CheckOut = () => {
   }, [get(cart, "cartItems")]);
 
   const updateCartProductQuantity = (item, updatedQuantity) => {
-    // const isQuantityIncreased = cartItems?.find((cartItem) => {
-    //   let cartItemId = get(cartItem, "_id");
-    //   let cartItemVariantId = get(cartItem, "variantId");
-    //   let itemId = get(item, "_id");
-    //   let itemVariantId = get(item, "variantId");
-    //   let itemProductQuantity = get(item, "productQuantity");
-    //   console.log(itemProductQuantity, "itemProductQuantity", item);
-    //   return (
-    //     ((cartItemId === itemId && cartItemVariantId === itemVariantId) ||
-    //       (cartItemId === itemId && !cartItemVariantId === itemVariantId)) &&
-    //     itemProductQuantity >= updatedQuantity
-    //   );
-    // });
+    setLoading(true);
     let prevQuantity = null;
     let updatedCartItems = cartItems?.map((cartItem) => {
       if (cartItem?._id === item?._id) {
@@ -208,6 +196,7 @@ export const CheckOut = () => {
     };
     dispatch(changeQty(variables, router))
       .then((res) => {
+        setLoading(false);
         if (get(res, "data.changeQty.success")) {
           dispatch(calculateUserCart(id));
         } else {
@@ -222,11 +211,13 @@ export const CheckOut = () => {
         setIsQuantityBtnLoading(false);
       })
       .catch((error) => {
+        setLoading(false);
         setIsQuantityBtnLoading(false);
       });
   };
   // Function to remove an item from the cart
   const removeToCart = async (item) => {
+    setLoading(true);
     let productId = get(item, "_id", "");
     if (session?.status === "authenticated") {
       let id = get(session, "data.user.accessToken.customer._id");
@@ -238,11 +229,13 @@ export const CheckOut = () => {
 
       mutation(DELETE_CART_PRODUCTS, variables)
         .then((res) => {
+          setLoading(false);
           if (get(res, "data.deleteCartProduct.success")) {
             dispatch(calculateUserCart(id));
           }
         })
         .catch((error) => {
+          setLoading(false);
           handleError(error, dispatch, router);
         });
     }
@@ -347,10 +340,10 @@ export const CheckOut = () => {
       ZipMessage?.zipSuccess
     ) {
       let isAddressAlready = get(billingDetails, "billing.id") ? true : false;
-      if (!isAddressAlready&&isAddNewAddressForm) {
+      if (!isAddressAlready) {
         addNewAddress();
-      }else if(isEditAddress){
-        updateCustomerAddress()
+      } else if (isEditAddress) {
+        updateCustomerAddress();
       } else {
         setIsAddNewAddressForm(false);
         nextFormStep();
@@ -399,7 +392,7 @@ export const CheckOut = () => {
         addressType,
         country,
         _id,
-        defaultAddress
+        defaultAddress,
       } = customerDefaultAddress;
       let defaultAddressInfo = {
         zip: pincode || "",
@@ -414,13 +407,20 @@ export const CheckOut = () => {
         firstname: firstName || "",
         country: country || "",
         id: _id || "",
-        defaultAddress:defaultAddress||false
+        defaultAddress: defaultAddress || false,
       };
 
       checkCode(get(defaultAddressInfo, "zip"));
       return defaultAddressInfo;
     } else {
-      return billingInfoObject;
+      const { email, phone, firstName, lastName } = customer || {};
+      return {
+        ...billingInfoObject,
+        email,
+        firstname: firstName,
+        lastname: lastName,
+        phone,
+      };
     }
   };
   const prepareCartItemsList = (allCartItems) => {
@@ -596,8 +596,8 @@ export const CheckOut = () => {
       country: address?.country || "",
       addressType: address?.addressType || "",
       id: address?._id || "",
-      _id:address?._id||'',
-      defaultAddress:address?.defaultAddress||false
+      _id: address?._id || "",
+      defaultAddress: address?.defaultAddress || false,
     };
     let shipping = commonFields;
     let billing = {
@@ -606,7 +606,9 @@ export const CheckOut = () => {
     };
     if (!shippingAdd) {
       setShippingInfo(shipping);
-      checkCode(get(address, "pincode", ""));
+      if (get(address, "_id") !== get(billingInfo, "_id")) {
+        checkCode(get(address, "pincode", ""));
+      }
     }
     setBillingInfo(billing);
     reset();
@@ -748,7 +750,7 @@ export const CheckOut = () => {
     } = billingAddress;
     let payload = {
       id: customerId,
-      _id:_id,
+      _id: _id,
       firstName: firstname,
       lastName: lastname,
       phone,
@@ -771,7 +773,7 @@ export const CheckOut = () => {
           // setAddress(addressObject)
           notify(message, success);
           nextFormStep();
-          setIsEditAddress(false)
+          setIsEditAddress(false);
           await getAddress();
         }
         if (!success) {
@@ -865,9 +867,10 @@ export const CheckOut = () => {
                         getBillingInfo={getBillingData}
                         editCustomerAddress={editCustomerAddress}
                       />
-                      {(isAddNewAddressForm ||
-                        addressList?.length === 0 ) && <h5>Add New Address</h5>}
-                        { isEditAddress&&<h5>Edit Address</h5>}
+                      {(isAddNewAddressForm || addressList?.length === 0) && (
+                        <h5>Add New Address</h5>
+                      )}
+                      {isEditAddress && <h5>Edit Address</h5>}
                       <form onSubmit={handleSubmit(onSubmit)}>
                         <BillingDetails
                           isEditAddress={isEditAddress}
@@ -899,6 +902,7 @@ export const CheckOut = () => {
                         </button>
                       </form>
                     </div>
+                    {loading && <Loading />}
                     <div className="cupon-cart">
                       <OrderSummary
                         cartLoading={cartLoading}
@@ -928,7 +932,6 @@ export const CheckOut = () => {
         return (
           <>
             <Toaster />
-
             <div>
               <BreadCrumb title={"checkout"} />
               <section className="checkout-section">
@@ -941,6 +944,7 @@ export const CheckOut = () => {
                       billingDetails={billingDetails}
                       couponCartDetail={couponCartDetail}
                       setBillingDetails={setBillingDetails}
+                      setPaymentMethod={setPaymentMethod}
                     />
                   ) : (
                     <div className="col-lg-12 third-container-checkout">

@@ -7,9 +7,7 @@ export const isEmpty = (value) =>
   (typeof value === "object" && Object.keys(value).length === 0) ||
   (typeof value === "string" && value.trim().length === 0);
 
-// export const baseUrl = "https://demo1.ravendel.io/";
-export const baseUrl = "https://demo1-ravendel.hbwebsol.com/";
-// export const baseUrl = "http://localhost:8000/";
+export const baseUrl = "/";
 export const client_app_route_url = "/admin/";
 
 export var bucketName = "revendal-image";
@@ -258,7 +256,9 @@ export const filterTreeData = (data) => {
     const filteredCategory = {
       id: category?.id,
       name: category.name,
-      checked: category.checked,
+      checked: category.checked, 
+      url: category.url, 
+
     };
     if (category?.children && category?.children?.length > 0) {
       filteredCategory.children = category?.children;

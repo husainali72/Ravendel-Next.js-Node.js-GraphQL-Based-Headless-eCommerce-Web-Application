@@ -62,15 +62,19 @@ const AddAttributeTheme = () => {
     }
     else {
       let allValid = true; // Validation flag
-
-      for (let i of attribute.values) {
+      let  payload = {
+        ...attribute,
+      };
+      for (let i of payload.values) {
+        let trimmedName = i?.name?.trim(); // Remove leading and trailing spaces
+        i.name = trimmedName;
         if (!SPECIAL_CHARACTER_REGEX.test(i.name) || i.name.trim() === '') {
           allValid = false; // Set flag to false if validation fails
           dispatch({
             type: ALERT_SUCCESS,
             payload: {
               boolean: false,
-              message: 'Attributes can only contain letters, numbers, and spaces',
+              message: 'Attributes can only contain letters, numbers,',
               error: true,
             },
           });
@@ -79,7 +83,7 @@ const AddAttributeTheme = () => {
       }
     
       if (allValid) {
-        dispatch(attributeAddAction({ attribute: attribute }, navigate));
+        dispatch(attributeAddAction({ attribute: payload }, navigate));
       }
     }
 

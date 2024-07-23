@@ -46,7 +46,7 @@ module.exports = {
           { 
             userId: new mongoose.Types.ObjectId(args.userId),
             $or: [
-              { 'billing.paymentMethod': "cashondelivery" },
+              { 'billing.paymentMethod': { $in: ["cashondelivery", "banktransfer"] } },
               { paymentStatus: "success" },
             ],
           }
@@ -78,7 +78,7 @@ module.exports = {
         let myResponse = await addOrder(args);
         return myResponse;
       } catch (error) {
-        console.log(error)
+        console.log(error.message)
         return MESSAGE_RESPONSE("CREATE_ERROR", "Order", false);
       }
     },
@@ -113,7 +113,6 @@ module.exports = {
             "city",
             "firstname",
             "lastname",
-            "company",
             "address",
             "zip",
             "country",

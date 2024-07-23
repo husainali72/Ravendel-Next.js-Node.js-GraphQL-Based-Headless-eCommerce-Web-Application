@@ -20,6 +20,7 @@ import Reviews from "../../components/singleproductcomponent/Reviews";
 import ProductDetails from "../../components/singleproductcomponent/productDetails";
 import CategoryBreadCrumb from "../../components/breadcrumb";
 import AddionalDetail from "../../components/singleproductcomponent/RelatedProducts";
+import Meta from "../../components/Meta";
 
 const SingleProduct = ({
   allProduct,
@@ -46,16 +47,14 @@ const SingleProduct = ({
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
+  const getMetaTitle = () => {
+    const metaTitle = get(singleproducts, 'meta.title', '');
+    const name = get(singleproducts, 'name', '');
+    return metaTitle || name || '';
+};
   return (
     <div>
-      <Head>
-        <title>{get(singleproducts, "meta.title", "") + " | Ravendel"}</title>
-        <meta
-          name="description"
-          content={get(singleproducts, "meta.description")}
-        />
-        <meta name="keywords" content={get(singleproducts, "meta.keywords")} />
-      </Head>
+      <Meta title={getMetaTitle()} discription={get(singleproducts, "meta.description",'')} keywords={get(singleproducts, "meta.keywords",'')}/>
       <CategoryBreadCrumb className="single-product" breadCrumbs={get(singleproducts, "breadcrumb", [])} />
       <section className="product-cart-section">
         <Toaster />

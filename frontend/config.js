@@ -1,7 +1,7 @@
-export const BASE_URL = "demo1-ravendel.hbwebsol.com";
-export const baseUrl = `https://${BASE_URL}/graphql`;
-export const IMAGE_BASE_URL = `https://${BASE_URL}/`;
-export const API_BASE_URL = `https://${BASE_URL}/apis`;
+export const BASE_URL = "/";
+export const baseUrl = `/graphql`;
+export const IMAGE_BASE_URL = `/`;
+export const API_BASE_URL = `/apis`;
 
 // export const BASE_URL = "localhost:8000";
 // export const baseUrl = `http://${BASE_URL}/graphql`;

@@ -2,8 +2,8 @@ import { get } from "lodash";
 import { ARRAY, CHOICE, RANGE } from "../constant";
 
 export const applyFiltersFromUrl = (filters, router) => {
-  const { query } = router;
-  return filters.map((filter) => {
+  const { query, } = router;
+  const updatedFilters= filters?.map((filter) => {
     if (filter.type === ARRAY) {
       const selectedValues = query[filter.heading]?.split(",") || [];
       const updatedData = filter.data.map((item) => ({
@@ -25,11 +25,7 @@ export const applyFiltersFromUrl = (filters, router) => {
       if (maxPrice || filterMaxPrice) {
         select.maxPrice = maxPrice ? Number(maxPrice) : filterMaxPrice;
       }
-
-      return {
-        ...filter,
-        select,
-      };
+      return { ...filter, select };
     } else if (filter.type === CHOICE) {
       const minValue = query[filter.heading];
       let filterMinValue = get(filter, "select.maxPrice", "");
@@ -47,9 +43,19 @@ export const applyFiltersFromUrl = (filters, router) => {
     }
     return filter;
   });
+  let activeSorting={}
+  if(query&&query['sortField']){
+    activeSorting={
+      field:query['sortField'],
+      type:query['sortType']||''
+    }
+  }
+ 
+  return { updatedFilters, activeSorting};
 };
-export const updateUrl = (filters, router) => {
-  const { category } = router.query;
+
+export const updateUrl = (filters, router,activeSorting) => {
+  const { category} = router.query;
   const searchParams = new URLSearchParams();
   filters.forEach((filter) => {
     if (filter.type === ARRAY) {
@@ -83,28 +89,36 @@ export const updateUrl = (filters, router) => {
       }
     }
   });
+  // Add sorting to the searchParams if they exist
+  if (activeSorting?.field) {
+    searchParams.set("sortField", activeSorting?.field);
+  }
+  if (activeSorting?.type) {
+    searchParams.set("sortType", activeSorting?.type);
+  }
   window.history.pushState({}, "", `/collection/${category}?${searchParams.toString()}`);
-  // router.push(
-  //   {
-  //     pathname: `/collection/${category}`,
-  //     query: searchParams.toString(),
-  //   },
-  //   undefined,
-  //   { shallow: true }
-  // );
+};
+
+export const updateSortingUrl = (sorting, router) => {
+  const { category } = router.query;
+  const searchParams = new URLSearchParams(window.location.search);
+  if (sorting.field==='date'||(sorting.field && sorting.type)) {
+    searchParams.set("sortField", sorting.field);
+    searchParams.set("sortType", sorting.type);
+  } else {
+    searchParams.delete("sortField");
+    searchParams.delete("sortType");
+  }
+  window.history.pushState({}, "", `/collection/${category}?${searchParams.toString()}`);
 };
 
 export const clearAllFilter = (router) => {
   const { category } = router.query;
-
-  // Clear query parameters related to filters
   const searchParams = new URLSearchParams();
   searchParams.set("category", category);
   router.push(
     { pathname: "/collection/[category]", query: searchParams.toString() },
     undefined,
-    {
-      shallow: true,
-    }
+    { shallow: true }
   );
 };

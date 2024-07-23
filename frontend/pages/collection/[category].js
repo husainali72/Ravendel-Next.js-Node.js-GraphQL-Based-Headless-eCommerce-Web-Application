@@ -7,8 +7,8 @@ import { ARRAY, CHOICE, LIMIT } from "../../components/categoryFilter/constant";
 import SubCategoryProducts from "../../components/category/subCategories";
 import ParentCategories from "../../components/category/parentCategories";
 import { clearAllFilter } from "../../components/categoryFilter/component/urlFilter";
-import PageLoader from "../../components/PageLoader";
 import Meta from "../../components/Meta";
+import SubCategorySkeletoncard from "../../components/category/component";
 
 const SingleCategoryProduct = () => {
   const productFilterData = useSelector((state) => state.products);
@@ -28,11 +28,11 @@ const SingleCategoryProduct = () => {
     };
     setFilterPayload({ ...variable });
   }, [router]);
-  const getCategoryData = async() => {
+  const getCategoryData = async () => {
     if (get(filterPayload, "mainFilter.categoryUrl")) {
       await dispatch(getFilteredProductsAction(filterPayload));
     }
-  }
+  };
   useEffect(() => {
     getCategoryData();
   }, [filterPayload]);
@@ -41,7 +41,7 @@ const SingleCategoryProduct = () => {
       ...get(productFilterData, "productFilter", {}),
     });
   }, [productFilterData]);
-  const handleFilter = (filters) => {
+  const handleFilter = (filters, activeSorting) => {
     let selectedData = [];
     let filteredData = filters?.map((item) => {
       switch (item?.type) {
@@ -86,7 +86,15 @@ const SingleCategoryProduct = () => {
       const { ...rest } = item;
       return rest;
     });
-    setFilterPayload({ ...filterPayload, filters: filteredData });
+    if (activeSorting) {
+      setFilterPayload({
+        ...filterPayload,
+        filters: filteredData,
+        sort: activeSorting,
+      });
+    } else {
+      setFilterPayload({ ...filterPayload, filters: filteredData });
+    }
   };
   const handleSorting = (sortingPayload) => {
     setFilterPayload({ ...filterPayload, sort: sortingPayload });
@@ -113,35 +121,51 @@ const SingleCategoryProduct = () => {
     setFilterPayload({ ...variable });
     clearAllFilter(router);
   };
+  const defaultMeta = { title: "", description: "", keywords: "" };
   const { title, description, keywords } = get(
     filteredProductData,
     "mostParentCategoryData.meta",
-    {}
+    defaultMeta
   );
+  if (router.isFallback) {
+    return <SubCategorySkeletoncard parentLoading={true} />;
+  }
+
   return (
     <div>
-      <Meta title={title} description={description} keywords={keywords}/>
-      {
-        productFilterData.loading ? 
-          <PageLoader/>
-        :
+      {get(productFilterData, "parentLoading") ? (
+        <SubCategorySkeletoncard
+          parentLoading={get(productFilterData, "parentLoading")}
+        />
+      ) : (
         <>
-          {get(filteredProductData, "isMostParentCategory") ? (
-            <ParentCategories
-              categories={get(filteredProductData, "mostParentCategoryData", {})}
-              categoryName={get(router, 'query.category', '')}
-            />
-          ) : (
-            <SubCategoryProducts
-              clearFilter={clearFilter}
-              filteredProductData={filteredProductData}
-              handleFilter={handleFilter}
-              handleScroll={handleScroll}
-              handleSorting={handleSorting}
-            />
-          )}
+          <Meta title={title||get(router, "query.category",'')} description={description} keywords={keywords} />
+          <>
+            {get(filteredProductData, "isMostParentCategory") ? (
+              <ParentCategories
+                categories={get(
+                  filteredProductData,
+                  "mostParentCategoryData",
+                  {}
+                )}
+                categoryName={get(router, "query.category", "")}
+                loading={get(productFilterData, "parentLoading", false)}
+              />
+            ) : (
+              <SubCategoryProducts
+                clearFilter={clearFilter}
+                filteredProductData={filteredProductData}
+                handleFilter={handleFilter}
+                defaultMeta={defaultMeta}
+                handleScroll={handleScroll}
+                handleSorting={handleSorting}
+                loading={get(productFilterData, "loading", false)}
+                parentLoading={get(productFilterData, "parentLoading", false)}
+              />
+            )}
+          </>
         </>
-      }
+      )}
     </div>
   );
 };

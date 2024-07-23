@@ -465,3 +465,12 @@ export const loginCustomer = async (
 export function isObjectEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
+export const formatPhoneNumber = (phoneNumber) => {
+  let digits = phoneNumber.replace(/\D/g, '');
+  const countryCode = digits.slice(0, 2);
+  const firstPart = digits.slice(2, 7);
+  const secondPart = digits.slice(7);
+
+  // Return formatted phone number
+  return `+${countryCode} ${firstPart}-${secondPart}`;
+};

@@ -27,6 +27,7 @@ import Loading from "../components/loadingComponent";
 import notify from "../utills/notifyToast";
 import { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
+import EmptyCart from "../components/shoppage/emptyCartpage";
 const YourCard = () => {
   const session = useSession();
   const cart = useSelector((state) => state.cart);
@@ -242,16 +243,7 @@ const YourCard = () => {
                 </div>
               </div>
             ) : (
-              <p
-                style={{
-                  display: "flex",
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                No product available in cart
-              </p>
+             <EmptyCart/>
             )}
           </Container>
         </section>

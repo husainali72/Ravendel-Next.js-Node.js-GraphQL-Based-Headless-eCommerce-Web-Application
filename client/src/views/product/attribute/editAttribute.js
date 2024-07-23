@@ -83,28 +83,31 @@ const EditAttributeComponent = ({ params }) => {
     }
     else {
       let allValid = true; // Validation flag
+      let  payload = {
+        ...attribute,
+      };
 
-      for (let i of attribute.values) {
-        if (!SPECIAL_CHARACTER_REGEX.test(i.name) || i.name.trim() === '') {
+      for (let i of payload.values) {
+        let trimmedName = i?.name?.trim(); // Remove leading and trailing spaces
+        i.name = trimmedName;
+        if (!SPECIAL_CHARACTER_REGEX.test(trimmedName) || trimmedName === '') {
           allValid = false; // Set flag to false if validation fails
           dispatch({
             type: ALERT_SUCCESS,
             payload: {
               boolean: false,
-              message: 'Attributes can only contain letters, numbers, and spaces',
+              message: 'Attributes can only contain letters, numbers',
               error: true,
             },
           });
           break; // Exit the loop on first validation failure
         }
       }
-      if(allValid){
-      dispatch(attributeUpdateAction({ attribute: attribute }, navigate));
+    
+      if (allValid) {
+        dispatch(attributeUpdateAction({ attribute: payload }, navigate));
+      }
     }
-    }
-
-
-
   };
 
   return (

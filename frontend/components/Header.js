@@ -176,7 +176,7 @@ const Header = ({ setOpenMenu }) => {
                           <a className="cart-icon action-btn">
                             <SlHandbag />
                           </a>
-                          <span className="pro-count blue">{cartItem?.length}</span>
+                          <span className="pro-count blue">{cartItem}</span>
                         </div>
                       </Link>
                       <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">

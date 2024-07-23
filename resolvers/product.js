@@ -22,6 +22,8 @@ const {
   addCategoryAttributes,
   getParentChildren,
   productScript,
+  getRelatedProducts,
+  getBoughtTogetherProducts,
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -323,6 +325,7 @@ module.exports = {
               }
             }
             else {
+              console.log('filterElement.field', filterElement.field);
               productFilter[filterElement.field] = {};
               if(filterElement.type == 'array') {
                 let values = [];
@@ -332,10 +335,13 @@ module.exports = {
                 productFilter[filterElement.field]["$in"] = values;
               }
               else if(filterElement.type == 'range' || filterElement.type == 'choice') {
+                console.log('in the range type filter');
+                console.log('productFilter[filterElement.field]', productFilter[filterElement.field]);
                 productFilter[filterElement.field]["$gte"] = filterElement.select.minValue;
                 if(filterElement.select.maxValue) {
                   productFilter[filterElement.field]["$lte"] = filterElement.select.maxValue;
                 }
+                console.log('productFilter[filterElement.field]', productFilter[filterElement.field]);
               }
             }
             productFilters.push(productFilter);
@@ -357,7 +363,7 @@ module.exports = {
           sortByExpression = { "date": -1 };
           responseSortObject = {
             field:"date",
-            type:"desc"
+            type:""
           }
         }
         
@@ -532,12 +538,14 @@ module.exports = {
           $facet: prodAggrFacets
         });
 
-        // adding unwind in the aggregation to deconstruct the price array 
-        prodAggr.push(
-          {
-            $unwind: "$price",
-          },
-        );
+        // Commented out by HSW because it is causing issue if there isn't a product exist in the requested category
+        // on 08-06-2024
+        // // adding unwind in the aggregation to deconstruct the price array 
+        // prodAggr.push(
+        //   {
+        //     $unwind: "$price",
+        //   },
+        // );
 
         // console.log('prodAggr', JSON.stringify(prodAggr));
         const aggrActualResult = await Product.aggregate(prodAggr);
@@ -597,13 +605,16 @@ module.exports = {
           valueType: "Decimal",
           data:{}
         };
-        priceFilterData.data.minPrice = aggrResult.price.minPrice;
-        priceFilterData.data.maxPrice = aggrResult.price.maxPrice;
-        let reqPriceFilter;
-        if(filters) {
-          reqPriceFilter = filters.find(filter => filter.field == "pricing.sellprice");
-          if(reqPriceFilter) {
-            priceFilterData.select = reqPriceFilter.select;
+        if(aggrResult.price && aggrResult.price.length) {
+          const priceAggrResult = aggrResult.price[0];
+          priceFilterData.data.minValue = priceAggrResult.minPrice;
+          priceFilterData.data.maxValue = priceAggrResult.maxPrice;
+          let reqPriceFilter;
+          if(filters) {
+            reqPriceFilter = filters.find(filter => filter.field == "pricing.sellprice");
+            if(reqPriceFilter) {
+              priceFilterData.select = reqPriceFilter.select;
+            }
           }
         }
         filterData.push(priceFilterData);
@@ -1499,186 +1510,18 @@ module.exports = {
         const { parentChildren, checkedCategoryIDs } = getParentChildren(categoryTree, {}, [])
         const parentIDs = [...new Set([...checkedCategoryIDs, ...Object.keys(parentChildren).reverse()])]
 
-        let previousFacets = [];
-        const facetStage = { $facet: {
-          boughtTogetherProducts: [
-            {
-              $match: {
-                _id: toObjectID(productId)
-              }
-            },
-            {
-              $lookup: {
-                from: "orders",
-                let: { productId: "$_id" },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: {
-                        $in: [
-                          "$$productId",
-                          "$products.productId"
-                        ]
-                      }
-                    }
-                  },
-                  {
-                    $lookup: {
-                      from: "products",
-                      localField: "products.productId",
-                      foreignField: "_id",
-                      as: "products"
-                    }
-                  },
-                  {
-                    $project: {
-                      filteredProducts: {
-                        $filter: {
-                          input: "$products",
-                          as: "product",
-                          cond: {
-                            $ne: [
-                              "$$product._id",
-                              "$$productId"
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  }
-                ],
-                as: "orders"
-              }
-            },
-            {
-              $unwind: "$orders"
-            },
-            {
-              $sort: {
-                "orders.date": -1
-              }
-            },
-            {
-              $match: {
-                $expr: {
-                  $gt: [
-                    {
-                      $size:
-                        "$orders.filteredProducts"
-                    },
-                    0
-                  ]
-                }
-              }
-            },
-            {
-              $group: {
-                _id: "$_id",
-                allFilteredProducts: {
-                  $push: "$orders.filteredProducts"
-                }
-              }
-            },
-            {
-              $set: {
-                concatenatedFilteredProducts: {
-                  $reduce: {
-                    input: "$allFilteredProducts",
-                    initialValue: [],
-                    in: { $concatArrays: ["$$value", "$$this"] }
-                  }
-                }
-              }
-            },
-            {
-              $project: {
-                boughtTogetherProducts: {
-                  $slice: [{ $setUnion: ["$concatenatedFilteredProducts"] }, 10]
-                },
-              }
-            }
-          ]
-        } };
-        const setStage = { $set: { combinedResults: { $concatArrays: [] } } };
-        const addFieldsStage = { $addFields: {} };
-        const projectStage = { $project: {
-          boughtTogetherProducts: {
-            $arrayElemAt: ["$boughtTogetherProducts.boughtTogetherProducts", 0]
-          }
-        } };
-        parentIDs.forEach((parentID, index) => {
-          const facetName = `categoryId_${parentID}`;
-          const matchStage = {
-            $match: {
-              categoryId: parentID,
-              _id: { $ne: toObjectID(productId) }
-            }
-          };
-          const groupStage = {
-            $group: {
-              _id: null,
-              productIds: { $push: "$_id" },
-              products: { $push: "$$ROOT" }
-            }
-          };
+        const relatedProducts = await getRelatedProducts(parentIDs, productId, Product)
+        const boughtTogetherProducts = await getBoughtTogetherProducts(productId, Product)   
 
-          facetStage["$facet"][facetName] = [matchStage, groupStage];
-
-          if (index > 0) {
-            const prevFacetNames = parentIDs.slice(0, index).map(id => `categoryId_${id}`);
-            const filterCondition = {
-              $filter: {
-                input: `$${facetName}.products`,
-                as: "product",
-                cond: {
-                  $not: {
-                    $in: ["$$product._id", prevFacetNames.map(name => `$${name}.productIds`)]
-                  }
-                }
-              }
-            };
-
-            projectStage["$project"][`categoryId_${parentID}`] = {
-              products: filterCondition
-            };
-          } else {
-            projectStage["$project"][`categoryId_${parentID}`] = {
-              products: `$${facetName}.products`,
-              productIds: `$${facetName}.productIds`
-            };
-          }
-
-          addFieldsStage["$addFields"][`categoryId_${parentID}`] = {
-            $arrayElemAt: [`$categoryId_${parentID}`, 0]
-          }
-
-          previousFacets.push(facetName);
-          setStage["$set"]["combinedResults"]["$concatArrays"].push(`$${facetName}.products`);
-        });
-
-        const pipeline = [
-          facetStage,
-          addFieldsStage,
-          projectStage,
-          setStage,
-          {
-            $project: {
-              Related_Products: {
-                $ifNull: ["$combinedResults", []]
-              },
-              Bought_Together_Products: {
-                $ifNull: ["$boughtTogetherProducts", []]
-              },
-            }
-          }
-        ];
-        const additionalDetails = await Product.aggregate(pipeline)
+        const additionalDetails = [relatedProducts, boughtTogetherProducts]
         
-        for(const key in additionalDetails[0]) {
-          response.push({
-            title: `${key}`.replace(/_/g, " "),
-            products: additionalDetails[0][key]
-          })
+        for(const details of additionalDetails) {
+          for(const key in details) {
+            response.push({
+              title: `${key}`.replace(/_/g, " "),
+              products: details[key]
+            })
+          }
         }
 
         return response
@@ -1958,7 +1801,9 @@ module.exports = {
           return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
         } else {
           let imgObject = "";
-          if (args.feature_image) {
+          if (typeof args.feature_image === "string") {
+            imgObject = args.feature_image
+          } else if(args.feature_image) {
             // console.log('fimage',args.feature_image);
             imgObject = await imageUpload(
               args.feature_image[0].file,
@@ -1978,15 +1823,19 @@ module.exports = {
           if (args.gallery_image) {
             let galleryObject = "";
             for (let i in args.gallery_image) {
-              console.log( args.gallery_image[i].file,' args.gallery_image[i].file')
-              galleryObject = await imageUpload(
-                args.gallery_image[i].file,
-                "assets/images/product/gallery/", 
-                "productgallery",
-                args.url
-              );
-              if (galleryObject.success) {
-                imgArray.push(galleryObject.data);
+              if(typeof args.gallery_image[i] === "string") {
+                imgArray.push(args.gallery_image[i]);
+              } else if (args.gallery_image[i].file) {
+                console.log( args.gallery_image[i].file,' args.gallery_image[i].file')
+                galleryObject = await imageUpload(
+                  args.gallery_image[i].file,
+                  "assets/images/product/gallery/", 
+                  "productgallery",
+                  args.url
+                );
+                if (galleryObject.success) {
+                  imgArray.push(galleryObject.data);
+                }
               }
             }
           }

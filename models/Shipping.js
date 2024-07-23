@@ -41,15 +41,10 @@ const ShippingSchema = new Schema({
   },
 });
 
-var Shipping = (module.exports = mongoose.model("Shipping", ShippingSchema));
+const Shipping = (module.exports = mongoose.model("Shipping", ShippingSchema));
 
-module.exports.createShipping = async () => {
-  const shipping = await Shipping.findOne({});
-  if (shipping) {
-    return;
-  }
-
-  var newShipping = new Shipping({
+const defaultShippings = [
+  {
     global: {
       is_global: false,
       is_per_order: false,
@@ -61,14 +56,24 @@ module.exports.createShipping = async () => {
         system: 1,
       },
     ],
-  });
+  }
+]
 
-  newShipping.save(async (err, defaultShipping) => {
-    if (err) throw err;
-    //const defaultShipping = await Shipping.findOne({});
-    defaultShipping.global.shippingClass =
-      defaultShipping.shippingClass[0]._id;
-    let result = await defaultShipping.save();
-    console.log(result);
-  });
+module.exports.createDefaultShippings = async () => {
+  const existingShippings = await Shipping.findOne({});
+  if (existingShippings) {
+    return;
+  }
+
+  const shippings = await Shipping.insertMany(defaultShippings)
+
+  if(shippings.length) {
+    console.log("shippings")
+    for(const shipping of shippings) {
+      console.log(shipping.shippingClass[0].name)
+      shipping.global.shippingClass = shipping.shippingClass[0]._id;
+  
+      await shipping.save()
+    }
+  }
 };

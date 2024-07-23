@@ -50,6 +50,35 @@ const PRODUCT_TILE_DATA = gql`
     updated
   }
 `;
+const GET_PRODUCT_TILE_DATA = gql`
+  fragment ProductTile on Product {
+    _id
+    name
+    url
+    brand {
+      id
+      name
+      url
+      brand_logo
+      meta
+      date
+      updated
+    }
+    feature_image
+    status
+    date
+    updated
+  }
+`;
+const GET_CLONE_TILE_DATA = gql`
+  fragment ProductTile on Product {
+    _id
+    name
+    status
+    date
+    updated
+  }
+`;
 
 // const GET_CATEGORIES = gql`
 //   {
@@ -279,7 +308,21 @@ const GET_PRODUCTS = gql`
       }
     }
   }
-  ${PRODUCT_TILE_DATA}
+  ${GET_PRODUCT_TILE_DATA}
+`;
+const GET_CLONE_PRODUCTS = gql`
+  query ($admin: Boolean){
+    products(admin: $admin) {
+      data {
+        ...ProductTile
+      }
+      message {
+        message
+        success
+      }
+    }
+  }
+  ${GET_CLONE_TILE_DATA}
 `;
 // const GET_ORDER = gql`
 //   query ($id: ID!) {
@@ -456,5 +499,6 @@ export {
   UPDATE_PRODUCT,
   DELETE_PRODUCT,
   CHECK_VALID_URL,
-  AVAILABLE_PRODUCTS
+  AVAILABLE_PRODUCTS,
+  GET_CLONE_PRODUCTS
 };

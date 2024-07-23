@@ -313,17 +313,17 @@ const AllCategoryComponent = () => {
                   >
                     <option value="">---Select---</option>
                     {categories &&
-                      categories.map((cat) => (
+                      categories?.map((cat) => (
                         <option
-                          key={cat.id}
-                          value={cat.id}
+                          key={cat?.id}
+                          value={cat?.id}
                           disabled={
-                            editMode && cat.id === singleCategory.id
+                            editMode && cat?.id === singleCategory?.id
                               ? true
                               : false
                           }
                         >
-                          {cat.name}
+                          {cat?.name}
                         </option>
                       ))}
                   </Select>
@@ -399,14 +399,14 @@ const AllCategoryComponent = () => {
                 )}
                 multiline
                 rows={3}
-                value={singleCategory.description}
+                value={get(singleCategory,'description','')}
                 onChange={handleChange}
                 style={{ marginRight: "20px" }}
               />
 
               <Box component="div" mb={2}>
                 <TextInput
-                  value={singleCategory.meta.title}
+                  value={get(singleCategory,'meta.title','')}
                   label="Meta Title"
                   name="metatitle"
                   onInputChange={(e) => {
@@ -422,7 +422,7 @@ const AllCategoryComponent = () => {
               </Box>
               <Box component="div" mb={2}>
                 <TextInput
-                  value={singleCategory.meta.keywords}
+                  value={get(singleCategory,'meta.keywords','')}
                   label="Meta Keyword"
                   name="metakeyword"
                   onInputChange={(e) => {
@@ -438,7 +438,7 @@ const AllCategoryComponent = () => {
               </Box>
               <Box component="div" mb={2}>
                 <TextInput
-                  value={singleCategory.meta.description}
+                  value={get(singleCategory,'meta.description','')}
                   label="Meta Description"
                   name="metadescription"
                   onInputChange={(e) => {

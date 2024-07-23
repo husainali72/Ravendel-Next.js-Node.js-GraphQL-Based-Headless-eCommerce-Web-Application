@@ -44,15 +44,10 @@ const TaxSchema = new Schema({
   },
 });
 
-var Tax = (module.exports = mongoose.model("Tax", TaxSchema));
+const Tax = (module.exports = mongoose.model("Tax", TaxSchema));
 
-module.exports.createTax = async () => {
-  const tax = await Tax.findOne({});
-  if (tax) {
-    return;
-  }
-
-  var newTax = new Tax({
+const defaultTaxes = [
+  {
     is_inclusive: true,
     global: {
       is_global: true,
@@ -64,12 +59,22 @@ module.exports.createTax = async () => {
         system: 1,
       },
     ],
-  });
+  }
+]
 
-  newTax.save(async (err, defaultTax) => {
-    if (err) throw err;
-    defaultTax.global.taxClass = defaultTax.taxClass[0]._id;
-    let result = await defaultTax.save();
-    console.log(result);
-  });
+module.exports.createDefaultTaxes = async () => {
+  const existingTaxes = await Tax.findOne({});
+  if (existingTaxes) {
+    return;
+  }
+
+  const taxes = await Tax.insertMany(defaultTaxes)
+
+  if(taxes.length) {
+    for(const tax of taxes) {
+      tax.global.taxClass = tax.taxClass[0]._id
+  
+      await tax.save()
+    }
+  }
 };

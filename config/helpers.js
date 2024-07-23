@@ -244,18 +244,25 @@ const UploadImageLocal = async (image, path, name) => {
     let buffer;
 
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    if (typeof image === 'string' && image.startsWith('data:image')) {
-      // Handle Base64 input
-      const matches = image.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
-      if (matches) {
-        isBase64 = true;
-        buffer = Buffer.from(matches[2], 'base64');
-        filename = `.${matches[1]}`;
-      } else {
-        return resolve({
-          success: false,
-          message: "Invalid Base64 string"
-        });
+    if (typeof image === 'string') {
+      if(image.startsWith("assets/images")) {
+        return {
+          success: true,
+          data: image,
+        }
+      } else if(image.startsWith('data:image')) {
+        // Handle Base64 input
+        const matches = image.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
+        if (matches) {
+          isBase64 = true;
+          buffer = Buffer.from(matches[2], 'base64');
+          filename = `.${matches[1]}`;
+        } else {
+          return Promise.resolve({
+            success: false,
+            message: "Invalid Base64 string"
+          });
+        }
       }
     } else {
       // Handle regular file upload
@@ -360,18 +367,25 @@ const imageUpload = async (upload, uploadPath, nametype, imageName) => {
         let isBase64 = false;
         let buffer;
 
-        if (typeof upload === 'string' && upload.startsWith('data:image')) {
-          // Handle Base64 input
-          const matches = upload.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
-          if (matches) {
-            isBase64 = true;
-            buffer = Buffer.from(matches[2], 'base64');
-            filename = `.${matches[1]}`;
-          } else {
+        if (typeof upload === 'string') {
+          if(upload.startsWith("assets/images")) {
             return resolve({
-              success: false,
-              message: "Invalid Base64 string"
-            });
+              success: true,
+              data: upload,
+            })
+          } else if(upload.startsWith('data:image')) {
+            // Handle Base64 input
+            const matches = upload.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
+            if (matches) {
+              isBase64 = true;
+              buffer = Buffer.from(matches[2], 'base64');
+              filename = `.${matches[1]}`;
+            } else {
+              return resolve({
+                success: false,
+                message: "Invalid Base64 string"
+              });
+            }
           }
         } else {
           // Handle regular file upload
@@ -1371,9 +1385,9 @@ const calculateCart = async (userId, cartItems) => {
           prod.shippingAmount = productShipping.amount;
           totalShipping += prod.shippingAmount;
         }
-        else {
-          console.log('product shipping class not found');
-        }
+        // else {
+        //   console.log('product shipping class not found');
+        // }
       }
       // Product Shipping calculation completed
 
@@ -1615,13 +1629,24 @@ const addOrder = async(args) => {
   const savedOrder = await newOrder.save();
 
   let environmentBool = process.env.NODE_ENV.trim() === 'production';
-
-  if (args.billing.paymentMethod === 'cashondelivery') {
+  if (args.billing.paymentMethod === 'cashondelivery' || args.billing.paymentMethod === 'banktransfer') {
     const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(args.userId) });
 
     for (let product of cart.products) {
-      await Product.findByIdAndUpdate(product.productId, { $inc: { quantity: -product.qty } });
+      let updatedProduct = await Product.findByIdAndUpdate(
+        product.productId,
+        {
+          $inc: { quantity: -product.qty },
+        },
+        { new: true }
+      );
+      sendLowStockEmailNotification(updatedProduct, setting);
     }
+
+    savedOrder.email = savedOrder.billing.email;
+    await sendEmailTemplate("ORDER_PLACED", savedOrder, setting);
+    await sendEmailTemplate("ADMIN_NEW_ORDER", savedOrder, setting);
+    
     emptyCart(cart);
   } else if(args.billing.paymentMethod === 'stripe') {
     
@@ -1811,7 +1836,7 @@ const updatePaymentStatus = async (userId, args) => {
     }
     let paymentMethod = orderData.billing.paymentMethod;
 
-    const setting = await Setting.findOne({}, {payment:1});
+    const setting = await Setting.findOne({}, {payment:1, appearance: 1, store: 1});
     let environmentBool = process.env.NODE_ENV.trim() === 'production';
     switch (paymentMethod) {
       case "stripe":
@@ -1891,29 +1916,35 @@ const updatePaymentStatus = async (userId, args) => {
     }
 
     if (!eligibleToUpdateSuccess) {
-      await sendEmailTemplate("ORDER_FAILED", orderData)
+      await sendEmailTemplate("ORDER_FAILED", orderData, setting)
       return MESSAGE_RESPONSE("PaymentUnpaid", null, false);
     } else {
       try {
         let orderData = await Order.findById(id);
         if (orderData.paymentStatus != "success") {
           for (let product of orderData.products) {
-            await Product.findByIdAndUpdate(product.productId, {
-              $inc: { quantity: -product.qty },
-            });
+            let updatedProduct = await Product.findByIdAndUpdate(
+              product.productId,
+              {
+                $inc: { quantity: -product.qty },
+              },
+              { new: true }
+            );
+            sendLowStockEmailNotification(updatedProduct, setting);
           }
           orderData.paymentStatus = "success";
           orderData.email = orderData.billing.email;
 
           await orderData.save();
-          await sendEmailTemplate("ORDER_PLACED", orderData)
+          await sendEmailTemplate("ORDER_PLACED", orderData, setting)
+          await sendEmailTemplate("ADMIN_NEW_ORDER", orderData, setting)
         }
         const cart = await Cart.findOne({
           userId: new mongoose.Types.ObjectId(userId),
         });
         await emptyCart(cart);
       } catch (error) {
-        await sendEmailTemplate("ORDER_FAILED", orderData)
+        await sendEmailTemplate("ORDER_FAILED", orderData, setting)
         return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
       }
       return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
@@ -1986,7 +2017,7 @@ const fillPlaceholders = async (template, data) => {
         dataValue = `${data.totalSummary.currency_code} ${dataValue}`
         break;
       case "CONDITIONAL":
-        if(dataValue == 0){
+        if(dataValue == 0 || dataValue == null || dataValue == undefined){
           dataValue = ""
         }
         else{
@@ -1994,6 +2025,9 @@ const fillPlaceholders = async (template, data) => {
           html = html.replaceAll("{{optional_value}}", `${data.totalSummary.currency_code} ${dataValue}`)
           dataValue = html;
         }
+        break;
+      case "IMAGE":
+        dataValue = `${APP_KEYS.BASE_URL}${dataValue}`
         break;
       default:
         break;
@@ -2006,26 +2040,38 @@ const fillPlaceholders = async (template, data) => {
   return emailTemplate;
 };
 
+const fillproductDetails = (looping_text, data, currency) => {
 
-
-const fillproductDetails = (looping_text, products) => {
   let output = "";
-  for (unit of products)
+  for (unit of data.products)
   {
     let html = looping_text
-    html = html.replaceAll("{{product_url}}", `https://demo1-ravendel.hbwebsol.com/${unit.productImage}`)
+    html = html.replaceAll("{{product_url}}", `${APP_KEYS.BASE_URL}${unit.productImage}`)
     // html = html.replaceAll("{{product_url}}", `https://picsum.photos/200`)
     html = html.replaceAll("{{product_name}}", unit.productTitle)
     html = html.replaceAll("{{product_quantity}}", unit.qty)
-    html = html.replaceAll("{{product_price}}", unit.productPrice)
-    html = html.replaceAll("{{product_total_price}}", unit.total)
+    html = html.replaceAll("{{product_price}}", `${currency} ${unit.mrp || unit.productPrice}`)
+    html = html.replaceAll("{{product_total_price}}",`${currency} ${unit.mrpAmount || unit.productPrice * unit.qty}`)
     output = output + html
   }
   return output;
 }
 
-const sendEmailTemplate = async (template_name, data) => {
+const fillSocialIcons = async (icons_html, data) => {
+  let output = "";
+  for (const unit of data) {
+    let html = icons_html
+    html = html.replaceAll("{{social_name}}", unit.name)
+    html = html.replaceAll("{{social_url}}", unit.handle)
+    output = output + html
+  }
+  return output;
+}
 
+const sendEmailTemplate = async (template_name, data, settings) => {
+  if(!settings){
+    settings = await Setting.findOne({})
+  }
   const emailTemplateModel = require("../models/EmailTemplate");
   try {
     let template = await emailTemplateModel.findOne({
@@ -2033,20 +2079,27 @@ const sendEmailTemplate = async (template_name, data) => {
     });
 
     let emailTemplate = await fillPlaceholders(template, data);
-    
-    if(template.looping_text)
-    {
-      let loopingProducts = await fillproductDetails(template.looping_text, data.products)
-      emailTemplate.body = emailTemplate.body.replace("{{looping}}",loopingProducts)
+
+    if (template.looping_text) {
+      let loopingProducts = await fillproductDetails(template.looping_text, data, settings.store.currency_options.currency.toUpperCase());
+      emailTemplate.body = emailTemplate.body.replace("{{looping}}", loopingProducts);
     }
-      let email_data = {
-        from: "ravendel@hbwebsol.com",
-        to: data.email,
-        subject: emailTemplate.subject,
-        html: emailTemplate.body
-      }
-      
-      await sendMail(email_data)
+
+    if (template.social_html) {
+      let social_icons = await fillSocialIcons(template.social_html, settings.store.store_address.social_media);
+      emailTemplate.body = emailTemplate.body.replace("{{social_icons}}", social_icons);
+    }
+    // console.log("settings.appearance.theme.logo", settings.appearance.theme.logo)
+    emailTemplate.body = emailTemplate.body.replace("{{main_logo}}", settings.appearance.theme.logo);
+
+    let email_data = {
+      from: APP_KEYS.FROM_EMAIL,
+      to: data.email,
+      subject: emailTemplate.subject,
+      html: emailTemplate.body,
+    };
+
+    await sendMail(email_data);
   } catch (error) {
     console.log("Error in sendEmailTemplate", error);
   }
@@ -2204,4 +2257,245 @@ const getParentChildren = (category, parentChildren, checkedCategoryIDs) => {
     checkedCategoryIDs
   }
 }
+
+const sendLowStockEmailNotification = async (data, setting) => { 
+  try {
+
+    let threshold = setting.store.inventory.low_stock_threshold;
+    let alert = setting.store.inventory.notifications.alert_for_minimum_stock;
+    
+    if(alert && data.quantity <= threshold) {
+      data.email = setting.store.inventory.notification_recipients;
+      sendEmailTemplate("ADMIN_LOW_STOCK", data, setting)
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 module.exports.getParentChildren = getParentChildren
+
+const getRelatedProducts = async (categoryIds, productId, model) => {
+  const facetStage = { $facet: {} }
+  const addFieldsStage = { $addFields: {} }
+  const projectStage = { $project: {} }
+  const setStage = { $set: { combinedResults: { $concatArrays: [] } } }
+
+  categoryIds.forEach((categoryId, index) => {
+    // populate data in facet stage
+    const facetName = `categoryId_${categoryId}`;
+    const matchStage = {
+      $match: {
+        categoryId: categoryId,
+        _id: { $ne: toObjectID(productId) }
+      }
+    };
+    const groupStage = {
+      $group: {
+        _id: null,
+        productIds: { $push: "$_id" },
+        products: { $push: "$$ROOT" }
+      }
+    };
+    facetStage["$facet"][facetName] = [matchStage, groupStage];
+
+    // populate data in add fields stage
+    addFieldsStage["$addFields"][`categoryId_${categoryId}`] = {
+      $arrayElemAt: [`$categoryId_${categoryId}`, 0]
+    }
+
+    // populate data in project stage
+    if (index > 0) {
+      const prevFacetNames = categoryIds.slice(0, index).map(id => `categoryId_${id}`);
+      const productsFilterCondition = {
+        $filter: {
+          input: `$${facetName}.products`,
+          as: "product",
+          cond: {
+            $not: {
+              $in: ["$$product._id", {
+                $reduce: {
+                  input: prevFacetNames.map(name => `$${name}.productIds`),
+                  initialValue: [],
+                  in: { $setUnion: ["$$value", "$$this"] }
+                }
+              }]
+            }
+          }
+        }
+      };
+      const productIdsFilterCondition = {
+        $filter: {
+          input: `$${facetName}.productIds`,
+          as: "productId",
+          cond: {
+            $not: {
+              // $in: ["$$product._id", prevFacetNames.map(name => `$${name}.productIds`)]
+              $in: ["$$productId", {
+                $reduce: {
+                  input: prevFacetNames.map(name => `$${name}.productIds`),
+                  initialValue: [],
+                  in: { $setUnion: ["$$value", "$$this"] }
+                }
+              }]
+            }
+          }
+        }
+      };
+
+      projectStage["$project"][`categoryId_${categoryId}`] = {
+        products: productsFilterCondition,
+        productIds: productIdsFilterCondition,
+      };
+    } else {
+      projectStage["$project"][`categoryId_${categoryId}`] = {
+        products: `$${facetName}.products`,
+        productIds: `$${facetName}.productIds`
+      };
+    }
+
+    // populate data in set stage
+    setStage["$set"]["combinedResults"]["$concatArrays"].push(`$${facetName}.products`);
+  });
+
+  const pipeline = [
+    facetStage,
+    addFieldsStage,
+    projectStage,
+    setStage,
+    {
+      $project: {
+        Related_Products: {
+          $slice: [
+            {
+              $ifNull: ["$combinedResults", []]
+            },
+            10
+          ]
+        }
+      }
+    }
+  ]
+
+  const relatedProducts = await model.aggregate(pipeline)
+  return relatedProducts[0]
+}
+module.exports.getRelatedProducts = getRelatedProducts
+
+const getBoughtTogetherProducts = async (productId, model) => {
+  const pipeline = [
+    {
+      $match: { }
+    },
+    {
+      $lookup: {
+        from: "orders",
+        let: { productId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $in: [
+                  "$$productId",
+                  "$products.productId"
+                ]
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: "products",
+              localField: "products.productId",
+              foreignField: "_id",
+              as: "products"
+            }
+          },
+          {
+            $project: {
+              filteredProducts: {
+                $filter: {
+                  input: "$products",
+                  as: "product",
+                  cond: {
+                    $ne: [
+                      "$$product._id",
+                      "$$productId"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ],
+        as: "orders"
+      }
+    },
+    { $unwind: "$orders" },
+    { $sort: { "orders.date": -1 } },
+    {
+      $match: {
+        $expr: {
+          $gt: [
+            { $size: "$orders.filteredProducts" },
+            0
+          ]
+        }
+      }
+    },
+    {
+      $group: {
+        _id: "$_id",
+        allFilteredProducts: {
+          $push: "$orders.filteredProducts"
+        }
+      }
+    },
+    {
+      $set: {
+        concatenatedFilteredProducts: {
+          $reduce: {
+            input: "$allFilteredProducts",
+            initialValue: [],
+            in: {
+              $concatArrays: ["$$value", "$$this"]
+            }
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        Bought_Together_Products: {
+          $slice: [
+            {
+              $setUnion: [
+                "$concatenatedFilteredProducts"
+              ]
+            },
+            10
+          ]
+        }
+      }
+    }
+  ]
+  if(Array.isArray(productId)) {
+    pipeline[0]["$match"]["_id"] = {$in: toObjectID(productId)}
+  } else {
+    pipeline[0]["$match"]["_id"] = toObjectID(productId) 
+  }
+  
+  const boughtTogetherProducts = await model.aggregate(pipeline)
+  if(Array.isArray(productId)) {
+    return {
+      Bought_Together_Products: boughtTogetherProducts
+      .flatMap(item => item.Bought_Together_Products)
+      .filter(item => !productId.includes(item._id.toString()))
+      .filter((product, index, self) =>
+        index === self.findIndex(p => p._id.toString() === product._id.toString())// Ensure uniqueness
+      )
+    }
+  } else {
+    return boughtTogetherProducts[0]
+  }
+}
+module.exports.getBoughtTogetherProducts = getBoughtTogetherProducts
