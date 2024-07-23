@@ -7362,6 +7362,33 @@ button.btn-outline-primary:hover {
   pointer-events: none;
 }
 
+.support-page-wrapper{
+  padding: 100px 0;
+}
+.support-page-wrapper h1{
+  margin-bottom: 40px;
+  font-size: 32px;
+  font-weight: 600;
+}
+.support-page-wrapper h2 {
+  margin: 24px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.support-page-wrapper p{
+  margin: 12px 0;
+}
+.support-page-wrapper li{
+  margin: 8px;
+}
+
+.support-page-wrapper h3{
+  margin: 20px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
 .first-checkout-page {
   display: flex;
 }
