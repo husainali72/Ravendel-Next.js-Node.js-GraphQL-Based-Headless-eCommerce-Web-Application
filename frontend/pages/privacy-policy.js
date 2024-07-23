@@ -1,15 +1,17 @@
 import React from 'react'
-import { APP_NAME } from '../config';
+import { APP_EMAIL_ID, APP_NAME, APP_URL } from '../config';
 
 const PrivacyPolicy = () => {
   const appName = APP_NAME;
+  const appUrl = APP_URL;
+  const appEmail = APP_EMAIL_ID;
 
   return (
     <div className='support-page-wrapper'>
       <div className='container'>
         <h1>Privacy Policy</h1>
         <h2>Introduction</h2>
-        <p>Welcome to {appName}. We are committed to protecting your privacy and ensuring that your personal information is handled safely and responsibly. This Privacy Policy describes how we collect, use, and protect your information when you visit our website <a href='http://www.zemjet.com'>www.zemjet.com</a> and make use of our services.</p>
+        <p>Welcome to {appName}. We are committed to protecting your privacy and ensuring that your personal information is handled safely and responsibly. This Privacy Policy describes how we collect, use, and protect your information when you visit our website <a href={`https://${appUrl}`}>{appUrl}</a> and make use of our services.</p>
         <h2>1. Information We Collect</h2>
         <p>We collect several types of information for various purposes to provide and improve our services to you.</p>
         <h3>Personal Information:</h3>
@@ -52,7 +54,7 @@ const PrivacyPolicy = () => {
         <p>{appName} may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.</p>
         <h2>8. Contact Us</h2>
         <p>If you have any questions or concerns about this Privacy Policy, please contact us at:</p>
-        <p>Email: <a href='mailto:sales@zemjet.com'>sales@zemjet.com</a> </p>
+        <p>Email: <a href={`mailto:${appEmail}`}>{appEmail}</a> </p>
       </div>
     </div>
   )

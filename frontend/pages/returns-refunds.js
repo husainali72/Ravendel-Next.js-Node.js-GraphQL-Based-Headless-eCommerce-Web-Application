@@ -1,8 +1,9 @@
 import React from 'react'
-import { APP_NAME } from '../config';
+import { APP_EMAIL_ID, APP_NAME } from '../config';
 
 const ReturnsAndRefund = () => {
     const appName = APP_NAME;
+    const appEmail = APP_EMAIL_ID;
   return (
     <div className='support-page-wrapper'>
         <div className='container'>
@@ -40,7 +41,7 @@ const ReturnsAndRefund = () => {
             <h2>Late or Missing Refunds</h2>
             <p>If you haven’t received a refund yet, please check your bank account again, then contact your credit card company. It may take some time before your refund is officially posted. </p>
             <h2>Contact Us</h2>
-            <p>If you have any questions about our Returns and refunds policy, please email our customer service team at <a href='mailto:sales@zemjet.com'>sales@zemjet.com</a>.</p>
+            <p>If you have any questions about our Returns and refunds policy, please email our customer service team at <a href={`mailto:${appEmail}`}>{appEmail}</a>.</p>
             
         </div>
     </div>
