@@ -1,12 +1,14 @@
 import React from 'react'
+import { APP_NAME } from '../config';
 
 const ReturnsAndRefund = () => {
+    const appName = APP_NAME;
   return (
     <div className='support-page-wrapper'>
         <div className='container'>
             <h1>Returns & Refunds</h1>
             <h2>Our Return Policy</h2>
-            <p>At Zemjet, we want you to be completely satisfied with your purchase. If you are not satisfied with your product, you may return it in accordance with our policy outlined below.</p>
+            <p>At {appName}, we want you to be completely satisfied with your purchase. If you are not satisfied with your product, you may return it in accordance with our policy outlined below.</p>
             <h2>Eligibility for Returns</h2>
             <ul>
                 <li>Items must be returned within 30 days of receipt.</li>
