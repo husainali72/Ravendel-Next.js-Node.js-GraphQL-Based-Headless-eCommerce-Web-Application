@@ -17,7 +17,7 @@ module.exports = {
   stripeBaseCancelUrl: process.env.CANCEL_URL,
   frontendBaseUrl: process.env.FRONTEND_BASEURL,
   noImagePlaceHolder: process.env.NO_IMAGE_PLACE_HOLDER,
-  
+  appName: process.env.REACT_APP_APP_NAME,
   FROM_EMAIL: process.env.FROM_EMAIL,
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASSWORD: process.env.SMTP_PASSWORD
