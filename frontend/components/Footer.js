@@ -184,13 +184,18 @@ export default function Footer() {
                   ) : null}
 
                   <p className="link-hover">
-                    <Link href="/abouts/privacypolicy">
+                    <Link href="/privacy-policy">
                       <a className="text-reset">Privacy policy</a>
                     </Link>
                   </p>
                   <p className="link-hover">
-                    <Link href="/abouts/terms&condition">
+                    <Link href="/terms-conditions">
                       <a className="text-reset">Terms & Conditions</a>
+                    </Link>
+                  </p>
+                  <p className="link-hover">
+                    <Link href="/returns-refunds">
+                      <a className="text-reset">Returns & Refunds</a>
                     </Link>
                   </p>
                   <p className="link-hover">
