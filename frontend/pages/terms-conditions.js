@@ -1,14 +1,17 @@
 import React from 'react'
-import { APP_NAME } from '../config';
+import { APP_EMAIL_ID, APP_NAME, APP_URL } from '../config';
 
 const TermsCondition = () => {
   const appName = APP_NAME;
+  const appUrl = APP_URL;
+  const appEmail = APP_EMAIL_ID;
+
   return (
     <div className='support-page-wrapper'>
       <div className='container'>
         <h1>Terms and Conditions</h1>
         <h2>Welcome to {appName}</h2>
-        <p>These Terms and Conditions outline the rules and regulations for using {appName}'s website, <a href='http://www.zemjet.com'>www.zemjet.com</a>.</p>
+        <p>These Terms and Conditions outline the rules and regulations for using {appName}'s website, <a href={`https://${appUrl}`}>{appUrl}</a>.</p>
         <p>By accessing this website, we assume you accept these terms and conditions. Do not continue to use {appName} if you do not agree to take all of the terms and conditions stated on this page</p>
         <h2>1. Introduction</h2>
         <p>These terms and conditions govern your use of our website and services. By using our website, you agree to these terms in full. If you disagree with any part of these terms and conditions, do not use our website.</p>
@@ -54,7 +57,7 @@ const TermsCondition = () => {
         <h2>9. Changes to Terms</h2>
         <p>{appName} reserves the right to revise these terms and conditions at any time. By using this website, you agree to be bound by the current version of these terms and conditions.</p>
         <h2>10. Contact Us</h2>
-        <p>If you have any questions about these terms and conditions, please contact us at <a href='mailto:sales@zemjet.com'>sales@zemjet.com</a>.</p>
+        <p>If you have any questions about these terms and conditions, please contact us at <a href={`mailto:${appEmail}`}>{appEmail}</a>.</p>
         
       </div>
     </div>

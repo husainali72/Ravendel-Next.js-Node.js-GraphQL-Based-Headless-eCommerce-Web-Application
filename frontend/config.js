@@ -15,6 +15,8 @@ export const API_BASE_URL = `/apis`;
 export var bucketName = "revendal-image";
 export var BUCKET_BASE_URL = `https://${bucketName}.s3.amazonaws.com/`;
 export const APP_NAME = "Ravendel";
+export const APP_URL = "www.ravendel.com";
+export const APP_EMAIL_ID = "sales@ravendel.com";
 
 // if (process.env.NODE_ENV === "production") {
 //     bucketName = "revendal-image-prod";
