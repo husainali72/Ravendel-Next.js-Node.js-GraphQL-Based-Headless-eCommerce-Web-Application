@@ -74,6 +74,7 @@ module.exports = {
     },
     // API is not ready, more work is needed
     getCartDetails: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const { userId } = args;
 

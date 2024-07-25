@@ -104,6 +104,12 @@ const CustomerSchema = new Schema({
     },
     app_version: String,
   },
+  // add a status field
+  status: {
+    type: String,
+    enum: ["ACTIVE", "DELETED", "BLOCKED"],
+    default: "ACTIVE",
+  },
   updated: {
     type: Date,
   },

@@ -5,7 +5,8 @@ const {
   MESSAGE_RESPONSE,
   _validate,
   duplicateData,
-  sendEmailTemplate
+  sendEmailTemplate,
+  checkToken
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -57,7 +58,7 @@ module.exports = {
         let validation = ["firstName", "lastName", "email", "password"];
         const duplicate = await duplicateData({ email: args.email }, Customer);
 
-        if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
+        if (duplicate) return MESSAGE_RESPONSE("Custom", "This email is not available", false);
         const errors = _validate(validation, data);
 
         if (!isEmpty(errors)) {
@@ -403,6 +404,7 @@ module.exports = {
       }
     },
     updateCustomerDeviceInfo: async (root, args, { id }) => {
+      checkToken(id);
       return await UPDATE_DEVICE_INFO(id, args, Customer);
     },
   },

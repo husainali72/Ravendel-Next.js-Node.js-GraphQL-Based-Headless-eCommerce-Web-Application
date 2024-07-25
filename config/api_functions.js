@@ -179,7 +179,13 @@ const DELETE_FUNC = async (token, delete_id, modal, name) => {
     return MESSAGE_RESPONSE("ID_ERROR", name, false);
   }
   try {
-    const response = await modal.deleteOne({_id:delete_id});
+    let response;
+    if(name === "Customers") {
+      response = await modal.findByIdAndUpdate({ _id: delete_id }, { status: "DELETED" });
+    }
+    else {
+      response = await modal.findByIdAndDelete({ _id: delete_id });
+    }
     const setting = await Setting.findOne({});
     if (response) {
       if (response.feature_image || response.image) {

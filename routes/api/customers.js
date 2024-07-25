@@ -87,7 +87,7 @@ router.post("/login", (req, res) => {
         },
       },
       { $set: { cartId: { $arrayElemAt: ["$cartId._id", 0] } } },
-      { $match: { email: email } },
+      { $match: { email: email, status: "ACTIVE" } },
     ];
     Customer.aggregate(pipeline).then((cust) => {
       let customer = cust[0];
