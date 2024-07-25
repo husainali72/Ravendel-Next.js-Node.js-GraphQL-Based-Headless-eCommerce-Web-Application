@@ -18,7 +18,6 @@ module.exports = async ({ req }) => {
       let customer = await Customer.findOne({ _id: id, status: "ACTIVE" });
 
       if (!customer) {
-        console.log("Customer Not Found");
         return { id: false };
       }
     } else if (role === "admin") {
