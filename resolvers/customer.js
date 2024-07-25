@@ -15,6 +15,7 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
   UPDATE_PASSWORD_FUNC,
+  UPDATE_DEVICE_INFO
 } = require("../config/api_functions");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -400,6 +401,9 @@ module.exports = {
         }
         return MESSAGE_RESPONSE("Custom", "Something went wrong", false);
       }
-    }
+    },
+    updateCustomerDeviceInfo: async (root, args, { id }) => {
+      return await UPDATE_DEVICE_INFO(id, args, Customer);
+    },
   },
 };

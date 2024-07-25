@@ -1,5 +1,23 @@
 // const { gql } = require("@apollo/server");
 module.exports = `
+   
+  enum DEVICE_TYPE {
+    ANDROID
+    IOS
+  }
+
+  type DEVICE_INFO {
+    device_id: String
+    device_type: DEVICE_TYPE
+    app_version: String
+  }
+  
+  input DEVICE_INFO_INPUT {
+    device_id: String
+    device_type: DEVICE_TYPE
+    app_version: String
+  }
+
   type User {
     id: ID
     email: String
@@ -9,6 +27,7 @@ module.exports = `
     image: String
     meta: userMeta
     date: Date
+    device_info: DEVICE_INFO
     updated: Date
   }
 
@@ -62,5 +81,8 @@ module.exports = `
       meta: [Meta]
     ): statusSchema
     deleteUser(id: ID!): statusSchema
+    updateUserDeviceInfo(
+      device_info: DEVICE_INFO_INPUT
+    ): statusSchema
   }
 `;

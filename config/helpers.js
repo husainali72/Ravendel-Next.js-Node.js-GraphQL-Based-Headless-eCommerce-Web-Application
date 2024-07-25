@@ -19,6 +19,7 @@ const mongoose = require('mongoose');
 const Order = require("../models/Order");
 const _ = require('lodash');
 const {Types: {ObjectId}} = require("mongoose")
+const { sendPushNotificationTemplate } = require("./notification");
 
 
 const isEmpty = (value) =>
@@ -1645,7 +1646,10 @@ const addOrder = async(args) => {
 
     savedOrder.email = savedOrder.billing.email;
     await sendEmailTemplate("ORDER_PLACED", savedOrder, setting);
-    await sendEmailTemplate("ADMIN_NEW_ORDER", savedOrder, setting);
+    let temp = {...savedOrder.toObject(), email: setting.store.inventory.notification_recipients};
+    await sendEmailTemplate("ADMIN_NEW_ORDER", temp, setting);
+    await sendPushNotificationTemplate("ADMIN", "NEW_ORDER_PLACED_SELLER", setting);
+    await sendPushNotificationTemplate(savedOrder.userId, "ORDER_PLACED_CUSTOMER", setting);
     
     emptyCart(cart);
   } else if(args.billing.paymentMethod === 'stripe') {
@@ -1917,6 +1921,7 @@ const updatePaymentStatus = async (userId, args) => {
 
     if (!eligibleToUpdateSuccess) {
       await sendEmailTemplate("ORDER_FAILED", orderData, setting)
+      await sendPushNotificationTemplate(orderData.userId, "ORDER_FAILED_CUSTOMER", setting);
       return MESSAGE_RESPONSE("PaymentUnpaid", null, false);
     } else {
       try {
@@ -1935,9 +1940,12 @@ const updatePaymentStatus = async (userId, args) => {
           orderData.paymentStatus = "success";
           orderData.email = orderData.billing.email;
 
-          await orderData.save();
+          orderData = await orderData.save();
           await sendEmailTemplate("ORDER_PLACED", orderData, setting)
-          await sendEmailTemplate("ADMIN_NEW_ORDER", orderData, setting)
+          let temp = {...orderData.toObject(), email: setting.store.inventory.notification_recipients};
+          await sendEmailTemplate("ADMIN_NEW_ORDER", temp, setting);
+          await sendPushNotificationTemplate("ADMIN", "NEW_ORDER_PLACED_SELLER", setting);
+          await sendPushNotificationTemplate(orderData.userId, "NEW_ORDER_PLACED_CUSTOMER", setting);
         }
         const cart = await Cart.findOne({
           userId: new mongoose.Types.ObjectId(userId),
@@ -1945,6 +1953,7 @@ const updatePaymentStatus = async (userId, args) => {
         await emptyCart(cart);
       } catch (error) {
         await sendEmailTemplate("ORDER_FAILED", orderData, setting)
+        await sendPushNotificationTemplate(orderData.userId, "ORDER_FAILED_CUSTOMER", setting);
         return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
       }
       return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);

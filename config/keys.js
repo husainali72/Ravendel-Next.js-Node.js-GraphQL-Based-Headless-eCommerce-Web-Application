@@ -20,5 +20,9 @@ module.exports = {
   appName: process.env.REACT_APP_APP_NAME,
   FROM_EMAIL: process.env.FROM_EMAIL,
   SMTP_USER: process.env.SMTP_USER,
-  SMTP_PASSWORD: process.env.SMTP_PASSWORD
+  SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+
+  // one signal
+  ONE_SIGNAL_APP_ID: process.env.ONE_SIGNAL_APP_ID,
+  ONE_SIGNAL_AUTH_KEY: process.env.ONE_SIGNAL_AUTH_KEY
 };
