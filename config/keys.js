@@ -23,6 +23,7 @@ module.exports = {
   SMTP_PASSWORD: process.env.SMTP_PASSWORD,
 
   // one signal
-  ONE_SIGNAL_APP_ID: process.env.ONE_SIGNAL_APP_ID,
-  ONE_SIGNAL_AUTH_KEY: process.env.ONE_SIGNAL_AUTH_KEY
+  ONE_SIGNAL_DEEPLINK: process.env.ONE_SIGNAL_DEEPLINK,
+  // ONE_SIGNAL_APP_ID: process.env.ONE_SIGNAL_APP_ID,
+  // ONE_SIGNAL_AUTH_KEY: process.env.ONE_SIGNAL_AUTH_KEY
 };
