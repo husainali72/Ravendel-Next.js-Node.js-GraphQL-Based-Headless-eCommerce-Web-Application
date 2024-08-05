@@ -179,7 +179,13 @@ const DELETE_FUNC = async (token, delete_id, modal, name) => {
     return MESSAGE_RESPONSE("ID_ERROR", name, false);
   }
   try {
-    const response = await modal.deleteOne({_id:delete_id});
+    let response;
+    if(name === "Customers") {
+      response = await modal.findByIdAndUpdate({ _id: delete_id }, { status: "DELETED" });
+    }
+    else {
+      response = await modal.findByIdAndDelete({ _id: delete_id });
+    }
     const setting = await Setting.findOne({});
     if (response) {
       if (response.feature_image || response.image) {
@@ -439,6 +445,21 @@ const UPDATE_FUNC = async (
   }
 };
 
+const UPDATE_DEVICE_INFO = async (id, args, modal) => {
+  if (!id) {
+    return MESSAGE_RESPONSE("TOKEN_REQ", name, false);
+  }
+
+  const response = await modal.findById(id);
+
+  if (response) {
+    response.device_info = args.device_info;
+    await response.save();
+    return MESSAGE_RESPONSE("UpdateSuccess", "User", true);
+  }
+  return MESSAGE_RESPONSE("NOT_EXIST", "User", false);
+};
+
 UPDATE_PASSWORD_FUNC = async (
   token,
   updateId,
@@ -495,3 +516,4 @@ module.exports.GET_BY_URL = GET_BY_URL;
 module.exports.GET_BY_PAGINATIONS = GET_BY_PAGINATIONS;
 module.exports.GET_SINGLE_FUNC = GET_SINGLE_FUNC;
 module.exports.GET_BY_ROOT_ID = GET_BY_ROOT_ID;
+module.exports.UPDATE_DEVICE_INFO = UPDATE_DEVICE_INFO;

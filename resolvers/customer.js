@@ -5,7 +5,8 @@ const {
   MESSAGE_RESPONSE,
   _validate,
   duplicateData,
-  sendEmailTemplate
+  sendEmailTemplate,
+  checkToken
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -15,6 +16,7 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
   UPDATE_PASSWORD_FUNC,
+  UPDATE_DEVICE_INFO
 } = require("../config/api_functions");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -56,7 +58,7 @@ module.exports = {
         let validation = ["firstName", "lastName", "email", "password"];
         const duplicate = await duplicateData({ email: args.email }, Customer);
 
-        if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
+        if (duplicate) return MESSAGE_RESPONSE("Custom", "This email is not available", false);
         const errors = _validate(validation, data);
 
         if (!isEmpty(errors)) {
@@ -400,6 +402,10 @@ module.exports = {
         }
         return MESSAGE_RESPONSE("Custom", "Something went wrong", false);
       }
-    }
+    },
+    updateCustomerDeviceInfo: async (root, args, { id }) => {
+      checkToken(id);
+      return await UPDATE_DEVICE_INFO(id, args, Customer);
+    },
   },
 };

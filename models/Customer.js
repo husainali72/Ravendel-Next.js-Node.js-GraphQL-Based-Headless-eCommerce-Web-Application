@@ -95,6 +95,21 @@ const CustomerSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  device_info: {
+    device_id: String,
+    device_type: {
+      type: String,
+      enum: ["ANDROID", "IOS"],
+      default: "ANDROID",
+    },
+    app_version: String,
+  },
+  // add a status field
+  status: {
+    type: String,
+    enum: ["ACTIVE", "DELETED", "BLOCKED"],
+    default: "ACTIVE",
+  },
   updated: {
     type: Date,
   },

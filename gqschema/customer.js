@@ -1,5 +1,23 @@
 // const { gql } = require("@apollo/server");
 module.exports = `
+
+  enum DEVICE_TYPE {
+    ANDROID
+    IOS
+  }
+
+  type DEVICE_INFO {
+    device_id: String
+    device_type: DEVICE_TYPE
+    app_version: String
+  }
+  
+  input DEVICE_INFO_INPUT {
+    device_id: String
+    device_type: DEVICE_TYPE
+    app_version: String
+  }
+
   type Customer {
     id: ID
     firstName: String
@@ -9,6 +27,7 @@ module.exports = `
     phone: String
     password: String
     addressBook: customArray
+    device_info: DEVICE_INFO
     date: Date
     updated: Date
     gender: String
@@ -135,6 +154,9 @@ module.exports = `
     verifyForgetPasswordToken(
       token: String
       newPassword: String
+    ): statusSchema
+    updateCustomerDeviceInfo(
+      device_info: DEVICE_INFO_INPUT
     ): statusSchema
   }
 `;

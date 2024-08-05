@@ -46,6 +46,7 @@
     "node-cron": "^3.0.2",
     "nodemailer": "^6.6.3",
     "nodemon": "^2.0.2",
+    "onesignal-node": "^3.4.0",
     "paypal-rest-sdk": "^1.8.1",
     "razorpay": "^2.9.2",
     "sanitize-html": "^2.4.0",

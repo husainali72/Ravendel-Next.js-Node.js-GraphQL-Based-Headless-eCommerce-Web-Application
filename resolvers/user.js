@@ -24,6 +24,7 @@ const {
   GET_ALL_FUNC,
   CREATE_FUNC,
   UPDATE_FUNC,
+  UPDATE_DEVICE_INFO
 } = require("../config/api_functions");
 const bcrypt = require("bcryptjs");
 const moment = require('moment')
@@ -294,6 +295,10 @@ module.exports = {
     },
     deleteUser: async (root, args, { id }) => {
       return await DELETE_FUNC(id, args.id, User, "User");
+    },
+    updateUserDeviceInfo: async (root, args, { id }) => {
+      checkToken(id);
+      return await UPDATE_DEVICE_INFO(id, args, User);
     },
   },
 };
