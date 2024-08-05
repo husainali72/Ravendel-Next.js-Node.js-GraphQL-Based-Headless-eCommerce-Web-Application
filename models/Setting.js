@@ -51,6 +51,12 @@ const SeetingSchema = new Schema(
       port: {
         type: Number,
       },
+      from_email: {
+        type: String,
+      },
+      from_name: {
+        type: String,
+      },
     },
     imageStorage: {
       status: {
@@ -437,6 +443,8 @@ const defaultSettings = [
       username: "smtp@gmail.com",
       password: "123456",
       port: 587,
+      from_email: "smtp@gmail.com",
+      from_name: "Ravendel",
     },
     seo: {
       meta_title: "Ravendel",

@@ -121,6 +121,8 @@ module.exports = {
         setting.smtp.username = args.username;
         setting.smtp.password = args.password;
         setting.smtp.port = args.port;
+        setting.smtp.from_email = args.from_email;
+        setting.smtp.from_name = args.from_name;
         return await setting.save();
         //return await Setting.findOne({});
       } catch (error) {

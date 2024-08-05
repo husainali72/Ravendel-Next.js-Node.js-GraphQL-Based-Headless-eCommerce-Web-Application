@@ -1984,12 +1984,27 @@ const sendMail = async (data) => {
     // });
     const { createTransport } = require('nodemailer');
 
+    let settings = await Setting.findOne({});
+
+    let user = settings.smtp.username;
+    let pass = settings.smtp.password;
+    let fromEmail = settings.smtp.from_email || "ravendel@hbwebsol.com";
+    let fromName = settings.smtp.from_name || "Ravendel";
+    let host = settings.smtp.server;
+    let port = settings.smtp.port;
+
+    if (!user || !pass || !host || !port) {
+      console.log("SMTP credentials not found", settings._id);
+      return;
+    }
+    
+    data.from = `${fromName} <${fromEmail}>`;
     const transporter = createTransport({ 
-      host: "mail.smtp2go.com",
-      port: 2525,
+      host: host, // mail.smtp2go.com
+      port: port, // 2525
       auth: {
-          user: APP_KEYS.SMTP_USER,
-          pass: APP_KEYS.SMTP_PASSWORD
+          user: user,
+          pass: pass
       }
     })
     const response = await transporter.sendMail(data);
