@@ -452,7 +452,7 @@ const defaultSettings = [
         number_of_decimals: 2,
       },
       store_address: {
-        addressLine1: "Central Perk",
+        addressLine1: "Central Park",
         addressLine2: "",
         city: "New York",
         country: "USA",
@@ -464,15 +464,15 @@ const defaultSettings = [
         social_media: [
           {
             name: "Facebook",
-            handle: "",
+            handle: "#",
           },
           {
             name: "Instagram",
-            handle: "",
+            handle: "#",
           },
           {
             name: "Twitter",
-            handle: "",
+            handle: "#",
           }
         ]
       },
@@ -576,17 +576,47 @@ const defaultSettings = [
             label: "Featured Product",
             name: "feature_product",
             visible: true,
+            display_type: "SLIDER",
           },
           {
             label: "Products On Sales",
             name: "products_on_sales",
             visible: true,
-          }
+            display_type: "SLIDER",
+          },
+          {
+            label: "Product from Specific Categories",
+            name: "product_from_specific_categories",
+            visible: true,
+            display_type: "GRID",
+            category: "6622337b00d13df9f1fc2a4e",
+          },
+          {
+            label: "Product from Specific Categories",
+            name: "product_from_specific_categories",
+            visible: true,
+            display_type: "SLIDER",
+            category: "6622337b00d13df9f1fc2a40",
+          },
+          {
+            label: "Product from Specific Categories",
+            name: "product_from_specific_categories",
+            visible: true,
+            display_type: "GRID",
+            category: "6622337b00d13df9f1fc2a41",
+          },
+          {
+            label: "Product from Specific Categories",
+            name: "product_from_specific_categories",
+            visible: true,
+            display_type: "SLIDER",
+            category: "6622337b00d13df9f1fc2a42",
+          },
         ],
 
       },
       theme: {
-        primary_color: "#154050",
+        primary_color: "#000000",
         playstore: "https://play.google.com/store/apps/details?id=com.ravendel",
         appstore: "https://apps.apple.com/us/app/ravendel/id1351162341",
         logo: "",
@@ -604,15 +634,49 @@ const defaultSettings = [
           {
             label: "Featured Product",
             section_img: "",
-            visible: false,
+            display_type: "SLIDER",
+            visible: true,
             url: "feature_product",
           },
           {
             label: "Products On Sales",
             section_img: "",
-            visible: false,
+            display_type: "SLIDER",
+            visible: true,
             url: "products_on_sales",
-          }
+          },
+          {
+            label: "Product from Specific Categories",
+            section_img: "",
+            visible: true,
+            category: "6622337b00d13df9f1fc2a4e",
+            display_type: "GRID",
+            url: "product_from_specific_categories",
+          },
+          {
+            label: "Product from Specific Categories",
+            section_img: "",
+            visible: true,
+            category: "6622337b00d13df9f1fc2a40",
+            display_type: "SLIDER",
+            url: "product_from_specific_categories",
+          },
+          {
+            label: "Product from Specific Categories",
+            section_img: "",
+            visible: true,
+            category: "6622337b00d13df9f1fc2a41",
+            display_type: "GRID",
+            url: "product_from_specific_categories",
+          },
+          {
+            label: "Product from Specific Categories",
+            section_img: "",
+            visible: true,
+            category: "6622337b00d13df9f1fc2a42",
+            display_type: "SLIDER",
+            url: "product_from_specific_categories",
+          },
         ],
       }
     }
