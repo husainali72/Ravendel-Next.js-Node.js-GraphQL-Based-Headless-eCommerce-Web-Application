@@ -19,7 +19,7 @@ const ActionButton = ({ onClick, showDeleteButton }) => {
                     aria-label="Delete"
                     type='delete'
                     onClick={() => onClick('delete')}
-                    disabled
+                    // disabled
                 >
                     <DeleteIcon />
                 </IconButton>
