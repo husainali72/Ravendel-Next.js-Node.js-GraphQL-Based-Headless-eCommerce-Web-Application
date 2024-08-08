@@ -124,7 +124,7 @@ const SeetingSchema = new Schema(
           type: String
         },
         phone_number: {
-          type: Number
+          type: String
         },
         social_media: [
           {
