@@ -679,14 +679,14 @@ module.exports = {
           specsFilterData = {
             heading:specsAggrResult._id,
             type:"array",
-            field:"specifications.value",
+            field:specsAggrResult.value,
             category:"dynamic",
             valueType: "String",
             data:[]
           };
           let loopSpecsFilterData, reqSpecsFilter;
           if(filters) {
-            reqBrandFilter = filters.find(filter => filter.field == specsAggrResult._id);
+            reqSpecsFilter = filters.find(filter => filter.heading == specsAggrResult._id);
           }
           for(let specs of specsAggrResult.values) {
             loopSpecsFilterData = {
