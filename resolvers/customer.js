@@ -80,7 +80,7 @@ module.exports = {
           role: "customer",
         };
 
-        const tokenExpiresIn = 36000;
+        const tokenExpiresIn = APP_KEYS.JWT_REFRESH_EXPIRATION_DAYS;
 
         let expiry = new Date();
         expiry.setSeconds(expiry.getSeconds() + tokenExpiresIn);

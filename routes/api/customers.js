@@ -107,14 +107,14 @@ router.post("/login", (req, res) => {
             email: customer.email,
             role: "customer",
           }; // Create JWT Payload
-          const tokenExpiresIn = 36000;
+          const tokenExpiresIn = APP_KEYS.JWT_REFRESH_EXPIRATION_DAYS;
           let expiry = new Date();
-          expiry.setSeconds(expiry.getSeconds() + tokenExpiresIn);
+          expiry.setSeconds(expiry.getSeconds() + tokenExpiresIn * 24 * 60 * 60);
           let customerObject = {
             ...customer
           }
           // Sign Token
-          jwt.sign(payload, APP_KEYS.jwtSecret, { expiresIn: tokenExpiresIn }, (err, token) => {
+          jwt.sign(payload, APP_KEYS.jwtSecret, { expiresIn: `${tokenExpiresIn}d` }, (err, token) => {
             let data = {
               success: true,
               token: token,
