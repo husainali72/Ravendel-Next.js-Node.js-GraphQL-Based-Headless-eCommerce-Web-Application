@@ -82,29 +82,27 @@ export default function Footer() {
               <div className="row mt-5">
                 <div className="col-lg-4 col-md-6 mb-4 mt-2">
                   <div className="app-logo-container">
-                  <Link href="/">
-                    <a className="app-logo">
-                      <ProductImage
-                        src={get(settings, "setting.appearance.theme.logo")}
-                        className="logo-image"
-                        alt=""
-                      />
-                    </a>
-                  </Link>
+                    <Link href="/">
+                      <a className="app-logo">
+                        <ProductImage
+                          src={get(settings, "setting.appearance.theme.logo")}
+                          className="logo-image"
+                          alt=""
+                        />
+                      </a>
+                    </Link>
                   </div>
                   <div className="address">
-                  
-                    { (addressLine1 ||
+                    {(addressLine1 ||
                       addressLine2 ||
                       city ||
                       email ||
                       phoneNumber ||
-                       hour)
-                       && (
-                        <h5 className="fw-600 text-grey-4 wow fadeIn animated animated animated">
-                          Contact
-                        </h5>
-                      )}
+                      hour) && (
+                      <h5 className="fw-600 text-grey-4 wow fadeIn animated animated animated">
+                        Contact
+                      </h5>
+                    )}
                     {addressLine1 && (
                       <>
                         <strong>Address : </strong>
@@ -191,6 +189,11 @@ export default function Footer() {
                   <p className="link-hover">
                     <Link href="/terms-conditions">
                       <a className="text-reset">Terms & Conditions</a>
+                    </Link>
+                  </p>
+                  <p className="link-hover">
+                    <Link href="/delivery-policy">
+                      <a className="text-reset">Shipping & Delivery Policy</a>
                     </Link>
                   </p>
                   <p className="link-hover">
