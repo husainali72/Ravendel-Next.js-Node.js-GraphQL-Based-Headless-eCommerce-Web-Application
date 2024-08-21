@@ -11,18 +11,18 @@ const FilterSlider = ({ data, handleFilterChange,onBlur }) => {
       <div style={{ marginTop: "24px" }}>
         <MultiRangeSlider
         onBlur={onBlur}
-          min={get(data, "data.minPrice")}
-          max={get(data, "data.maxPrice")}
-          minValue={get(data, "select.minPrice", get(data, "data.minPrice"))}
-          maxValue={get(data, "select.maxPrice", get(data, "data.maxPrice"))}
+          min={get(data, "data.minValue")}
+          max={get(data, "data.maxValue")}
+          minValue={get(data, "select.minValue", get(data, "data.minValue"))}
+          maxValue={get(data, "select.maxValue", get(data, "data.maxValue"))}
           onChange={({ min, max }) => {
             if (
-              min !== get(data, "minPrice") ||
-              max !== get(data, "maxPrice")
+              min !== get(data, "minValue") ||
+              max !== get(data, "maxValue")
             ) {
               let value = {
-                minPrice: min,
-                maxPrice: max,
+                minValue: min,
+                maxValue: max,
               };
               handleFilterChange(value, data?.type);
             }
@@ -31,11 +31,11 @@ const FilterSlider = ({ data, handleFilterChange,onBlur }) => {
         <p className="range-value">
           Range :{" "}
           <Price
-            price={get(data, "select.minPrice", get(data, "data.minPrice"))}
+            price={get(data, "select.minValue", get(data, "data.minValue"))}
           />{" "}
           -{" "}
           <Price
-            price={get(data, "select.maxPrice", get(data, "data.maxPrice"))}
+            price={get(data, "select.maxValue", get(data, "data.maxValue"))}
           />
         </p>
       </div>
