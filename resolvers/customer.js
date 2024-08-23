@@ -110,6 +110,7 @@ module.exports = {
         company: args.company || "",
         phone: args.phone || "",
         updated: Date.now(),
+        password: args.password || "",
       };
       let validation = ["firstName", "lastName", "email"];
       const duplicate = await duplicateData({email: args.email}, Customer, args.id)

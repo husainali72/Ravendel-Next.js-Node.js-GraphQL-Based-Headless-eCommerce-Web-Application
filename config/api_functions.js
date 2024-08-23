@@ -415,9 +415,7 @@ const UPDATE_FUNC = async (
           }
         }
       }
-      
       if (data?.password.length != 0) {
-        console.log("FOund password : ", data.password);
         data.password = await bcrypt.hash(data.password, 10);
       }
       else{

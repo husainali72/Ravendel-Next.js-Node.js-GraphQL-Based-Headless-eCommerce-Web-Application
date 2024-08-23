@@ -208,6 +208,7 @@ const UPDATE_CUSTOMER = gql`
     $email: String
     $company: String
     $phone: String
+    $password: String
   ) {
     updateCustomer(
       id: $id
@@ -216,6 +217,7 @@ const UPDATE_CUSTOMER = gql`
       email: $email
       company: $company
       phone: $phone
+      password: $password
     ) {
       message
       success
