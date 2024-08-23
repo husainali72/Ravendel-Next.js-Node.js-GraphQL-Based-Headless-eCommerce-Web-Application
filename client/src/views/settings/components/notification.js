@@ -5,6 +5,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import Alerts from "../../components/Alert";
 import OneSignal from "./oneSignal";
+import Seller from "./seller.js";
 const NotificationComponent = () => {
     const [tabVal, setTabVal] = useState(0);
     const handleChange = (event, newValue) => {
@@ -24,12 +25,16 @@ const NotificationComponent = () => {
                             textColor="primary"
                             variant="scrollable"
                         >
-                            <Tab label="One Signal" {...TabProps(0)} />
+                            <Tab label="Customer" {...TabProps(0)} />
+                            <Tab label="Seller" {...TabProps(1)} />
 
                         </Tabs>
                     </Paper>
                     <TabPanel value={tabVal} index={0}>
                         <OneSignal />
+                    </TabPanel>
+                    <TabPanel value={tabVal} index={1}>
+                        <Seller />
                     </TabPanel>
 
                 </Grid>

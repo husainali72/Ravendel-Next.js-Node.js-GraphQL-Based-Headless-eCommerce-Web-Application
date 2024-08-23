@@ -1575,7 +1575,7 @@ footer .follow h5 {
 .section-banner {
   position: relative;
   width: 100%;
-  height: 500px;
+  height: 40vw;
 }
 .section-banner h2 {
   position: absolute;
