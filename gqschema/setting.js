@@ -179,7 +179,8 @@ module.exports = `
   }
 
   type Notification {
-    one_signal: ONE_SIGNAL
+    customer: ONE_SIGNAL
+    seller: ONE_SIGNAL
   }
 
   type ONE_SIGNAL {
@@ -419,7 +420,11 @@ module.exports = `
       sandbox_client_id: String
       live_client_id: String
     ): Setting
-    updateNotificationOneSignal(
+    updateNotificationCustomer(
+      app_id: String
+      rest_api_key: String
+    ): Setting
+    updateNotificationSeller(
       app_id: String
       rest_api_key: String
     ): Setting

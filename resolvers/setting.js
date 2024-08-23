@@ -331,13 +331,27 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    updateNotificationOneSignal: async (root, args, { id }) => {
+    updateNotificationCustomer: async (root, args, { id }) => {
       checkToken(id);
       try {
         await checkAwsFolder('setting');
         const setting = await Setting.findOne({});
-        setting.notification.one_signal.app_id = args.app_id
-        setting.notification.one_signal.rest_api_key = args.rest_api_key
+        console.log(args)
+        setting.notification.customer.app_id = args.app_id
+        setting.notification.customer.rest_api_key = args.rest_api_key
+        return await setting.save();
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    updateNotificationSeller: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        await checkAwsFolder('setting');
+        const setting = await Setting.findOne({});
+        setting.notification.seller.app_id = args.app_id
+        setting.notification.seller.rest_api_key = args.rest_api_key
         return await setting.save();
       } catch (error) {
         error = checkError(error);

@@ -303,14 +303,22 @@ const SeetingSchema = new Schema(
       }
     },
     notification: {
-      one_signal: {
+      customer: {
         app_id: {
           type: String,
         },
         rest_api_key: {
           type: String,
         },
-      }
+      },
+      seller: {
+        app_id: {
+          type: String,
+        },
+        rest_api_key: {
+          type: String,
+        },
+      },
     },
     appearance: {
       home: {

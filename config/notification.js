@@ -35,15 +35,13 @@ const sendPushNotificationTemplate = async (
   // console.log("sendPushNotificationTemplate: ", userId, template_name);
   // console.log("env deeplink name : ", APP_KEYS.ONE_SIGNAL_DEEPLINK);
   if ((!userId, !template_name, !Setting, !orderId)) {
-
-
     // console.log("User Id Not Found");
     return false;
   }
   // console.log("sendPushNotificationTemplate Settings: ", Setting);
 
-  let APP_ID = Setting.notification.one_signal.app_id;
-  let API_KEY = Setting.notification.one_signal.rest_api_key;
+  let APP_ID = Setting.notification.customer.app_id;
+  let API_KEY = Setting.notification.customer.rest_api_key;
 
   // console.log("APP_ID: ", APP_ID, "API_KEY: ", API_KEY);
 
@@ -66,6 +64,8 @@ const sendPushNotificationTemplate = async (
       role: "MANAGER",
       "device_info.device_id": { $exists: true, $ne: "" },
     });
+    APP_ID = Setting.notification.customer.app_id;
+    API_KEY = Setting.notification.customer.rest_api_key;
   } else {
     userData = await Customer.findOne({ _id: userId });
   }
