@@ -38,6 +38,7 @@ const sendPushNotificationTemplate = async (
     // console.log("User Id Not Found");
     return false;
   }
+  // console.log("Sending to : ", userId);
   // console.log("sendPushNotificationTemplate Settings: ", Setting);
 
   let APP_ID = Setting.notification.customer.app_id;
@@ -64,8 +65,8 @@ const sendPushNotificationTemplate = async (
       role: "MANAGER",
       "device_info.device_id": { $exists: true, $ne: "" },
     });
-    APP_ID = Setting.notification.customer.app_id;
-    API_KEY = Setting.notification.customer.rest_api_key;
+    APP_ID = Setting.notification.seller.app_id;
+    API_KEY = Setting.notification.seller.rest_api_key;
   } else {
     userData = await Customer.findOne({ _id: userId });
   }
@@ -94,6 +95,11 @@ const sendPushNotification = async (playerId, data, APP_ID, API_KEY) => {
     include_player_ids: [playerId],
     headings: { en: data.title },
     app_url: data.app_url,
+    ios_badgeType: "Increase",
+    ios_badgeCount: 1
+    // ios_attachments: {
+    //   id: "https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg"
+    // },
   };
 
   // console.log("push notification data : ", notification);
