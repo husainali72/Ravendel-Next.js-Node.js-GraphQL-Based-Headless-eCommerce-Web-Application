@@ -49,8 +49,8 @@ const CategoryFilter = ({ filterCategoryData, handleFilter,activeSorting }) => {
         currentValue = filterData[index];
         updatedSelect = {
           ...currentValue.select,
-          minPrice: get(value, "minPrice"),
-          maxPrice: get(value, "maxPrice"),
+          minValue: get(value, "minValue"),
+          maxValue: get(value, "maxValue"),
         };
         updatedFilterData = [...filterData];
         updatedFilterData[index] = {

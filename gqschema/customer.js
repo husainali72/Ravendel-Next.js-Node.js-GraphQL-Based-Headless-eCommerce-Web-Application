@@ -104,6 +104,7 @@ module.exports = `
       company: String
       phone: String
       gender: String
+      password: String
     ): statusSchema
     updateCustomerPassword(
       id: ID!

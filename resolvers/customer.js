@@ -58,7 +58,7 @@ module.exports = {
         let validation = ["firstName", "lastName", "email", "password"];
         const duplicate = await duplicateData({ email: args.email }, Customer);
 
-        if (duplicate) return MESSAGE_RESPONSE("Custom", "This email is not available", false);
+        if (duplicate) return MESSAGE_RESPONSE("Custom", "Already registered ?", false);
         const errors = _validate(validation, data);
 
         if (!isEmpty(errors)) {
@@ -80,7 +80,7 @@ module.exports = {
           role: "customer",
         };
 
-        const tokenExpiresIn = 36000;
+        const tokenExpiresIn = APP_KEYS.JWT_REFRESH_EXPIRATION_DAYS;
 
         let expiry = new Date();
         expiry.setSeconds(expiry.getSeconds() + tokenExpiresIn);
@@ -110,6 +110,7 @@ module.exports = {
         company: args.company || "",
         phone: args.phone || "",
         updated: Date.now(),
+        password: args.password || "",
       };
       let validation = ["firstName", "lastName", "email"];
       const duplicate = await duplicateData({email: args.email}, Customer, args.id)

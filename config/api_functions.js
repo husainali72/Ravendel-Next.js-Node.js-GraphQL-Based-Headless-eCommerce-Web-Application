@@ -415,14 +415,17 @@ const UPDATE_FUNC = async (
           }
         }
       }
+      if (data?.password.length != 0) {
+        data.password = await bcrypt.hash(data.password, 10);
+      }
+      else{
+        data.password = response.password
+      }
+
       for (const [key, value] of Object.entries(data)) {
         response[key] = value;
       }
-
-      if (data.password) {
-        response.password = await bcrypt.hash(data.password, 10);
-      }
-
+      
       if (data.gender === "" && data.gender === null) {
         return {
           message: "Invalid gender",
@@ -432,8 +435,8 @@ const UPDATE_FUNC = async (
       if (name !== "Page" && name !== "Product Attribute") response.updated = Date.now();
 
       response = await modal.findByIdAndUpdate({ _id: response._id }, { ...response });
-      await response.save();
-      // update average rating of product related to reviews
+      // await response.save();
+      // // update average rating of product related to reviews
       if (name === "Review") {
         await prodAvgRating(data.productId, modal, modal2);
       }

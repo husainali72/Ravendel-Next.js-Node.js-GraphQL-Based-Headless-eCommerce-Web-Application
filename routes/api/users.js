@@ -75,7 +75,7 @@ router.post("/login", (req, res) => {
           jwt.sign(
             payload,
             APP_KEYS.jwtSecret,
-            { expiresIn: 36000 },
+            { expiresIn: `${APP_KEYS.JWT_REFRESH_EXPIRATION_DAYS}d` },
             (err, token) => {
               if(token){
                 res.json({
