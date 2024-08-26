@@ -80,6 +80,7 @@ import { productsCloneAction } from "../../store/action/productAction";
 let defaultobj = {
   _id: "",
   name: "",
+  url:'',
   description: "",
   categoryId: [],
   categoryTree: [],
@@ -140,6 +141,7 @@ const EditProductComponent = ({ params }) => {
   const [shippingClass, setShippingClass] = useState(defaultobj.shipping);
   const [product, setProduct] = useState(defaultobj);
   const [isUrlChanged, setIsUrlChanged] = useState(false);
+  const [isCloneProduct, setIsCloneProduct] = useState(false);
   const setting = useSelector((state) => state.settings);
   const { attributes } = useSelector((state) => state.productAttributes);
   const baseURl = getBaseUrl(setting);
@@ -697,17 +699,18 @@ const EditProductComponent = ({ params }) => {
       if (get(productToClone, "_id")) {
         setClonedId(get(productToClone, "_id"));
       }
-      const { url, ...rest } = productToClone;
+      const {  ...rest } = productToClone;
       setProduct({
         ...product,
         ...rest,
-        name: productToClone?.name && `${productToClone.name} copy`,
+        name: isCloneProduct?  `${productToClone.name} copy`:productToClone.name,
         specifications: groupedSpecifications,
         categoryId: categoryIds,
         categoryTree: get(productToClone, "categoryTree", []),
         brand: defaultBrand && Object.keys(defaultBrand).length > 0 ? defaultBrand : null,
         shipping,
       });
+      isCloneProduct && updateUrlOnBlur(`${productToClone.name} copy`)
       if (productToClone.feature_image) {
         setfeatureImage(baseURl + productToClone.feature_image);
       } else {
@@ -717,8 +720,10 @@ const EditProductComponent = ({ params }) => {
   }, [productState?.product]);
   const cloneProject = async (event, value) => {
     if (get(value, "value") && productState?.products) {
+      setIsCloneProduct(true)
       dispatch(productAction(value?.value));
     }else{
+      setIsCloneProduct(false)
       setProduct({...defaultobj})
       setfeatureImage(null)
     }
@@ -755,10 +760,10 @@ const EditProductComponent = ({ params }) => {
       await query(CHECK_VALID_URL, { url: url }).then((res) => {
         if (get(res, "data.validateUrl.url")) {
           const newUrl = get(res, "data.validateUrl.url");
-          setProduct({
-            ...product,
+          setProduct((previousProduct) => ({
+            ...previousProduct,
             url: newUrl,
-          });
+          }))
           setIsUrlChanged(true);
         }
       });
