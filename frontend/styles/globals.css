@@ -8723,3 +8723,19 @@ text-align: center;
   margin-bottom: 20px; 
 }
 
+.carousel-control-next, .carousel-control-prev {
+  top: 50% !important;
+  left: 5% !important;
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+}
+.carousel-control-next{
+  left: unset !important;
+  right: 5% !important;
+}
+.carousel-control-next-icon, .carousel-control-prev-icon {
+  width: 28px !important;
+  height: 28px !important;
+}
