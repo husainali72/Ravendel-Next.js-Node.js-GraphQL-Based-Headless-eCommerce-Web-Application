@@ -13,6 +13,39 @@ const Cart = require("../../models/Cart");
 const Setting = require("../../models/Setting");
 const { sendEmail } = require("../../config/helpers");
 const mongoose = require('mongoose');
+const { OAuth2Client } = require('google-auth-library');
+
+let client;
+if (APP_KEYS.GOOGLE_CLIENT_ID) {
+  console.log("GOOGLE_CLIENT_ID", APP_KEYS.GOOGLE_CLIENT_ID)
+  client = new OAuth2Client(APP_KEYS.GOOGLE_CLIENT_ID);
+}
+else {
+  console.log("GOOGLE_CLIENT_ID fake : ", APP_KEYS.GOOGLE_CLIENT_ID)
+  client = null;
+}
+
+async function verifyGoogleToken(idToken) {
+  try {
+    if (!client) throw new Error('Google OAuth client is not initialized.');
+
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: APP_KEYS.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    return payload;
+  } catch (error) {
+    if (error.message.includes('too late')) {
+      throw new Error('Invalid or expired token');
+    } else {
+      throw new Error('Failed to verify token');
+    }
+  }
+}
+
+
 // @route   Post api/posts
 // @desc    Registering customer
 // @access  public
@@ -134,7 +167,77 @@ router.post("/login", (req, res) => {
   }
 });
 
+router.post('/googleOAuth', async(req, res) =>{
+  try {
 
+    if(!client){
+      return res.status(400).json({success: false,message: 'Google OAuth client is not initialized.' });
+    }
+
+    let data = req.body;
+
+    if (!data.idToken) {
+      return res.status(400).json({success: false,message: 'Id token is required.' });
+    }
+
+
+    const googleUser = await verifyGoogleToken(data.idToken);
+
+    const pipeline = [
+      {
+        $lookup: {
+          from: "carts",
+          localField: "_id",
+          foreignField: "userId",
+          as: "cartId",
+        },
+      },
+      { $set: { cartId: { $arrayElemAt: ["$cartId._id", 0] } } },
+      { $match: { email: googleUser.email, status: "ACTIVE" } },
+    ];
+
+    let customerData = await Customer.aggregate(pipeline);
+
+    let customer = customerData[0];
+
+    if (!customer) {
+      // return res.status(404).json({success: false,message: 'Customer not found.' });
+
+      let password = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      let hashedPassword = await bcrypt.hash(password, 10);
+
+
+      customer = new Customer({
+        firstName: googleUser.given_name,
+        lastName: googleUser.family_name,
+        email: googleUser.email,
+        password: hashedPassword,
+      });
+
+      customer = await customer.save();
+    }
+    const payload = {
+      id: customer._id,
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      email: customer.email,
+      role: "customer",
+    }; // Create JWT Payload
+
+    let token = jwt.sign(payload, APP_KEYS.jwtSecret, { expiresIn: `${APP_KEYS.JWT_REFRESH_EXPIRATION_DAYS}d` });
+
+    data = {
+      success: true,
+      token: token,
+      customer: customer,
+    }
+
+    return res.status(200).json({success: true, data})
+  } catch (err) {
+    // console.log(err);
+    return res.status(404).json({ success: false, message: err.message });
+  }
+});
 
 // @route   Post api/posts
 // @desc    Forgot password customer
