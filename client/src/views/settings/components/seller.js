@@ -8,20 +8,20 @@ import { get } from "lodash";
 import theme from "../../../theme/index.js";
 import Alerts from "../../components/Alert";
 import Loading from "../../components/Loading.js";
-import { oneSignalUpdateAction } from "../../../store/action/settingAction";
+import { oneSignalSellerUpdateAction } from "../../../store/action/settingAction";
 const SellerComponent = () => {
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [onesignal, setOneSignal] = useState({ enable: false });
   useEffect(() => {
-    if (get(settingState, "settings.notification.one_signal")) {
+    if (get(settingState, "settings.notification.seller")) {
       setOneSignal({
-        ...get(settingState, "settings.notification.one_signal"),
+        ...get(settingState, "settings.notification.seller"),
       });
     }
   }, [get(settingState, "settings")]);
   const updateOneSignal = () => {
-    dispatch(oneSignalUpdateAction(onesignal));
+    dispatch(oneSignalSellerUpdateAction(onesignal));
   };
   return (
     <>

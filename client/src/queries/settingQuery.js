@@ -126,7 +126,11 @@ const SETTING_TILE_DATA = gql`
       }
     }
     notification {
-      one_signal {
+      customer {
+        app_id
+        rest_api_key
+      }
+      seller {
         app_id
         rest_api_key
       }
@@ -482,9 +486,18 @@ const UPDATE_PAYMENT_RAZORPAY = gql`
   ${SETTING_TILE_DATA}
 `;
 
-const UPDATE_NOTIFICATION_ONESIGNAL = gql`
+const UPDATE_NOTIFICATION_ONESIGNAL_CUSTOMER = gql`
   mutation ($app_id: String, $rest_api_key: String) {
-    updateNotificationOneSignal(app_id: $app_id, rest_api_key: $rest_api_key) {
+    updateNotificationCustomer(app_id: $app_id, rest_api_key: $rest_api_key) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+
+const UPDATE_NOTIFICATION_ONESIGNAL_SELLER = gql`
+  mutation ($app_id: String, $rest_api_key: String) {
+    updateNotificationSeller(app_id: $app_id, rest_api_key: $rest_api_key) {
       ...SettingTile
     }
   }
@@ -636,7 +649,8 @@ export {
   UPDATE_PAYMENT_STRIPE,
   UPDATE_PAYMENT_PAYPAL,
   UPDATE_PAYMENT_RAZORPAY,
-  UPDATE_NOTIFICATION_ONESIGNAL,
+  UPDATE_NOTIFICATION_ONESIGNAL_CUSTOMER,
+  UPDATE_NOTIFICATION_ONESIGNAL_SELLER,
   UPDATE_APPEARANCE_HOME,
   UPDATE_APPEARANCE_MOBILE,
   UPDATE_APPEARANCE_THEME,
