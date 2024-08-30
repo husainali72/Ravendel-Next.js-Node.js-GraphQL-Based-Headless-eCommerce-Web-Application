@@ -415,7 +415,7 @@ const UPDATE_FUNC = async (
           }
         }
       }
-      if (data?.password.length != 0) {
+      if (data?.password && data?.password?.length != 0) {
         data.password = await bcrypt.hash(data.password, 10);
       }
       else{
@@ -444,6 +444,7 @@ const UPDATE_FUNC = async (
     }
     return MESSAGE_RESPONSE("NOT_EXIST", name, false);
   } catch (error) {
+    console.log("error in update : ", error);
     return MESSAGE_RESPONSE("UPDATE_ERROR", name, false);
   }
 };

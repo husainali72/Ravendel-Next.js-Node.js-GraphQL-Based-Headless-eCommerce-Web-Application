@@ -17,7 +17,8 @@ import {
   UPDATE_APPEARANCE_THEME,
   UPDATE_APPEARANCE_HOME_NEW,
   UPDATE_APPEARANCE_MOBILE_NEW,
-  UPDATE_NOTIFICATION_ONESIGNAL,
+  UPDATE_NOTIFICATION_ONESIGNAL_CUSTOMER,
+  UPDATE_NOTIFICATION_ONESIGNAL_SELLER,
   UPDATE_STORE_ORDER,
   ADD_ZIPCODE,
   GET_ZIPCODE,
@@ -529,12 +530,44 @@ export const oneSignalUpdateAction = (object) => (dispatch) => {
   dispatch({
     type: SETING_LOADING,
   });
-  mutation(UPDATE_NOTIFICATION_ONESIGNAL, object)
+  mutation(UPDATE_NOTIFICATION_ONESIGNAL_CUSTOMER, object)
     .then((response) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: get(response,'data.updateNotificationOneSignal'),
+          payload: get(response,'data.updateNotificationCustomer'),
+        });
+
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: true,
+            message: "Updated successfully",
+            error: false,
+          },
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: SETTING_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: error, error: true },
+      });
+    });
+};
+export const oneSignalSellerUpdateAction = (object) => (dispatch) => {
+  dispatch({
+    type: SETING_LOADING,
+  });
+  mutation(UPDATE_NOTIFICATION_ONESIGNAL_SELLER, object)
+    .then((response) => {
+      if (response) {
+        dispatch({
+          type: SETTING_SUCCESS,
+          payload: get(response,'data.updateNotificationSeller'),
         });
 
         return dispatch({

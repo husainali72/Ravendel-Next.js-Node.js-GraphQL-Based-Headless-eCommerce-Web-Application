@@ -14,9 +14,9 @@ const OneSignalComponent = () => {
   const settingState = useSelector((state) => state.settings);
   const [onesignal, setOneSignal] = useState({ enable: false });
   useEffect(() => {
-    if (get(settingState, "settings.notification.one_signal")) {
+    if (get(settingState, "settings.notification.customer")) {
       setOneSignal({
-        ...get(settingState, "settings.notification.one_signal"),
+        ...get(settingState, "settings.notification.customer"),
       });
     }
   }, [get(settingState, "settings")]);
