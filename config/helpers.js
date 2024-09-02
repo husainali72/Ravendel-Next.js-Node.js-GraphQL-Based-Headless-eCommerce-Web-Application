@@ -1726,7 +1726,8 @@ const addOrder = async(args) => {
     request.prefer('return=representation');
     const paypalItems = calculatedCart.cartItems.map(item=> {
       return{
-        name: item.productTitle.replace(/[^a-zA-Z0-9 ]/g, ""),
+        // trim name to 120 chars
+        name: item.productTitle.length > 120 ? item.productTitle.substring(0, 120) : item.productTitle,
         unit_amount: {
           currency_code: currencycode,
           value: (+item.productPrice)
