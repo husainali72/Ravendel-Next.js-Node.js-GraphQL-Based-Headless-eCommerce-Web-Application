@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { insertToken } from "./store/action/loginAction";
 import Login from "./views/login";
@@ -8,9 +8,14 @@ import ThemeHelper from "./main-layout";
 import "./assets/scss/index.css";
 import "./App.css";
 import cookie from "react-cookies";
+import { Helmet } from "react-helmet";
+import get from "lodash/get";
+import { getSettings } from "./store/action";
+
 const App = () => {
   const dispatch = useDispatch();
   const login = useSelector((state) => state.login);
+  const settings = useSelector((state) => state.settings);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -45,21 +50,25 @@ const App = () => {
     );
   }
 
+  const metaTitle = get(settings, 'settings.seo.meta_title', process.env.REACT_APP_META_TITLE);
+
   return (
     <>
-      {!isEmpty(login.user_token) && cookie.load("auth").token ?
+      <Helmet>
+        <title>{metaTitle}</title>
+      </Helmet>
+      {!isEmpty(login.user_token) && cookie.load("auth")?.token ? (
         <ThemeHelper />
-        :
+      ) : (
         <Routes>
-
           <Route
             exact={true}
             path={`${client_app_route_url}login`}
             element={<Login />}
           ></Route>
-          <Route path='*' element={<Navigate to={`${client_app_route_url}login`} />} />
+          <Route path="*" element={<Navigate to={`${client_app_route_url}login`} />} />
         </Routes>
-      }
+      )}
     </>
   );
 };
