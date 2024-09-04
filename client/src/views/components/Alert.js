@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import { useDispatch, useSelector } from "react-redux";
 import MuiAlert from "@mui/material/Alert";
+import { isString } from "lodash";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -55,7 +56,7 @@ const Alerts = () => {
             severity={alert.success ? "success" : "error"}
             sx={{ width: "100%" }}
           >
-            {alert.message}
+            {isString(alert.message) ? alert.message : 'Something went wrong'}
           </Alert>
         ) : null}
       </Snackbar>

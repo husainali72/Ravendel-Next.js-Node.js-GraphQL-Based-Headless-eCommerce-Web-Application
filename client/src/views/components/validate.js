@@ -1,6 +1,12 @@
 import { PhoneNumberUtil } from "google-libphonenumber";
 import { capitalize } from "lodash";
 const isNullOrWhitespace = (value) => value === "" || /^\s*$/.test(value);
+
+export const isValidEmail = (email) => {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailPattern.test(email);
+};
+
 export const validate = (names, args) => {
   let errors = "";
   if (names && names.length > 0) {

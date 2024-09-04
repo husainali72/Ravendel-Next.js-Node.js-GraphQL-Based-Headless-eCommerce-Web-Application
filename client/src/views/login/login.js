@@ -7,21 +7,52 @@ import { LoginAction } from "../../store/action";
 import { Alert, Loading } from "../components";
 import { useNavigate } from "react-router-dom";
 import theme from "../../theme";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { isValidEmail, validate } from "../components/validate";
+import { isEmpty } from "lodash";
 const LoginComponent = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const login_loading = useSelector((state) => state.login.token_loading);
   const navigate = useNavigate();
   const [values, setValues] = useState({
-    email: "admin@ravendel.com",
-    password: "12345678",
+    email: "",
+    password: "",
   });
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
   const login = (e) => {
     e.preventDefault();
-    dispatch(LoginAction(values.email, values.password, navigate));
+    let errors = validate(
+      [
+         "password",
+        "email",
+       ,
+      ],
+      values
+    );
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }else if(!isValidEmail(values.email)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: 'Invalid email',
+          error: true,
+        },
+      });
+    }else {
+      dispatch(LoginAction(values.email, values.password, navigate));
+    }
   };
   return (
     <div className={classes.root}>
@@ -41,6 +72,7 @@ const LoginComponent = () => {
               type="text"
               variant="outlined"
               value={values.email}
+              autoComplete="off"
               onChange={handleChange("email")}
             />
             <TextField
@@ -49,6 +81,7 @@ const LoginComponent = () => {
               label="Password"
               name="password"
               type="password"
+              autoComplete="new-password"
               variant="outlined"
               value={values.password}
               onChange={handleChange("password")}

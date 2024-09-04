@@ -10,7 +10,7 @@ const location = window.location.origin;
 
 export const mutation = async (query, variables) => {
   try {
-    
+
     const response = await APclient.mutate({
       mutation: query,
       variables,
@@ -90,17 +90,19 @@ const service = (config, navigate) => {
       return response;
     },
     function (error) {
-      if (!error?.response) {
-        error={response : {
-          data: "Network error",
-          status: 500,
-        }}
+      if (!error && !error?.response) {
+        error = {
+          response: {
+            data: "Network error",
+            status: 500,
+          }
+        }
       }
-      if (error.response.status === 401) {
+      if (error?.response?.status === 401) {
         Auth.logout();
         navigate(`${client_app_route_url}login`);
       }
-      return Promise.reject(get(error,'response.data'),'Something went wrong');
+      return Promise.reject(get(error, 'response.data') || error?.response || error, 'Something went wrong');
     }
   );
   return axios(config);
