@@ -370,6 +370,7 @@ const EditCustomerComponent = ({ params }) => {
                     name="email"
                     onInputChange={handleChange}
                     type="email"
+                    autoComplete='off'
                     onInput={toInputLowercase}
                   />
                 </Grid>
@@ -378,6 +379,7 @@ const EditCustomerComponent = ({ params }) => {
                     name="password"
                     value={customer.password}
                     label="Password"
+                          autoComplete='new-password'
                     onInputChange={handleChange}
                   />
                 </Grid>

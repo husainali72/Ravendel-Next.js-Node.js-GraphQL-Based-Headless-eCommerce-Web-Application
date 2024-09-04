@@ -12,7 +12,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import clsx from "clsx";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index.js";
-const PasswordInputComponent = ({ name, value, label, onInputChange }) => {
+const PasswordInputComponent = ({ name, value,autoComplete, label, onInputChange }) => {
   const classes = viewStyles();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -36,6 +36,7 @@ const PasswordInputComponent = ({ name, value, label, onInputChange }) => {
         type={showPassword ? "text" : "password"}
         name={name}
         value={value}
+        autoComplete={autoComplete}
         onChange={onInputChange}
         endAdornment={
           <InputAdornment position="end">
@@ -50,18 +51,18 @@ const PasswordInputComponent = ({ name, value, label, onInputChange }) => {
           </InputAdornment>
         }
         labelWidth={70}
-        autoComplete="off"
       />
     </FormControl>
   );
 };
 
-const PasswordInput = ({ name, value, label, onInputChange }) => {
+const PasswordInput = ({ name, value, label, onInputChange,autoComplete }) => {
   return (
     <ThemeProvider theme={theme}>
       <PasswordInputComponent
         name={name}
         value={value}
+        autoComplete={autoComplete}
         label={label}
         onInputChange={onInputChange}
       />
