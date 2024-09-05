@@ -184,7 +184,7 @@ module.exports = {
        const customerData= await customer.save();
        let address=customerData?.addressBook[customerData?.addressBook?.length-1]
         let data={
-          ...MESSAGE_RESPONSE("UpdateSuccess", "Address", true),
+          ...MESSAGE_RESPONSE("AddSuccess", "Address", true),
           data: address
         }
         return data

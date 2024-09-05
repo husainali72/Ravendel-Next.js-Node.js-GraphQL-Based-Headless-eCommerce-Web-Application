@@ -1682,9 +1682,9 @@ const addOrder = async(args) => {
               id: item.productId.toString()
             },
           },
-          unit_amount: (+item.productPrice)*100
+          unit_amount: (calculatedCart.totalSummary.grandTotal)*100
         },
-        quantity: (+item.qty),
+        quantity: (1),
       }
     })
     
