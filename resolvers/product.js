@@ -1769,7 +1769,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
       }
       try {
-        var errors = _validate(["name", "description", "short_description", "sku", "quantity"], args);
+        var errors = _validate(["name", "description", "short_description", "sku"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -1851,7 +1851,7 @@ module.exports = {
             short_description: args.short_description,
             description: args.description,
             sku: args.sku,
-            quantity: args.quantity,
+            quantity: args.quantity || 0,
             pricing: {
               price: args.pricing.price || 0,
               sellprice: args.pricing.sellprice || 0,
@@ -1893,7 +1893,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
       }
       try {
-        var errors = _validate(["name", "description", "short_description", "sku", "quantity"], args);
+        var errors = _validate(["name", "description", "short_description", "sku"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -2007,7 +2007,7 @@ module.exports = {
           product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;
-          product.quantity = args.quantity;
+          product.quantity = args.quantity || 0;
           product.pricing = args.pricing;
           product.gallery_image = gallery_images;
           product.meta = args.meta;
