@@ -324,7 +324,6 @@ const EditProductComponent = ({ params }) => {
     let errors = validate(
       [
         "short_description",
-        "quantity",
         "sku",
         "categoryId",
         "description",
