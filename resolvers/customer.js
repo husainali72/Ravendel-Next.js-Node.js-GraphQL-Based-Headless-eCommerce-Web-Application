@@ -58,7 +58,7 @@ module.exports = {
         let validation = ["firstName", "lastName", "email", "password"];
         const duplicate = await duplicateData({ email: args.email }, Customer);
 
-        if (duplicate) return MESSAGE_RESPONSE("Custom", "Already registered ?", false);
+        if (duplicate) return MESSAGE_RESPONSE("Custom", "Already registered", false);
         const errors = _validate(validation, data);
 
         if (!isEmpty(errors)) {
@@ -184,7 +184,7 @@ module.exports = {
        const customerData= await customer.save();
        let address=customerData?.addressBook[customerData?.addressBook?.length-1]
         let data={
-          ...MESSAGE_RESPONSE("UpdateSuccess", "Address", true),
+          ...MESSAGE_RESPONSE("AddSuccess", "Address", true),
           data: address
         }
         return data
