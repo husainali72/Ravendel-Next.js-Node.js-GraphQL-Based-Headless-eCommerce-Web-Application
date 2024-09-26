@@ -5,7 +5,7 @@ import { GlassMagnifier } from "react-image-magnifiers";
 import ProductImage from "./imageComponent";
 import PropTypes from "prop-types";
 import { get } from "lodash";
-import { getImage, imageOnError } from "../utills/helpers";
+import { getImage } from "../utills/helpers";
 import { useSelector } from "react-redux";
 import ReactImageMagnify from "react-image-magnify";
 const GalleryImageSlider = ({ galleryImages, variantSelect, comboData, showMagnifiedImageState }) => {
@@ -73,17 +73,17 @@ const GalleryImageSlider = ({ galleryImages, variantSelect, comboData, showMagni
   };
 const getImageSrc = (gallery, imageType, variantSelect, comboData) => {
   if (!variantSelect) {
-    return getImage(gallery, imageType);
+    return getImage(gallery, imageType,setting);
   }
   if (comboData?.length && variantSelect) {
     if (comboData.length > 1) {
-      return getImage(gallery, imageType);
+      return getImage(gallery, imageType,setting);
     }
     if (get(comboData,'[0].image')?.length) {
-      return getImage(get(comboData,'[0].image'), imageType);
+      return getImage(get(comboData,'[0].image'), imageType,setting);
     }
   }
-  return getImage(gallery, imageType);
+  return getImage(gallery, imageType,setting);
 };
   return (
     <>

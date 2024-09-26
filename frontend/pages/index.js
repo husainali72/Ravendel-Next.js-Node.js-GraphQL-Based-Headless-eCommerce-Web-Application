@@ -40,11 +40,11 @@ export default function Home({
       initialRender.current = false;
     }
   }, [cart]);
-
+  const brandTitle = process.env.NEXT_PUBLIC_BRAND_TITLE || "";
   return (
     <div>
       <Head>
-        <title>{get(seoInfo, "meta_title", "Ravendel")}</title>
+        <title>{get(seoInfo, "meta_title", brandTitle)}</title>
         <link rel="icon" href="/favicon.ico" />
         <meta
           name="description"
@@ -134,7 +134,7 @@ export async function getStaticProps() {
     let homepageSettings = get(fetchedHomePageData, "getSettings", {});
     homePageSliderInfo = get(homepageSettings, "appearance.home", {});
     seoInfo = get(homepageSettings, "seo", {});
-  } catch (e) {}
+  } catch (e) { }
   let variable = {
     deviceType: 1,
   };
@@ -147,7 +147,7 @@ export async function getStaticProps() {
     let sectionData = get(homePagedata, "getHomePage", []);
     homePageSections = get(sectionData, "sections", []);
     parentCategories = get(homePagedata, "getHomePage.parentCategories", []);
-  } catch (e) {}
+  } catch (e) { }
 
   return {
     props: {
