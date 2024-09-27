@@ -24,25 +24,34 @@ import { createCart } from "../redux/actions/cartAction";
 /* -------------------------------image funtion ------------------------------- */
 export const imageOnError = (event, settings) => {
   const dummyImage = get(settings, 'setting.appearance.theme.placeholder_image');
-  const type =get(settings, 'setting.imageStorage.status');
-  
+  const type = get(settings, 'setting.imageStorage.status');
+
   const placeHolderImage = type && type === "localStorage"
     ? IMAGE_BASE_URL + dummyImage
     : BUCKET_BASE_URL + dummyImage;
-  
+
+  // First attempt to load the placeholder image
   if (event.target.src !== placeHolderImage) {
-    event.target.src = placeHolderImage;
+    event.target.src = dummyImage ? placeHolderImage : NoImagePlaceHolder.src;
+
+    // Add an event listener for errors on the placeholder image
+    event.target.onerror = () => {
+      event.target.src = NoImagePlaceHolder.src;
+    };
   } else {
     console.warn('Failed to load both original and placeholder images.');
+    // Load the fallback image in case both original and placeholder images fail
+    event.target.src = NoImagePlaceHolder.src;
   }
 };
+
 
 export const getImage = (img, type, setting, isBanner) => {
 
   const dummyImage = get(setting, 'setting.appearance.theme.placeholder_image')
-  const placeHolderImage = type && type === "localStorage"
+  const placeHolderImage = dummyImage ? type && type === "localStorage"
     ? IMAGE_BASE_URL + dummyImage
-    : BUCKET_BASE_URL + dummyImage;
+    : BUCKET_BASE_URL + dummyImage : NoImagePlaceHolder?.src;
 
   if (!img) {
     return placeHolderImage
