@@ -127,21 +127,24 @@ const MobileAppSetting = () => {
       slider: updatedSlider,
     }));
   };
-
   const fileChange = (e, i) => {
     const files = get(e, "target.files");
-    if (files?.length > 0) {
-      const updatedSlider = [...get(settingMobile, "slider", [])];
-      updatedSlider[i] = {
-        ...updatedSlider[i],
-        image: URL.createObjectURL(files[0]),
-        update_image: files,
+    if (files && files.length > 0) {
+      settingMobile.slider[i] = {
+        ...settingMobile.slider[i],
+        image: URL.createObjectURL(e.target.files[0]),
+        update_image: e.target.files,
+      };
+      slider[i] = {
+        ...slider[i],
+        image: URL.createObjectURL(e.target.files[0]),
+        update_image: e.target.files,
       };
 
-      setSettingMobile((prevState) => ({
-        ...prevState,
-        slider: updatedSlider,
-      }));
+      setSettingMobile({
+        ...settingMobile,
+        slider: [...settingMobile.slider],
+      });
     }
   };
 

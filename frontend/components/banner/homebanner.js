@@ -26,7 +26,7 @@ const Homebanner = ({ settings, slider }) => {
                   imageSrc
                     ? imageSrc
                     : get(slide, "image")
-                    ? getImage(get(slide, "image"), imageType, true)
+                    ? getImage(get(slide, "image"), imageType, settings)
                     : "https://dummyimage.com/300"
                 }
                 width={1920}

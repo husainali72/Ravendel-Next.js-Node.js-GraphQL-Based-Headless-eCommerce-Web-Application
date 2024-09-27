@@ -118,6 +118,7 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           playstore
           appstore
           logo
+          placeholder_image
         }
 
         mobile {

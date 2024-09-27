@@ -22,16 +22,43 @@ import notify from "./notifyToast";
 import { outOfStockMessage } from "../components/validationMessages";
 import { createCart } from "../redux/actions/cartAction";
 /* -------------------------------image funtion ------------------------------- */
-export const imageOnError = (event) => {
-  event.target.src = NoImagePlaceHolder.src;
+export const imageOnError = (event, settings) => {
+  const dummyImage = get(settings, 'setting.appearance.theme.placeholder_image');
+  const type = get(settings, 'setting.imageStorage.status');
+
+  const placeHolderImage = type && type === "localStorage"
+    ? IMAGE_BASE_URL + dummyImage
+    : BUCKET_BASE_URL + dummyImage;
+
+  // First attempt to load the placeholder image
+  if (event.target.src !== placeHolderImage) {
+    event.target.src = dummyImage ? placeHolderImage : NoImagePlaceHolder.src;
+
+    // Add an event listener for errors on the placeholder image
+    event.target.onerror = () => {
+      event.target.src = NoImagePlaceHolder.src;
+    };
+  } else {
+    console.warn('Failed to load both original and placeholder images.');
+    // Load the fallback image in case both original and placeholder images fail
+    event.target.src = NoImagePlaceHolder.src;
+  }
 };
-export const getImage = (img, type, isBanner, setting) => {
+
+
+export const getImage = (img, type, setting, isBanner) => {
+
+  const dummyImage = get(setting, 'setting.appearance.theme.placeholder_image')
+  const placeHolderImage = dummyImage ? type && type === "localStorage"
+    ? IMAGE_BASE_URL + dummyImage
+    : BUCKET_BASE_URL + dummyImage : NoImagePlaceHolder?.src;
+
   if (!img) {
-    return NoImagePlaceHolder.src;
+    return placeHolderImage
   }
   let imagaPath = "";
   if (!isBanner) {
-    imagaPath = NoImagePlaceHolder.src;
+    imagaPath = placeHolderImage;
   }
   if (img) {
     imagaPath =
@@ -239,10 +266,10 @@ export const isVariantDiscount = (variantProduct) => {
 export const formatNumber = (value) => (value && !isNaN(value) ? value : "0");
 
 // ---------------------------------------------LocalStorage-------------------------
-export const getItemFromLocalStorage = (key,defaultValue=[]) => {
+export const getItemFromLocalStorage = (key, defaultValue = []) => {
   try {
     if (!localStorage.hasOwnProperty(key)) {
-      return defaultValue||[]; // Key does not exist in localStorage
+      return defaultValue || []; // Key does not exist in localStorage
     }
     const item = localStorage.getItem(key);
     return JSON.parse(item);
@@ -256,7 +283,7 @@ export const setItemToLocalStorage = (key, value) => {
     if (value) {
       localStorage.setItem(key, JSON.stringify(value));
     }
-  } catch (error) {}
+  } catch (error) { }
 };
 
 export const removeItemFromLocalStorage = (key) => {
@@ -265,7 +292,7 @@ export const removeItemFromLocalStorage = (key) => {
       return;
     }
     localStorage.removeItem(key);
-  } catch (error) {}
+  } catch (error) { }
 };
 
 export const formatDate = (date) =>
@@ -308,7 +335,7 @@ export const convertDateToStringFormat = (date, setting) => {
 export const handleError = (error, dispatch, router) => {
   const status = get(error, "extensions.code");
   if (status === 401) {
-    logoutAndClearData(dispatch,router);
+    logoutAndClearData(dispatch, router);
   }
 };
 export const getProductSellPrice = (product) => {
@@ -452,7 +479,7 @@ export const loginCustomer = async (
       dispatch(createCart(id, products));
     }
     if (response.ok) {
-      let pathName = getItemFromLocalStorage("previousPage",'/')
+      let pathName = getItemFromLocalStorage("previousPage", '/')
       removeItemFromLocalStorage("previousPage");
       await router.push(pathName);
     }

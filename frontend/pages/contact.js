@@ -12,6 +12,7 @@ import PhoneInput from 'react-phone-input-2';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 import client from '../apollo-client';
+import Meta from '../components/Meta';
 var defaultObj = {
     name: '',
     email: '',
@@ -20,26 +21,29 @@ var defaultObj = {
     city: '',
     message: '',
 };
-const Contact = ( {homePageData} ) => {
-    const [ contactDetails, setContactDetails ] = useState( {...homePageData?.getSettings?.store?.store_address} );
-    const [ address, seAddress ] = useState( {...homePageData?.getSettings?.store?.store_address} );
-    const [ contact, setcontact ] = useState( defaultObj );
-    const handleChange = ( e ) => {
-        setcontact( { ...contact, [e.target.name]: e.target.value } );
+const Contact = ({ homePageData }) => {
+    const [contactDetails, setContactDetails] = useState({ ...homePageData?.getSettings?.store?.store_address });
+    const [address, seAddress] = useState({ ...homePageData?.getSettings?.store?.store_address });
+    const [contact, setcontact] = useState(defaultObj);
+    const handleChange = (e) => {
+        setcontact({ ...contact, [e.target.name]: e.target.value });
     };
     const {
         register,
         handleSubmit, reset,
         formState: { errors },
         control,
-    } = useForm( { mode: 'submit', } );
+    } = useForm({ mode: 'submit', });
 
     const onSubmit = () => {
-        setcontact( defaultObj );
-        notify( 'Sent succesfully', true );
+        setcontact(defaultObj);
+        notify('Sent succesfully', true);
+
     };
+    const siteTitle = process.env.NEXT_PUBLIC_BRAND_TITLE || "";
     return (
         <div>
+            <Meta title='Contact Us' description={`${siteTitle} is your trusted online hardware shop, offering quality tools, materials, and home improvement essentials at affordable prices.`} />
             <PageTitle title="Contact" />
             <BreadCrumb title="Contact" />
             <Container>
@@ -60,22 +64,22 @@ const Contact = ( {homePageData} ) => {
                         </div>
                         <div className="col-lg-6">
                             <div className="get-in-touch-form">
-                                <form onSubmit={handleSubmit( onSubmit )}>
+                                <form onSubmit={handleSubmit(onSubmit)}>
                                     <input
                                         type="text"
                                         placeholder="Name"
                                         name='name'
-                                        {...register( 'name', {
+                                        {...register('name', {
 
                                             required: {
-                                                value: ( contact.name ? false : true ),
+                                                value: (contact.name ? false : true),
                                                 message: 'Name is Required',
                                             },
                                             minLength: {
                                                 value: 4,
                                                 message: 'Name Min length is 4',
                                             },
-                                        } )}
+                                        })}
                                         onChange={handleChange}
                                         value={contact.name} />
                                     <p>
@@ -88,16 +92,16 @@ const Contact = ( {homePageData} ) => {
                                         type="email"
                                         placeholder="Email-Address"
                                         name='email'
-                                        {...register( 'email', {
+                                        {...register('email', {
                                             required: {
-                                                value: ( contact.email ? false : true ),
+                                                value: (contact.email ? false : true),
                                                 message: 'Email is Required',
                                             },
                                             pattern: {
                                                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
                                                 message: 'Invalid Email',
                                             },
-                                        } )}
+                                        })}
                                         onChange={handleChange}
                                         value={contact.email} />
                                     <p>
@@ -113,21 +117,21 @@ const Contact = ( {homePageData} ) => {
                                         control={control}
                                         rules={{
                                             required: {
-                                                value: ( contact.phone ? false : true ),
+                                                value: (contact.phone ? false : true),
                                                 message: 'Phone number is Required',
                                             },
                                             validate: () => {
-                                                return isValidPhoneNumber( `+${contact.phone}` );
+                                                return isValidPhoneNumber(`+${contact.phone}`);
                                             }
                                         }}
-                                        render={( { field: { onChange, value } } ) => (
+                                        render={({ field: { onChange, value } }) => (
                                             <PhoneInput
                                                 inputClass={'custom-input'}
                                                 specialLabel=""
                                                 enableSearch='true'
                                                 value={contact.phone}
                                                 country={'in'}
-                                                onChange={( value ) => setcontact( { ...contact, phone: value } )}
+                                                onChange={(value) => setcontact({ ...contact, phone: value })}
                                             />
                                         )}
                                     />
@@ -144,13 +148,13 @@ const Contact = ( {homePageData} ) => {
                                         type="text"
                                         placeholder="Address"
                                         name='address'
-                                        {...register( 'address', {
+                                        {...register('address', {
 
                                             required: {
-                                                value: ( contact.address ? false : true ),
+                                                value: (contact.address ? false : true),
                                                 message: 'Address is Required',
                                             },
-                                        } )}
+                                        })}
                                         onChange={handleChange}
                                         style={{ marginTop: '10px' }}
                                         value={contact.address} />
@@ -163,12 +167,12 @@ const Contact = ( {homePageData} ) => {
                                         type="text"
                                         placeholder="City"
                                         name='city'
-                                        {...register( 'city', {
+                                        {...register('city', {
                                             required: {
-                                                value: ( contact.city ? false : true ),
+                                                value: (contact.city ? false : true),
                                                 message: 'City is Required',
                                             },
-                                        } )}
+                                        })}
                                         onChange={handleChange}
                                         value={contact.city} />
                                     <p>
@@ -180,12 +184,12 @@ const Contact = ( {homePageData} ) => {
                                         rows="5"
                                         placeholder="Message..."
                                         name='message'
-                                        {...register( 'message', {
+                                        {...register('message', {
                                             required: {
-                                                value: ( contact.message ? false : true ),
+                                                value: (contact.message ? false : true),
                                                 message: 'Message is Required',
                                             },
-                                        } )}
+                                        })}
                                         onChange={handleChange}
                                         value={contact.message}>
                                     </textarea>
@@ -204,7 +208,7 @@ const Contact = ( {homePageData} ) => {
                                     <h4>Contact Us</h4>
                                     {/* <p><span>Address:</span> {address ? (address?.addressLine1 && address?.addressLine1 + ", ") + (address?.addressLine2 && address?.addressLine2 + ", ") + address?.city :"10 Suffolk st Soho, London, UK"}</p> */}
                                     <p><span>Address:</span> {
-                                        address ? ( `${address?.addressLine1 ? ( address?.addressLine1 + ', ' ) : ''} ${address?.addressLine2 ? ( address?.addressLine1 + ', ' ) : ''}  ${address?.city || ''}` ) : '10 Suffolk st Soho, London, UK'
+                                        address ? (`${address?.addressLine1 ? (address?.addressLine1 + ', ') : ''} ${address?.addressLine2 ? (address?.addressLine1 + ', ') : ''}  ${address?.city || ''}`) : '10 Suffolk st Soho, London, UK'
                                     }</p>
                                     <Link href="tel:+1234567890">
                                         <p><a>Phone : {contactDetails ? contactDetails?.phone_number : '(+01) - 2345 - 6789'}</a>
@@ -223,16 +227,16 @@ const Contact = ( {homePageData} ) => {
     );
 };
 export default Contact;
-export const getStaticProps = async () =>{
+export const getStaticProps = async () => {
     var homePageData = [];
 
     try {
-        const { data: homePagedata} = await client.query( {
+        const { data: homePagedata } = await client.query({
             query: GET_HOMEPAGE_DATA_QUERY
-        } );
+        });
         homePageData = homePagedata;
-    } catch ( e ) {
-        console.log( 'homepage Error===', e.networkError && e.networkError.result ? e.networkError.result.errors : '' );
+    } catch (e) {
+        console.log('homepage Error===', e.networkError && e.networkError.result ? e.networkError.result.errors : '');
     }
     return {
         props: {
