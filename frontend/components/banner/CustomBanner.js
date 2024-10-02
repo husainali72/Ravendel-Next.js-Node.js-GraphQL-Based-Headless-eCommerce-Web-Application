@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
-import { Container } from "react-bootstrap";
 import ProductImage from "../imageComponent";
+import { Container } from "react-bootstrap";
 const CustomBanner = ({ variant }) => {
   return (
-    <section className="product-cart-section banner">
-      <Container className="container">
-        <div className={`banner-container section-banner`}>
+    <section>
+      <Container>
+        <div>
           <ProductImage className="banner-image" src={variant} />
         </div>
       </Container>
