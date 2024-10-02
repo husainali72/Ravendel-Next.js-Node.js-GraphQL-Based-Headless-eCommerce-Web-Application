@@ -72,6 +72,7 @@ export default function Footer() {
   } = Address;
   const session = useSession();
   const customerId = session?.data?.user?.accessToken?.customer?._id;
+  const siteTitle = process.env.NEXT_PUBLIC_BRAND_TITLE || "";
   return (
     <section className="product-cart-section footer">
       <Container>
@@ -99,10 +100,10 @@ export default function Footer() {
                       email ||
                       phoneNumber ||
                       hour) && (
-                      <h5 className="fw-600 text-grey-4 wow fadeIn animated animated animated">
-                        Contact
-                      </h5>
-                    )}
+                        <h5 className="fw-600 text-grey-4 wow fadeIn animated animated animated">
+                          Contact
+                        </h5>
+                      )}
                     {addressLine1 && (
                       <>
                         <strong>Address : </strong>
@@ -306,7 +307,7 @@ export default function Footer() {
           <div className="copyright">
             <p>
               ©{new Date().getFullYear()} Copyright:
-              <span className="co-name">Ravendel</span>
+              <span className="co-name">{siteTitle}</span>
             </p>
             <p className="design-by">
               Design By{" "}
