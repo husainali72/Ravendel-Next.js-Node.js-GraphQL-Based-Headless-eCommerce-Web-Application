@@ -8756,6 +8756,9 @@ button.btn-outline-primary:hover {
   background: #ffffff;
   border-radius: 10px;
   max-height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .on-sale-image-wrapper img {
