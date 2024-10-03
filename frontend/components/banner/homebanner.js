@@ -30,7 +30,7 @@ const Homebanner = ({ settings, slider }) => {
                     : "https://dummyimage.com/300"
                 }
                 width={1920}
-                height={550}
+                height={400}
                 sx={{ alignItems: "center", mt: 0 }}
                 className="d-block w-100"
                 alt={`slider`}
