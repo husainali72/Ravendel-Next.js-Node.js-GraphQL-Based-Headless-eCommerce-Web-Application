@@ -1645,11 +1645,11 @@ const addOrder = async(args) => {
     }
 
     savedOrder.email = savedOrder.billing.email;
-    await sendEmailTemplate("ORDER_PLACED", savedOrder, setting);
+    sendEmailTemplate("ORDER_PLACED", savedOrder, setting);
     let temp = {...savedOrder.toObject(), email: setting.store.inventory.notification_recipients};
-    await sendEmailTemplate("ADMIN_NEW_ORDER", temp, setting);
-    await sendPushNotificationTemplate("ADMIN", "NEW_ORDER_PLACED_SELLER", setting, savedOrder._id);
-    await sendPushNotificationTemplate(savedOrder.userId, "ORDER_PLACED_CUSTOMER", setting, savedOrder._id);
+    sendEmailTemplate("ADMIN_NEW_ORDER", temp, setting);
+    sendPushNotificationTemplate("ADMIN", "NEW_ORDER_PLACED_SELLER", setting, savedOrder._id);
+    sendPushNotificationTemplate(savedOrder.userId, "ORDER_PLACED_CUSTOMER", setting, savedOrder._id);
     
     emptyCart(cart);
   } else if(args.billing.paymentMethod === 'stripe') {
@@ -1921,8 +1921,8 @@ const updatePaymentStatus = async (userId, args) => {
     }
 
     if (!eligibleToUpdateSuccess) {
-      await sendEmailTemplate("ORDER_FAILED", orderData, setting)
-      await sendPushNotificationTemplate(orderData.userId, "ORDER_FAILED_CUSTOMER", setting, orderData._id);
+      sendEmailTemplate("ORDER_FAILED", orderData, setting)
+      sendPushNotificationTemplate(orderData.userId, "ORDER_FAILED_CUSTOMER", setting, orderData._id);
       return MESSAGE_RESPONSE("PaymentUnpaid", null, false);
     } else {
       try {
@@ -1942,19 +1942,19 @@ const updatePaymentStatus = async (userId, args) => {
           orderData.email = orderData.billing.email;
 
           orderData = await orderData.save();
-          await sendEmailTemplate("ORDER_PLACED", orderData, setting)
+          sendEmailTemplate("ORDER_PLACED", orderData, setting)
           let temp = {...orderData.toObject(), email: setting.store.inventory.notification_recipients};
-          await sendEmailTemplate("ADMIN_NEW_ORDER", temp, setting);
-          await sendPushNotificationTemplate("ADMIN", "NEW_ORDER_PLACED_SELLER", setting, orderData._id);
-          await sendPushNotificationTemplate(orderData.userId, "ORDER_PLACED_CUSTOMER", setting, orderData._id);
+          sendEmailTemplate("ADMIN_NEW_ORDER", temp, setting);
+          sendPushNotificationTemplate("ADMIN", "NEW_ORDER_PLACED_SELLER", setting, orderData._id);
+          sendPushNotificationTemplate(orderData.userId, "ORDER_PLACED_CUSTOMER", setting, orderData._id);
         }
         const cart = await Cart.findOne({
           userId: new mongoose.Types.ObjectId(userId),
         });
         await emptyCart(cart);
       } catch (error) {
-        await sendEmailTemplate("ORDER_FAILED", orderData, setting)
-        await sendPushNotificationTemplate(orderData.userId, "ORDER_FAILED_CUSTOMER", setting, orderData._id);
+        sendEmailTemplate("ORDER_FAILED", orderData, setting)
+        sendPushNotificationTemplate(orderData.userId, "ORDER_FAILED_CUSTOMER", setting, orderData._id);
         return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
       }
       return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
@@ -2036,6 +2036,9 @@ const fillPlaceholders = async (template, data) => {
         dataValue = formatDate(dataValue);
         break;
       case "FIRST_CAP":
+        if(dataValue == 'cashondelivery'){
+          dataValue = 'Cash On Delivery'
+        }
         dataValue = dataValue[0].toUpperCase() + dataValue.slice(1);
         break;
       case "MONEY":
@@ -2065,13 +2068,13 @@ const fillPlaceholders = async (template, data) => {
   return emailTemplate;
 };
 
-const fillproductDetails = (looping_text, data, currency) => {
+const fillproductDetails = (looping_text, data, currency, setting) => {
 
   let output = "";
   for (unit of data.products)
   {
     let html = looping_text
-    html = html.replaceAll("{{product_url}}", `${encodeURI(`${APP_KEYS.BASE_URL}${unit.productImage}`)}`)    
+    html = html.replaceAll("{{product_url}}", `${encodeURI(`${APP_KEYS.BASE_URL}${unit.productImage ? unit.productImage : setting.appearance.theme.placeholder_image}`)}`)    
     // html = html.replaceAll("{{product_url}}", `https://picsum.photos/200`)
     html = html.replaceAll("{{product_name}}", unit.productTitle)
     html = html.replaceAll("{{product_quantity}}", unit.qty)
@@ -2106,7 +2109,7 @@ const sendEmailTemplate = async (template_name, data, settings) => {
     let emailTemplate = await fillPlaceholders(template, data);
 
     if (template.looping_text) {
-      let loopingProducts = await fillproductDetails(template.looping_text, data, settings.store.currency_options.currency.toUpperCase());
+      let loopingProducts = await fillproductDetails(template.looping_text, data, settings.store.currency_options.currency.toUpperCase(), settings);
       emailTemplate.body = emailTemplate.body.replace("{{looping}}", loopingProducts);
     }
 
@@ -2115,8 +2118,8 @@ const sendEmailTemplate = async (template_name, data, settings) => {
       emailTemplate.body = emailTemplate.body.replace("{{social_icons}}", social_icons);
     }
     // console.log("settings.appearance.theme.logo", settings.appearance.theme.logo)
-    emailTemplate.body = emailTemplate.body.replace("{{main_logo}}", settings.appearance.theme.logo);
-    
+    emailTemplate.body = emailTemplate.body.replace("{{main_logo}}",`${encodeURI(`${APP_KEYS.BASE_URL}${settings.appearance.theme.logo}`)}`);
+
     let email_data = {
       from: APP_KEYS.FROM_EMAIL,
       to: data.email,
