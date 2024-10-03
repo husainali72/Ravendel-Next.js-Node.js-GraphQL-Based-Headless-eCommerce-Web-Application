@@ -2110,7 +2110,7 @@ const sendEmailTemplate = async (template_name, data, settings) => {
 
     if (template.looping_text) {
       let loopingProducts = await fillproductDetails(template.looping_text, data, settings.store.currency_options.currency.toUpperCase(), settings);
-      emailTemplate.body = emailTemplate.body.replace("{{looping}}", loopingProducts);
+      emailTemplate.body = emailTemplate.body.replaceAll("{{looping}}", loopingProducts);
     }
 
     if (template.social_html) {
@@ -2118,7 +2118,8 @@ const sendEmailTemplate = async (template_name, data, settings) => {
       emailTemplate.body = emailTemplate.body.replace("{{social_icons}}", social_icons);
     }
     // console.log("settings.appearance.theme.logo", settings.appearance.theme.logo)
-    emailTemplate.body = emailTemplate.body.replace("{{main_logo}}",`${encodeURI(`${APP_KEYS.BASE_URL}${settings.appearance.theme.logo}`)}`);
+    emailTemplate.body = emailTemplate.body.replaceAll("{{main_logo}}",`${encodeURI(`${APP_KEYS.BASE_URL}${settings.appearance.theme.logo}`)}`);
+    emailTemplate.body = emailTemplate.body.replaceAll("{{base_url}}",APP_KEYS.BASE_URL);
 
     let email_data = {
       from: APP_KEYS.FROM_EMAIL,
