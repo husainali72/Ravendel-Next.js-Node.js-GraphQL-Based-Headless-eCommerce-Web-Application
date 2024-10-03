@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import CategoryCard from "../card/roundCard";
 import ProductImage from "../imageComponent";
 import CategoryLink from "./categoryLink";
-import { Container } from "react-bootstrap";
 
 const ParentCategories = ({ categories, categoryName }) => {
   return (
