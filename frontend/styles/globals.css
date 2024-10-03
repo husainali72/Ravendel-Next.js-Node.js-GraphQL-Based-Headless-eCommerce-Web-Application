@@ -6935,6 +6935,8 @@ button.btn-outline-primary:hover {
 }
 .home-page .product-cart-section .container .products-row h5 {
   margin-top: 10px;
+  font-size: 20px;
+  margin-bottom: 0 !important;
 }
 .home-page .product-cart-section:nth-of-type(2) .container .products-row h5 {
   margin-top: 20px;
@@ -8774,7 +8776,7 @@ button.btn-outline-primary:hover {
 }
 .category-banner img {
   width: 100%;
-  height: auto;
+  /* height: auto; */
   object-fit: cover;
 }
 .category-banner h2 {
