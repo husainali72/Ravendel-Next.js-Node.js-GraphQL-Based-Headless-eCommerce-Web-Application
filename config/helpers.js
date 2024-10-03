@@ -2071,7 +2071,7 @@ const fillproductDetails = (looping_text, data, currency) => {
   for (unit of data.products)
   {
     let html = looping_text
-    html = html.replaceAll("{{product_url}}", `${APP_KEYS.BASE_URL}${unit.productImage}`)
+    html = html.replaceAll("{{product_url}}", `${encodeURI(`${APP_KEYS.BASE_URL}${unit.productImage}`)}`)    
     // html = html.replaceAll("{{product_url}}", `https://picsum.photos/200`)
     html = html.replaceAll("{{product_name}}", unit.productTitle)
     html = html.replaceAll("{{product_quantity}}", unit.qty)
@@ -2116,7 +2116,7 @@ const sendEmailTemplate = async (template_name, data, settings) => {
     }
     // console.log("settings.appearance.theme.logo", settings.appearance.theme.logo)
     emailTemplate.body = emailTemplate.body.replace("{{main_logo}}", settings.appearance.theme.logo);
-
+    
     let email_data = {
       from: APP_KEYS.FROM_EMAIL,
       to: data.email,
