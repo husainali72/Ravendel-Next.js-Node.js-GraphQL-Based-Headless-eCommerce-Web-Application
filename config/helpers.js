@@ -2023,6 +2023,15 @@ const sendMail = async (data) => {
   }
 };
 
+const formatPrice = (price, currency_code) => {
+  const formattedPrice = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency_code,
+    minimumFractionDigits: 2,
+  }).format(price);
+
+  return formattedPrice;
+};
 const fillPlaceholders = async (template, data) => {
   let emailTemplate = { subject: template.subject, body: template.body };
   
@@ -2042,7 +2051,7 @@ const fillPlaceholders = async (template, data) => {
         dataValue = dataValue[0].toUpperCase() + dataValue.slice(1);
         break;
       case "MONEY":
-        dataValue = `${data.totalSummary.currency_code} ${dataValue}`
+        dataValue = formatPrice(dataValue, data.totalSummary.currency_code);
         break;
       case "CONDITIONAL":
         if(dataValue == 0 || dataValue == null || dataValue == undefined){
@@ -2050,7 +2059,7 @@ const fillPlaceholders = async (template, data) => {
         }
         else{
           let html = unit.html;
-          html = html.replaceAll("{{optional_value}}", `${data.totalSummary.currency_code} ${dataValue}`)
+          html = html.replaceAll("{{optional_value}}", formatPrice(dataValue, data.totalSummary.currency_code));
           dataValue = html;
         }
         break;
@@ -2078,8 +2087,8 @@ const fillproductDetails = (looping_text, data, currency, setting) => {
     // html = html.replaceAll("{{product_url}}", `https://picsum.photos/200`)
     html = html.replaceAll("{{product_name}}", unit.productTitle)
     html = html.replaceAll("{{product_quantity}}", unit.qty)
-    html = html.replaceAll("{{product_price}}", `${currency} ${unit.mrp || unit.productPrice}`)
-    html = html.replaceAll("{{product_total_price}}",`${currency} ${unit.mrpAmount || unit.productPrice * unit.qty}`)
+    html = html.replaceAll("{{product_price}}", formatPrice(unit.mrp || unit.productPrice, currency))
+    html = html.replaceAll("{{product_total_price}}", formatPrice(unit.mrpAmount || unit.productPrice * unit.qty, currency))
     output = output + html
   }
   return output;
@@ -2527,4 +2536,39 @@ const getBoughtTogetherProducts = async (productId, model) => {
     return boughtTogetherProducts[0]
   }
 }
+
+// export const currencySetter = (settings, setCurrency) => {
+//   const currency = get(settings, "currency", "usd") || settings;
+//   const currencySymbols = {
+//     usd: "$",
+//     eur: "€",
+//     gbp: "£",
+//     cad: "CA$",
+//     inr: "₹",
+//   };
+//   const selectedSymbol = currencySymbols[currency];
+//   if (selectedSymbol) setCurrency(selectedSymbol);
+// };
+
+// export const formattedPrice = (value, currencyOptions) => {
+//   const decimal = get(currencyOptions, "number_of_decimals", "2");
+//   const thousandSeparator = get(currencyOptions, "thousand_separator", ",");
+//   const decimalSeparator = get(currencyOptions, "decimal_separator", ".");
+//   return value
+//     .toFixed(decimal)
+//     .replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator)
+
+//     .replace(".", decimalSeparator);
+// };
+// export const getPrice = (price, currencyOptions) => {
+//   let fixed = 3;
+//   if (typeof price === "string") {
+//     return formattedPrice(parseFloat(price), currencyOptions);
+//   } else if (typeof price === "number") {
+//     return formattedPrice(price, currencyOptions);
+//   }
+
+//   return "0.00";
+// };
+
 module.exports.getBoughtTogetherProducts = getBoughtTogetherProducts
