@@ -45,7 +45,7 @@ const OnSaleProductCard = ({
         <div className="products-row">
           {!hideTitle ? (
             <div>
-              <h5 className="black-color mb-4">
+              <h5 className="black-color">
                 {titleShow ? capitalize(titleShow) : "On Sale"}{" "}
               </h5>
             </div>
