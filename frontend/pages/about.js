@@ -16,7 +16,7 @@ const About = () => {
       <BreadCrumb title={'About'} />
       
       <Container>
-        <h1>We Are Your Next Door Hardware Shop</h1>
+        <h2>We Are Your Next Door Hardware Shop</h2>
         <p>
           Find premium quality home and professional hardware tools, home improvement products, home decor, DIY essentials, and much more that support businesses and individuals in an efficient and seamless procurement process in the Indian market.
         </p>
@@ -27,7 +27,7 @@ const About = () => {
           Whether you're a professional contractor, an interior designer, or a DIY enthusiast looking to upgrade your space, you can now get top-of-the-line products delivered right to your doorstep.
         </p>
 
-        <h2>We Aim to Deliver the Best</h2>
+        <h4>We Aim to Deliver the Best</h4>
         <p>
           In the world of Amazon, where online shopping, great discounts, and fast shipping are like daily food, Zemjet stands out by focusing on one thing above all: an exceptional customer experience. We go beyond just selling products by offering personalized recommendations, dedicated customer support, and a human touch in the digital age.
         </p>
@@ -36,8 +36,8 @@ const About = () => {
           We also understand that security is a major concern when shopping online. That's why Zemjet’s e-commerce site, built by certified IT professionals, ensures that your data and personal information remain safe and secure, never used without your permission. At Zemjet, we’re not just about transactions—we’re about building trust and lasting relationships with every order.
         </p>
 
-        <h2>Who We Are</h2>
-        <h3>The Backstory of Zemjet</h3>
+        <h4>Who We Are</h4>
+        <h4>The Backstory of Zemjet</h4>
         <p>
           Like many businesses, the Covid-19 pandemic was a turning point for us. After working in the local hardware market for nearly 20 years, we realized that the world was evolving faster than ever. More customers were shifting to online shopping and prioritizing digital channels. But that wasn’t the only reason we made the leap.
         </p>
@@ -48,7 +48,7 @@ const About = () => {
           At Zemjet, it's not just about selling hardware; it’s about quality products, a smooth and transparent checkout process, timely delivery, and dedicated customer support. We built Zemjet with one thing in mind—putting our customers first, always.
         </p>
 
-        <h2>What We Offer</h2>
+        <h4>What We Offer</h4>
         <h3>For Individuals</h3>
         <p>
         Ever found yourself running around town, searching for the perfect hardware item for your DIY project? At Zemjet, we've put an end to the hassle. Our online hardware store is your one-stop shop for everything from building materials to paints and fixtures. Imagine having a fully stocked hardware shop right at your fingertips, ready to deliver straight to your door.
@@ -78,7 +78,7 @@ const About = () => {
         </ul>
         <p>Our collection is constantly growing, ensuring that there’s always something new and exciting to discover.</p>
 
-        <h2>Why Zemjet?</h2>
+        <h4>Why ZEMJET?</h4>
         <p>
           When you shop with Zemjet, you’re choosing:
         </p>
@@ -90,7 +90,7 @@ const About = () => {
           <li>Trending offers to help you stay ahead in experiencing innovative solutions.</li>
         </ul>
 
-        <h2>Our Customer Commitment</h2>
+        <h4>Our Customer Commitment</h4>
         <p>
         Your satisfaction is our top priority, and we strive to offer the best possible shopping experience. From providing detailed product information to seamless checkout and ensuring fast delivery, we aim to make every step of your shopping experience hassle-free. Our friendly customer support team is always here to help if you have any questions.
         </p>
