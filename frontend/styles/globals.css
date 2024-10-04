@@ -1161,7 +1161,7 @@ a.action-btn:after {
   margin-bottom: 5px;
 }
 .product-cart-section h5 {
-  margin-bottom: 30px !important;
+/*   margin-bottom: 30px !important; */
 }
 .product-cart-section.home-page {
   padding: 0;
