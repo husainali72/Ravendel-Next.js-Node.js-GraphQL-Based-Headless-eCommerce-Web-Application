@@ -8771,7 +8771,7 @@ button.btn-outline-primary:hover {
 .category-banner {
   position: relative;
   width: 100%;
-  /* height: 400px; */
+  height: 400px;
   overflow: hidden;
 }
 .category-banner img {
