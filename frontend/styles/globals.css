@@ -8790,3 +8790,7 @@ button.btn-outline-primary:hover {
   font-weight: 700;
   text-shadow: 0px 0px 12px rgb(0 0 0 / 0.2);
 }
+.category-title{
+  font-size: 20px !important;
+  margin-bottom: 0 !important;
+}
