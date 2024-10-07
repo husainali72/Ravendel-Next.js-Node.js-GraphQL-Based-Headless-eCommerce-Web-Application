@@ -9,10 +9,15 @@ const RemainingQuantity = ({ quantity }) => {
 
   useEffect(() => {
     const stockOption = get(setting, "setting.store.inventory");
-    const stockDisplayFormat = get(
-      stockOption,
-      "stock_display_format",
-    );
+
+    // Check if manage_stock is true
+    if (!stockOption?.manage_stock) {
+      setShowQuantity(false);
+      return; // Skip further execution if manage_stock is false
+    }
+
+    const stockDisplayFormat = get(stockOption, "stock_display_format");
+
     switch (stockDisplayFormat) {
       case "leftStock":
         setShowQuantity(quantity <= get(stockOption, "left_quantity"));
@@ -35,6 +40,9 @@ const RemainingQuantity = ({ quantity }) => {
     <>
       {quantity > 0 && (
         <div className="itemComponents-base-lowUnitCount">{`${quantity} Left`}</div>
+      )}
+      {showQuantity && quantity <= 0 && (
+        <div className="itemComponents-base-lowUnitCount">Out of Stock</div>
       )}
     </>
   );
