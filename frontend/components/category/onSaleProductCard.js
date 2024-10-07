@@ -136,11 +136,11 @@ const OnSaleProductCard = ({
                                       <RemainingQuantity
                                         quantity={get(product, "quantity", 0)}
                                       />
-                                      {product?.quantity<=0 && (
+                                      {/* {product?.quantity<=0 && (
                                         <p className="out-of-stock-card">
                                           Out Of Stock
                                         </p>
-                                      )}
+                                      )} */}
                                     </div>
 
                                     <div className="on-sale-product-detail">
@@ -280,11 +280,11 @@ const OnSaleProductCard = ({
                                   <RemainingQuantity
                                     quantity={get(product, "quantity", 0)}
                                   />
-                                  {product?.quantity <= 0 && (
+                                  {/* {product?.quantity <= 0 && (
                                     <p className="itemComponents-base-lowUnitCount">
                                       Out Of Stock
                                     </p>
-                                  )}
+                                  )} */}
                                 </div>
 
                                 <div className="on-sale-product-detail">
