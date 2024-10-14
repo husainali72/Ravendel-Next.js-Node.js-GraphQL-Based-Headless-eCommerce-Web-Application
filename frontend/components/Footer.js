@@ -100,12 +100,10 @@ export default function Footer() {
                       email ||
                       phoneNumber ||
                       hour) && (
-                        <h5 className="fw-600 text-grey-4 wow fadeIn animated animated animated">
-                          Contact
-                        </h5>
+                        <h6 className="foot-tittle mt-4">Contact</h6>
                       )}
                     {addressLine1 && (
-                      <>
+                      <p className="mb-1">
                         <strong>Address : </strong>
                         <span>
                           {addressLine1 || ""}
@@ -115,10 +113,10 @@ export default function Footer() {
                           {city || ""}
                         </span>
                         <br />
-                      </>
+                      </p>
                     )}
                     {phoneNumber && (
-                      <>
+                      <p className="mb-1">
                         <strong>Phone : </strong>
                         <Link href={"tel:" + phoneNumber || ""}>
                           <span className="contact-details">
@@ -126,10 +124,10 @@ export default function Footer() {
                           </span>
                         </Link>
                         <br />
-                      </>
+                      </p>
                     )}
                     {email && (
-                      <>
+                      <p className="mb-1">
                         <strong>Email : </strong>
                         <Link href={"mailto:" + email || ""}>
                           <span className="contact-details">
@@ -137,14 +135,14 @@ export default function Footer() {
                           </span>
                         </Link>
                         <br />
-                      </>
+                      </p>
                     )}
                     {get(Address, "hour", "") && (
-                      <>
+                      <p className="mb-1">
                         <strong>Hour: </strong>
 
                         {<span>{get(Address, "hour", "")}</span>}
-                      </>
+                      </p>
                     )}
                   </div>
 
@@ -168,7 +166,7 @@ export default function Footer() {
                   )}
                 </div>
                 <div className="col-lg-2 col-md-3 col-xl-2 mx-auto mb-4 mt-2 ">
-                  <h5 className="foot-tittle mb-4">About</h5>
+                  <h6 className="foot-tittle mb-4">About</h6>
                   <p className="link-hover">
                     <Link href="/about">
                       <a className="text-reset">About Us</a>
