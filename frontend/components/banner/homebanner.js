@@ -20,7 +20,7 @@ const Homebanner = ({ settings, slider }) => {
       <Carousel >
         {slider.map((slide, i) => (
           <Carousel.Item key={i}>
-            <a href={slide.link} rel="noreferrer" target={slide.open_in_tab ? '_blank' : ''}>
+            <a href={slide.link ? slide.link : undefined} rel="noreferrer" target={slide.open_in_tab ? '_blank' : ''}>
               <Image
                 src={
                   imageSrc

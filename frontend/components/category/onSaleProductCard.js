@@ -98,12 +98,12 @@ const OnSaleProductCard = ({
                                       alt={product?.name}
                                       className="img-on-sale"
                                     />
-                                    {get(product, "rating", 0) > 0 && (
+                                    {/* {get(product, "rating", 0) > 0 && (
                                       <div className="card-rating">
                                         <span>{get(product, "rating", 0)}</span>
                                         <i className="fa-solid fa-star" />
                                       </div>
-                                    )}
+                                    )} */}
                                     {/* <OverlayTrigger
                                     className="on-sale-product-tooltip"
                                     placement="top"
@@ -242,12 +242,12 @@ const OnSaleProductCard = ({
                                   alt={product?.name}
                                   className="img-on-sale"
                                 />
-                                {get(product, "rating", 0) > 0 && (
+                                {/* {get(product, "rating", 0) > 0 && (
                                   <div className="card-rating">
                                     <span>{get(product, "rating", 0)}</span>
                                     <i className="fa-solid fa-star" />
                                   </div>
-                                )}
+                                )} */}
                                 {/* <OverlayTrigger
                                     className="on-sale-product-tooltip"
                                     placement="top"
