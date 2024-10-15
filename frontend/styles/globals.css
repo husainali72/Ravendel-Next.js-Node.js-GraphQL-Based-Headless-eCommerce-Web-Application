@@ -681,6 +681,9 @@ a.action-btn:after {
   display: block !important;
   width: 100%;
 }
+.dropdown-content .shopping-cart-button-view-cart{
+  padding: 0;
+}
 .already-in-cart-message {
   color: rgb(8, 129, 120);
 }
@@ -3476,7 +3479,7 @@ header {
 }
 
 .checkout-section {
-  padding-top: 50px;
+  padding-top: 20px;
 }
 
 .checkout-section .toggle-info {
@@ -4686,7 +4689,7 @@ header {
   font-weight: 600;
   margin-bottom: 12px;
   font-size: 14px;
-  width: calc(100% - 50px);
+  width: calc(100% - 30px);
   /* max-height: 55px; */
 }
 .itemContainer-base-item {
@@ -5565,6 +5568,7 @@ header {
   padding: 20px;
   padding-bottom: 0;
   width: 60%;
+  padding-top: 0;
 }
 .checkout-continue-btn {
   margin-top: 12px;
@@ -5883,7 +5887,8 @@ button.btn-outline-primary:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #dcf0ef;
+  background-color: var(--primary-color);
+  color: #fff;
   border-radius: 50%;
 }
 .address-card {
@@ -6516,7 +6521,7 @@ button.btn-outline-primary:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #dcf0ef;
+  background-color: var(--primary-color);
   border-radius: 50%;
 }
 .address-card {
@@ -6626,7 +6631,7 @@ button.btn-outline-primary:hover {
   border-color: var(--primary-color);
   font-weight: 500;
   color: var(--primary-color);
-  /* background-color: #DCF0EF; */
+  /* background-color: var(--primary-color); */
 }
 .address-card .content {
   padding-left: 30px;
@@ -7136,7 +7141,7 @@ button.btn-outline-primary:hover {
   border-radius: 4px;
 }
 .clear-filters-btn:hover {
-  background-color: #dcf0ef;
+  background-color: var(--primary-color);
 }
 .search-page-title {
   text-align: center;
@@ -7818,7 +7823,7 @@ button.btn-outline-primary:hover {
     border-radius: 4px;
   }
   .clear-filters-btn:hover {
-    background-color: #dcf0ef;
+    background-color: var(--primary-color);
   }
   .search-page-title {
     text-align: center;
@@ -8077,6 +8082,25 @@ button.btn-outline-primary:hover {
     grid-template-columns: repeat(auto-fill, minmax(23.2vw, 1fr));
     grid-auto-columns: minmax(23.2vw, 1fr);
   }
+  .first-checkout-page-container, .checkout-coupon-container{
+    width: 55%;
+  }
+  .cupon-cart, .checkout-order-summary-container{
+    width: 45% !important;
+  }
+  .thankyou-page-container .left-col{
+    width: 60%;
+  }
+  .success-head h1{
+    font-size: 28px;
+    text-align: center;
+  }
+  .thankyou-page-container{
+    padding: 20px;
+  }
+  .thankyou-page-container .right-col{
+    width: 40%;
+  }
 }
 
 @media screen and (max-width: 992px) {
@@ -8273,6 +8297,17 @@ button.btn-outline-primary:hover {
   .shop-product-container {
     width: 72%;
   }
+  .first-checkout-page-container, .checkout-coupon-container{
+    width: 50%;
+    padding-left: 0;
+  }
+  .cupon-cart, .checkout-order-summary-container{
+    width: 50% !important;
+    padding-right: 0 !important;
+  }
+  .cart-product-base-container{
+    padding-right: 0;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -8432,11 +8467,42 @@ button.btn-outline-primary:hover {
   .twoRows .col-lg-4 {
     width: 100%;
   }
+  .third-container-checkout{
+    flex-direction: column;
+  }
+  .first-checkout-page-container, .checkout-coupon-container{
+    width: 100%;
+    padding-right: 0 !important;
+    padding-top: 24px !important;
+    order: 2;
+  }
+  .cupon-cart, .checkout-order-summary-container {
+    width: 100% !important;
+    border-left: unset !important;
+    padding-left: 0 !important;
+    order: 1;
+  }
+  .thankyou-page-container{
+    flex-direction: column;
+  }
+  .thankyou-page-container .left-col{
+    width: 100%;
+    padding-right: 0;
+    border: 0;
+  }
+  .thankyou-page-container .right-col{
+    width: 100%;
+    max-width: unset;
+  }
+  .btn-wrapper.thankyou .card-btons{
+    margin-left: auto !important;
+  }
 }
 
 .cupon-cart {
   border-left: 2px solid whitesmoke;
   padding: 20px;
+  padding-top: 0;
 }
 
 @media screen and (min-width: 770px) {
@@ -8680,6 +8746,7 @@ button.btn-outline-primary:hover {
 }
 .mini-cart-image {
   width: 80px;
+  margin-right: 0;
   height: 80px;
 }
 .mini-cart-footer {
@@ -8689,9 +8756,13 @@ button.btn-outline-primary:hover {
 .mini-cart-product-container {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
 }
 .mini-cart-prod-title {
   font-size: 12px !important;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .mini-cart-decrease-qty {
   width: 20px !important;
