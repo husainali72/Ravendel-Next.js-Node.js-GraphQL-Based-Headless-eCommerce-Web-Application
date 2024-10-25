@@ -243,16 +243,6 @@ const GalleryImagesComponents = (props) => {
             <CheckZipcode checkzipcode={checkzipcode} />
             <ul className="product-meta font-xs color-grey mt-50">
               <div className="stock-availabilty">
-                {/* {get(singleProduct, "quantity", 0) <= 0 && (
-                  <div className="singleProduct-stock">
-                    <p>
-                      Availablity:{" "}
-                      <span className="out-of-stock" style={{}}>
-                        Out of Stock
-                      </span>
-                    </p>
-                  </div>
-                )} */}
                 <div>
                   <RemainingQuantity
                     quantity={get(singleProduct, "quantity", 0)}

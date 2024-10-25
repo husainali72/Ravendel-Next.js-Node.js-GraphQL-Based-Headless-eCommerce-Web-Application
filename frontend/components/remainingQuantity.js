@@ -8,7 +8,7 @@ const RemainingQuantity = ({ quantity }) => {
   const [showQuantity, setShowQuantity] = useState(true); // Default to true
 
   useEffect(() => {
-    const stockOption = get(setting, "setting.store.inventory");
+    let stockOption = get(setting, "setting.store.inventory");
 
     // Check if manage_stock is true
     if (!stockOption?.manage_stock) {
@@ -16,9 +16,7 @@ const RemainingQuantity = ({ quantity }) => {
       return; // Skip further execution if manage_stock is false
     }
 
-    const stockDisplayFormat = get(stockOption, "stock_display_format");
-
-    switch (stockDisplayFormat) {
+    switch (get(stockOption, "stock_display_format")) {
       case "leftStock":
         setShowQuantity(quantity <= get(stockOption, "left_quantity"));
         break;
