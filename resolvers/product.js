@@ -1842,6 +1842,10 @@ module.exports = {
           let url = await validateAndSetUrl(args.url || args.name, Product);
           const duplicate = await duplicateData({ name: args.name }, Product)
           if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
+
+          const duplicateSKU = await duplicateData({ sku: args.sku }, Product)
+          if (duplicateSKU) return MESSAGE_RESPONSE("DUPLICATE", "Product SKU", false);
+
           const newProduct = new Product({
             name: args.name,
             url: url,
@@ -1926,6 +1930,9 @@ module.exports = {
 
         const duplicate = await duplicateData({ name: args.name }, Product, args.id)
         if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
+
+        const duplicateSKU = await duplicateData({ sku: args.sku }, Product, args.id)
+        if (duplicateSKU) return MESSAGE_RESPONSE("DUPLICATE", "Product SKU", false);
 
         const product = await Product.findById({ _id: args.id });
         if (product) {
