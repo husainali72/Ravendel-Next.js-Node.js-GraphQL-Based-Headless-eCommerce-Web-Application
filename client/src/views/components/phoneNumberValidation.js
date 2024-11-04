@@ -14,7 +14,7 @@ const PhoneNumber = ({ handleOnChange, phoneValue, width, className }) => {
                 className={className}
                 style={{ width: width }}
                 value={phoneValue}
-                defaultCountry={"us"}
+                defaultCountry={"in"}
                 label="Phone"
                 name="phone"
                 variant="outlined"

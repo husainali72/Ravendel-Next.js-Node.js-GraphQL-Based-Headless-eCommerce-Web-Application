@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {  get } from "lodash";
+import {  capitalize, get } from "lodash";
 import PropTypes from "prop-types";
 import CheckBox from "../../check";
 import Search from "./search";
 
-const FilterRadioButtons = ({ data, handleFilterChange }) => {
+const FilterRadioButtons = ({ data, handleFilterChange, title }) => {
   const [filterData, setFilterData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [showAll, setShowAll] = useState(false);
@@ -46,7 +46,7 @@ const FilterRadioButtons = ({ data, handleFilterChange }) => {
 
   return (
     <>
-      <Search searchData={searchData} onSearch={onSearch} />
+      <Search searchData={searchData} onSearch={onSearch} placeholder={`Search ${capitalize(title)}`} />
       <div className="radio-buttons">
         <CheckBox
           type="radio"
@@ -67,6 +67,7 @@ const FilterRadioButtons = ({ data, handleFilterChange }) => {
 FilterRadioButtons.propTypes = {
   data: PropTypes.array.isRequired,
   handleFilterChange: PropTypes.func.isRequired,
+  title: PropTypes.string,
 };
 
 export default FilterRadioButtons;

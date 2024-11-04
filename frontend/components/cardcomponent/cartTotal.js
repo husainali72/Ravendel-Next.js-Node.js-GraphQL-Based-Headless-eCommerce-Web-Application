@@ -83,7 +83,7 @@ const CartTotalDetails = ({ totalSummary, cartItems }) => {
           <span className="text-align-center">Checkout</span>
         </button>
         <div className="card-btons text-align-center outline">
-          <Link href="/"> Go to home</Link>
+          <Link href="/"> Continue Shopping</Link>
         </div>
       </div>
     </div>

@@ -90,6 +90,11 @@ const SubCategoryProducts = ({
                       []
                     )}
                     handleFilter={(data) => handleFilter(data)}
+                    productData={get(
+                      filteredProductData,
+                      "productData",
+                      []
+                    )}
                   />
                 </div>
               </div>
@@ -101,23 +106,21 @@ const SubCategoryProducts = ({
             !loading ? (
               get(filteredProductData, "productData.products")?.length > 0 ? (
                 <div className="shop-product-list ">
-                  <div className="totall-product category-product-count">
-                    {
-                      <p>{`${get(
-                        filteredProductData,
-                        "productData.count"
-                      )} Results for ${capitalize(
-                        get(router, "query.category", "")
-                      )}`}</p>
-                    }
-                  </div>
-                  <div className="totall-product ">
+                  <div className="totall-product">
                     <CategorySorting
                       activeSorting={get(filteredProductData, "sort", {})}
                       filterProductData={filteredProductData}
                       handleSorting={handleSorting}
                       sortingState={[selectedSorting, setSelectedSorting]}
-                    />
+                      />
+                      {
+                        <p>{`${get(
+                          filteredProductData,
+                          "productData.count"
+                        )} Results for ${capitalize(
+                          get(router, "query.category", "")
+                        )}`}</p>
+                      }
                   </div>
 
                   <div className="mobile_action_btn_wrapper">

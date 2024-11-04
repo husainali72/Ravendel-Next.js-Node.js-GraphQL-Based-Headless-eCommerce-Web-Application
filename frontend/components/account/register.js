@@ -90,7 +90,6 @@ const Register = () => {
     if (type === "checkbox") {
       setRegisterUser({ ...registerUser, [name]: !registerUser[name] });
     } else {
-      console.log(name,value)
       setRegisterUser({ ...registerUser, [name]: value });
     }
   };

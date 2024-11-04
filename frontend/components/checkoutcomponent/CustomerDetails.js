@@ -15,7 +15,8 @@ const CustomerDetail = (props) => {
     shippingInfo,
     shippingAdd,
     toggleAddNewAddressForm,
-    editCustomerAddress
+    editCustomerAddress,
+    ZipMessage
   } = props;
   useEffect(() => {
     let billingData = billingInfo;
@@ -94,6 +95,12 @@ const CustomerDetail = (props) => {
                         <p>{get(address, "addressLine2")}</p>
                       </div>
                     </div>
+                    {
+                      (!ZipMessage?.zipSuccess && billingInfo?.id && address._id === billingInfo?.id) &&
+                      <div className="error-message" style={{marginTop: '10px'}}>
+                        <small className="">{ZipMessage?.zipMessage}</small>
+                      </div>
+                    }
                   </>
                 ))}
               </div>
@@ -113,5 +120,6 @@ CustomerDetail.propTypes = {
   shippingAdd: PropTypes.object,
   toggleAddNewAddressForm: PropTypes.func,
   editCustomerAddress: PropTypes.func,
+  ZipMessage: PropTypes.object,
 };
 export default CustomerDetail;

@@ -8,7 +8,7 @@ import Price from "../../priceWithCurrency";
 const FilterSlider = ({ data, handleFilterChange,onBlur }) => {
   return (
     <>
-      <div style={{ marginTop: "24px" }}>
+      <div style={{ marginTop: "14px" }}>
         <MultiRangeSlider
         onBlur={onBlur}
           min={get(data, "data.minValue")}

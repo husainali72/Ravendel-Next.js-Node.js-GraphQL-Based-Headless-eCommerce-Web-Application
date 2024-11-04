@@ -119,7 +119,7 @@ const Orderdetail = (props) => {
                         <b>{get(option, 'label', '')}</b>
                         <p>{get(option, "description", '')}</p>
                       </div>
-                      <img className="payment-mode-img" src={option?.label === 'Razorpay' ? razorpayImage.src : option?.label === 'Paypal' ? paypalImage.src : option?.label === 'Stripe' ? stripeImage.src : option?.label === 'Cash On Delivery' ? codImage.src : option?.label === 'Bank Transfer' ? bankImage.src : ''} />
+                      <img className="payment-mode-img" src={option?.label === 'RazorPay' ? razorpayImage.src : option?.label === 'Paypal' ? paypalImage.src : option?.label === 'Stripe' ? stripeImage.src : option?.label === 'Cash On Delivery' ? codImage.src : option?.label === 'Bank Transfer' ? bankImage.src : ''} />
                     </div>
                   </div>
                 </div>
