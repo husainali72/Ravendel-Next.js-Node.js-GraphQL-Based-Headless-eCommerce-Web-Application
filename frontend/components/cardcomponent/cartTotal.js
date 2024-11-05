@@ -36,7 +36,7 @@ const CartTotalDetails = ({ totalSummary, cartItems }) => {
           <p className="mrp-price ">
             Discount on MRP
             <Tooltip
-              title="Your total amount has already been updated with a special discount."
+              title="Your purchase price has already been updated with this discount value."
               placement="top"
             >
               {/* <HelpIcon className="priceDetail-base-knowMore "/> */}
@@ -52,7 +52,7 @@ const CartTotalDetails = ({ totalSummary, cartItems }) => {
           <p className="mrp-price">
             Shipping Fee
             <Tooltip
-              title="Your total amount has already been updated with a special discount."
+              title="Shipping cost is calculated based on your location and order quantity."
               placement="top"
             >
               <i className="fa fa-question-circle priceDetail-base-knowMore"></i>

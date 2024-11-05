@@ -14,6 +14,7 @@ import { emailErrorMessage, passwordErrorMessage } from "../validationMessages";
 import { validateEmail } from "../../utills/Validation";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/bootstrap.css";
 import PasswordField from "../passwordField";
 import {
   GET_CUSTOMER_QUERY,
@@ -38,6 +39,7 @@ function EditAddress() {
   const [customerDetail, setCustomerDetail] = useState(addressFieldObject);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const {
     register,
     handleSubmit,
@@ -48,6 +50,7 @@ function EditAddress() {
   const dispatch = useDispatch();
   const session = useSession();
   const handleInputChange = (e, nm) => {
+    setIsButtonDisabled(false)
     if (nm === "addressType") {
       setCustomerDetail({ ...customerDetail, [nm]: e?.value });
     } else {
@@ -56,6 +59,7 @@ function EditAddress() {
     }
   };
   const handlePhoneInput = (name, value) => {
+    setIsButtonDisabled(false)
     setCustomerDetail({ ...customerDetail, [name]: value });
   };
   const getcustomer = () => {
@@ -101,6 +105,7 @@ function EditAddress() {
         });
     }
   };
+
   return (
     <>
       {loading && (
@@ -223,14 +228,15 @@ function EditAddress() {
                   style={{ gap: "12px" }}
                 >
                   <button
-                    className="card-btons text-align-center outline"
+                    className="btn btn-success primary-btn-color checkout-continue-btn outline"
                     onClick={() => setShowChangePassword(true)}
                   >
                     <span className="text-align-center">Change Password</span>
                   </button>
                   <button
-                    className="card-btons text-align-center primary-btn-color"
+                    className="btn btn-success primary-btn-color checkout-continue-btn"
                     type="submit"
+                    disabled={isButtonDisabled}
                   >
                     <span className="text-align-center">Save Changes</span>
                   </button>

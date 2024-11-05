@@ -100,10 +100,10 @@ export default function Footer() {
                       email ||
                       phoneNumber ||
                       hour) && (
-                        <h6 className="foot-tittle mt-4">Contact</h6>
+                        <h6 className="foot-tittle mt-4 mb-3">Contact</h6>
                       )}
                     {addressLine1 && (
-                      <p className="mb-1">
+                      <p className="mb-2">
                         <strong>Address : </strong>
                         <span>
                           {addressLine1 || ""}
@@ -116,7 +116,7 @@ export default function Footer() {
                       </p>
                     )}
                     {phoneNumber && (
-                      <p className="mb-1">
+                      <p className="mb-2">
                         <strong>Phone : </strong>
                         <Link href={"tel:" + phoneNumber || ""}>
                           <span className="contact-details">
@@ -127,7 +127,7 @@ export default function Footer() {
                       </p>
                     )}
                     {email && (
-                      <p className="mb-1">
+                      <p className="mb-2">
                         <strong>Email : </strong>
                         <Link href={"mailto:" + email || ""}>
                           <span className="contact-details">
@@ -138,7 +138,7 @@ export default function Footer() {
                       </p>
                     )}
                     {get(Address, "hour", "") && (
-                      <p className="mb-1">
+                      <p className="mb-2">
                         <strong>Hour: </strong>
 
                         {<span>{get(Address, "hour", "")}</span>}

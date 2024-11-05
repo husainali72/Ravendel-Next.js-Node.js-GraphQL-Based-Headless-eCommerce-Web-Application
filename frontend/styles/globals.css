@@ -2635,7 +2635,7 @@ footer .btn:hover a {
   margin-left: auto;
   margin-right: 0;
   height: 576px !important;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .singleroduct-gallery-slider {
@@ -5216,6 +5216,10 @@ header {
   font-size: 15px;
   color: #1a1a1a;
 }
+.applied-coupon-section p b{
+  font-weight: 600;
+  margin-right: 4px;
+}
 .applied-coupon-section p {
   font-weight: 600;
   margin-bottom: 12px;
@@ -5593,6 +5597,14 @@ header {
 }
 .checkout-second-page-container {
   display: flex;
+}
+.checkout-continue-btn.outline{
+  background-color: transparent !important;
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+}
+.checkout-continue-btn.outline:hover{
+  transform: unset !important;
 }
 
 .second-container {
@@ -7564,6 +7576,9 @@ button.btn-outline-primary:hover {
 }
 .btn-wrapper.thankyou .card-btons {
   width: 500px;
+  word-spacing: 3px;
+  letter-spacing: 1px;
+  font-weight: 600;
 }
 .magnify-portal {
   overflow: hidden;

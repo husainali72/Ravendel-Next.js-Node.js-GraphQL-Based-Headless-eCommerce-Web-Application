@@ -80,7 +80,7 @@ const ResetPasswordForm = ({ setShowChangePassword }) => {
         <PasswordField
           type="password"
           className="form-control login-top-space"
-          id="newPassword"
+          id="New Password"
           placeholder="newPassword"
           value={get(formData, "newPassword", "")}
           name="newPassword"
@@ -110,6 +110,7 @@ const ResetPasswordForm = ({ setShowChangePassword }) => {
           <button
             type="submit"
             className="btn btn-success primary-btn-color checkout-continue-btn"
+            disabled={(!get(formData, "newPassword", "") || !get(formData, "currentPassword", ""))}
           >
             Change password
           </button>

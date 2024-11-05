@@ -170,6 +170,12 @@ const Tablecomponent = ({
                                     />
                                   </TableCell>
                                 );
+                              case "link":
+                                return (
+                                  <TableCell>
+                                    <a href={`/product/${get(data,'url','')}`} target="_blank">{get(data, `${[column?.name]}`)}</a>
+                                  </TableCell>
+                                );
                               case "rating":
                                 return (
                                   <TableCell>

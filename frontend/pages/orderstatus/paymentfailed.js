@@ -144,6 +144,21 @@ const PaymentFailed = () => {
                   </div>
                 </div>
               </div>
+              {
+                singleOrderDetail?.couponCard?.couponApplied &&
+                <div className="order-address">
+                  <div className="checkout-shipping-method">
+                    <div className="checkout-details-title">
+                      <h5>Coupon Details</h5>
+                    </div>
+                    <div className="checkout-shipping-address ">
+                      <div className="checkout-list-content">
+                        <b>Coupon Applied: {singleOrderDetail?.couponCard?.appliedCouponCode}</b>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
           </div>
           {/* <OrderDetailAfter orderInfo={singleOrderDetail} /> */}
         </div>
@@ -155,7 +170,7 @@ const PaymentFailed = () => {
           </Link>
           <Link href='/'>
             <a className="card-btons text-align-center outline">
-              <span className="text-align-center">GO TO HOME</span>
+              <span className="text-align-center">Continue Shopping</span>
             </a>
           </Link>
         </div>
