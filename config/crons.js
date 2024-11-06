@@ -58,20 +58,9 @@ const abandonedCartsNotification = (app) => {
 
       const cartsData = await Cart.aggregate(pipeline);
 
-      let currentDate = new Date();
-      let oldDate = new Date(currentDate.getTime());
-      oldDate.setDate(oldDate.getDate() - 7);
-
-
       for (let unit of cartsData) {
         if (unit.products.length != 0 && unit.customerInfo.length != 0) {
 
-          let unitDateTimestamp = unit.date.getTime();
-          let oldDateTimestamp = oldDate.getTime();
-
-          if (unitDateTimestamp < oldDateTimestamp) {
-            console.log(unit.date, unit.customerInfo[0].firstName);
-          }
           let data = {
             email : unit.customerInfo[0].email,
             products : unit.products
