@@ -20,7 +20,7 @@ const Order = require("../models/Order");
 const _ = require('lodash');
 const {Types: {ObjectId}} = require("mongoose")
 const { sendPushNotificationTemplate } = require("./notification");
-
+const jwt = require("jsonwebtoken");
 
 const isEmpty = (value) =>
   value === undefined ||
@@ -303,6 +303,7 @@ const Jimp = require("jimp");
 const sharp = require("sharp");
 const Zipcode = require("../models/Zipcode");
 const ProductCat = require("../models/ProductCat");
+const keys = require("../config/keys");
 const imgType = ["original", "large", "medium", "thumbnail"];
 
 //const path = require("path");
@@ -2129,6 +2130,7 @@ const sendEmailTemplate = async (template_name, data, settings) => {
     // console.log("settings.appearance.theme.logo", settings.appearance.theme.logo)
     emailTemplate.body = emailTemplate.body.replaceAll("{{main_logo}}",`${encodeURI(`${APP_KEYS.BASE_URL}${settings.appearance.theme.logo}`)}`);
     emailTemplate.body = emailTemplate.body.replaceAll("{{base_url}}",APP_KEYS.BASE_URL);
+    emailTemplate.body = emailTemplate.body.replaceAll("{{unsubscribe_link}}",data?.unsubscribe_link);
 
     let email_data = {
       from: APP_KEYS.FROM_EMAIL,
@@ -2572,3 +2574,12 @@ const getBoughtTogetherProducts = async (productId, model) => {
 // };
 
 module.exports.getBoughtTogetherProducts = getBoughtTogetherProducts
+
+const unsubscribeTokenGenerator = (id) => {
+  let token = jwt.sign(
+    { id: id },
+    keys.jwtSecret
+  )
+  return token
+};
+module.exports.unsubscribeTokenGenerator = unsubscribeTokenGenerator

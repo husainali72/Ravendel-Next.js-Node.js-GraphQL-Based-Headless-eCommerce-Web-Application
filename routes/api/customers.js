@@ -9,6 +9,7 @@ const auth = require("../../middleware/customerauth");
 
 // custmer model
 const Customer = require("../../models/Customer");
+const EmailTemplate = require("../../models/EmailTemplate");
 const Cart = require("../../models/Cart");
 const Setting = require("../../models/Setting");
 const { sendEmail } = require("../../config/helpers");
@@ -887,5 +888,47 @@ router.post('/remindCart/:custId', auth, async(req, res) => {
     res.status(500).json({message: "Server Error", succes: false})
   }
 })
+
+router.get("/unsubscribe", async (req, res) => {
+  try {
+
+    let token = req?.query?.token;
+    if (!token) {
+      return res.send("<code> Invalid token, try again later A</code>");
+    }
+
+    try {
+      token = jwt.verify(token, APP_KEYS.jwtSecret);
+    } catch (error) {
+      return res.send("<code> Invalid token, try again later B</code>");
+    }
+
+    const customerData = await Customer.findByIdAndUpdate(
+      { _id: token.id },
+      { $set: { "emailPreferences.remainders" : false } },
+      { new: true }
+    );
+
+    if (!customerData) {
+      return res.send("<code> Invalid token, try again later C</code>");
+    }
+
+    // Return a success message
+    let htmlpage = await EmailTemplate.findOne({ template_name: "UNSUBSCRIBE_PAGE" });
+    if (!htmlpage) {
+      return res.send("<code> Your email is unsubscribed, thank you </code>");
+    }
+    let settings = await Setting.findOne({});
+    htmlpage = htmlpage.body;
+
+    htmlpage = htmlpage.replaceAll("{{main_logo}}",`${encodeURI(`${APP_KEYS.BASE_URL}${settings?.appearance?.theme?.logo}`)}`);
+
+    return res.send(htmlpage);
+    
+  } catch (error) {
+    console.log(error);
+    return res.send("<code> Invalid token, try again later D</code>");
+  }
+});
 
 module.exports = router;
