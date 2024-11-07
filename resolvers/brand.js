@@ -181,8 +181,8 @@ module.exports = {
           }
           let _id = args.id;
           const product = await Product.updateMany(
-            {},
-            { $unset: { brand: _id } }
+            { brand: _id },
+            { $unset: { brand: 1} }
           );
          
           return MESSAGE_RESPONSE("DELETE", "Brand", true);
