@@ -110,6 +110,16 @@ const CustomerSchema = new Schema({
     enum: ["ACTIVE", "DELETED", "BLOCKED"],
     default: "ACTIVE",
   },
+  emailPreferences: {
+    transactions: {
+      type: Boolean,
+      default: true,
+    },
+    remainders: {
+      type: Boolean,
+      default: true,
+    }
+  },
   updated: {
     type: Date,
   },

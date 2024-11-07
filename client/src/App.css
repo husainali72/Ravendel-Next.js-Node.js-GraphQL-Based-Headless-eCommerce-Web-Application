@@ -387,3 +387,9 @@
 .input_display{
   display: none;
 }
+.MuiTableCell-root  a{
+  color: #000;
+}
+.MuiTableCell-root  a:hover{
+  text-decoration: underline;
+}

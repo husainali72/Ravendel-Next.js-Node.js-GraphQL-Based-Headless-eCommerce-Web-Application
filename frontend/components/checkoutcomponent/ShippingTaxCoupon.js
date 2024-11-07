@@ -6,6 +6,7 @@ import { Button, Form, FormCheck, FormGroup } from "react-bootstrap";
 import { capitalize } from "lodash";
 import DetailsCard from "../cardcomponent/DetailsCard";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import {isPriceZero} from '../../utills/helpers'
 const ShippingTaxCoupon = (props) => {
   const {
     currency,
@@ -13,6 +14,7 @@ const ShippingTaxCoupon = (props) => {
     prevFormStep,
     shippingAdd,
     billingInfo,
+    totalSummary
   } = props;
   return (
     <>
@@ -38,9 +40,11 @@ const ShippingTaxCoupon = (props) => {
           </>
         ) : null}
         <div className="checkout-shipping-method">
-          <div className="checkout-details-title">
-            <h5>Shipping Method</h5>
-          </div>
+          {isPriceZero(totalSummary.totalShipping || 0) && (
+            <>
+            <div className="checkout-details-title">
+              <h5>Shipping Method</h5>
+            </div>
             <div className="cust-detail-container">
               <>
                 <div
@@ -60,6 +64,8 @@ const ShippingTaxCoupon = (props) => {
                 </div>
               </>
             </div>
+            </>
+          )}
         </div>
       </div>
     </>

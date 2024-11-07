@@ -9,7 +9,7 @@ const CouponCard = ({ couponCartDetail, removeCoupon }) => {
         <div className="applied-coupon-section">
           <span>
             <p>
-              You Saved :
+              <b>You Saved : {" "}</b>
               <Price
                 price={get(couponCartDetail, "appliedCouponDiscount", 0)}
               />

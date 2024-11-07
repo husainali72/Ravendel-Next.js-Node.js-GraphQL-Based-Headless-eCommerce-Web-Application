@@ -40,15 +40,16 @@ export default function Home({
       initialRender.current = false;
     }
   }, [cart]);
-  const brandTitle = process.env.NEXT_PUBLIC_BRAND_TITLE || "";
+  const siteTitle = process.env.NEXT_PUBLIC_BRAND_TITLE || "";
+
   return (
     <div>
       <Head>
-        <title>{get(seoInfo, "meta_title", brandTitle)}</title>
+        <title>{get(seoInfo, "meta_title", siteTitle)}</title>
         <link rel="icon" href="/favicon.ico" />
         <meta
           name="description"
-          content={get(seoInfo, "meta_description", "Ravendel")}
+          content={get(seoInfo, "meta_description", siteTitle)}
         />
         <meta name="keywords" content={get(seoInfo, "meta_tag", "")} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />

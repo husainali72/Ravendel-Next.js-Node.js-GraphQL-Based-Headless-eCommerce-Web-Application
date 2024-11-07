@@ -20,7 +20,7 @@ const Homebanner = ({ settings, slider }) => {
       <Carousel >
         {slider.map((slide, i) => (
           <Carousel.Item key={i}>
-            <a href={slide.link} rel="noreferrer" target={slide.open_in_tab ? '_blank' : ''}>
+            <a href={slide.link ? slide.link : undefined} rel="noreferrer" target={slide.open_in_tab ? '_blank' : ''}>
               <Image
                 src={
                   imageSrc
@@ -30,7 +30,7 @@ const Homebanner = ({ settings, slider }) => {
                     : "https://dummyimage.com/300"
                 }
                 width={1920}
-                height={550}
+                height={400}
                 sx={{ alignItems: "center", mt: 0 }}
                 className="d-block w-100"
                 alt={`slider`}

@@ -9,6 +9,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { Controller, useForm } from 'react-hook-form';
 import notify from '../utills/notifyToast';
 import PhoneInput from 'react-phone-input-2';
+import "react-phone-input-2/lib/bootstrap.css";
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 import client from '../apollo-client';

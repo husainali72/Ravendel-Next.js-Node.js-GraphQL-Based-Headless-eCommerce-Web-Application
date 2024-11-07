@@ -98,13 +98,37 @@ const OnSaleProductCard = ({
                                       alt={product?.name}
                                       className="img-on-sale"
                                     />
-                                    {get(product, "rating", 0) > 0 && (
+                                    {/* {get(product, "rating", 0) > 0 && (
                                       <div className="card-rating">
                                         <span>{get(product, "rating", 0)}</span>
                                         <i className="fa-solid fa-star" />
                                       </div>
-                                    )}
-                
+                                    )} */}
+                                    {/* <OverlayTrigger
+                                    className="on-sale-product-tooltip"
+                                    placement="top"
+                                    overlay={
+                                      <Tooltip id={"tooltip-top"}>
+                                        add to cart
+                                      </Tooltip>
+                                    }
+                                  >
+                                    <Link
+                                      href={`/product/[singleproduct]?url=${product.url}`}
+                                      as={`/product/${product.url}`}
+                                    >
+                                      <div className="add-to-cart">
+                                        <button>Add to cart</button>
+                                        {" "}
+                                        <a className="cart-icon">
+                                          <i
+                                            className="fas fa-shopping-bag font-awesome-icon"
+                                            aria-hidden="true"
+                                          ></i>
+                                        </a>
+                                      </div>
+                                    </Link>
+                                  </OverlayTrigger> */}
                                   </div>
                                   <div className="on-sale-product-card-body">
                                     <div className="card-price">
@@ -213,12 +237,12 @@ const OnSaleProductCard = ({
                                   alt={product?.name}
                                   className="img-on-sale"
                                 />
-                                {get(product, "rating", 0) > 0 && (
+                                {/* {get(product, "rating", 0) > 0 && (
                                   <div className="card-rating">
                                     <span>{get(product, "rating", 0)}</span>
                                     <i className="fa-solid fa-star" />
                                   </div>
-                                )}
+                                )} */}
                                 {/* <OverlayTrigger
                                     className="on-sale-product-tooltip"
                                     placement="top"

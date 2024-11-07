@@ -4,7 +4,7 @@ const Setting = require("../models/Setting");
 const Cart = require("../models/Cart");
 const Customer = require("../models/Customer");
 const APP_KEYS = require("./keys");
-const { sendEmail, sendEmailTemplate } = require("./helpers");
+const { sendEmailTemplate, unsubscribeTokenGenerator } = require("./helpers");
 
 /*
 // updateAdminProductLowStock everyday at 12am
@@ -49,6 +49,7 @@ const abandonedCartsNotification = (app) => {
                 $project: {
                   firstName: 1,
                   email: 1,
+                  emailPreferences: 1,
                 },
               },
             ],
@@ -58,26 +59,21 @@ const abandonedCartsNotification = (app) => {
 
       const cartsData = await Cart.aggregate(pipeline);
 
-      let currentDate = new Date();
-      let oldDate = new Date(currentDate.getTime());
-      oldDate.setDate(oldDate.getDate() - 7);
-
-
       for (let unit of cartsData) {
         if (unit.products.length != 0 && unit.customerInfo.length != 0) {
-
-          let unitDateTimestamp = unit.date.getTime();
-          let oldDateTimestamp = oldDate.getTime();
-
-          if (unitDateTimestamp < oldDateTimestamp) {
-            console.log(unit.date, unit.customerInfo[0].firstName);
+          if (unit?.customerInfo[0]?.emailPreferences?.remainders === false) {
+            continue;
           }
+
+          let unsubscribeToken = unsubscribeTokenGenerator(
+            unit.customerInfo[0]._id
+          );
           let data = {
-            email : unit.customerInfo[0].email,
-            products : unit.products
-          }
-          sendEmailTemplate("CART_REMAINDER", data)
-
+            email: unit.customerInfo[0].email,
+            products: unit.products,
+            unsubscribe_link: `${APP_KEYS.BASE_URL}apis/customers/unsubscribe?token=${unsubscribeToken}`,
+          };
+          sendEmailTemplate("CART_REMAINDER", data);
         }
       }
     } catch (error) {
