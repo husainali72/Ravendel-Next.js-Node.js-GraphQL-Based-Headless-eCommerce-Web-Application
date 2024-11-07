@@ -156,7 +156,6 @@ const AllOrdersComponent = () => {
             searchdata={AllOrder}
             handleOnChangeSearch={handleOnChangeSearch}
             dropdown={badgefilter}
-            showDeleteButton={true}
             searchbydate={true}
             title="All Orders"
           />
