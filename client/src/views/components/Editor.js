@@ -32,14 +32,16 @@ const TinymceEditorComponent = ({ value, onEditorChange }) => {
             height: 500,
             menubar: false,
             plugins: [
-              "advlist autolink lists link image charmap print preview anchor",
-              "searchreplace visualblocks code fullscreen",
-              "insertdatetime media table paste code help wordcount",
+              'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
+              'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
+              'media', 'table', 'emoticons', 'help'
             ],
             toolbar:
-              "undo redo | formatselect | bold italic underline backcolor forecolor | \
-                  alignleft aligncenter alignright alignjustify | \
-                  bullist numlist outdent indent | removeformat | help | image | code",
+              "undo redo | formatselect | bold italic underline backcolor forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help | code",
+              style_formats: [
+                {title: 'Red text - applies inline', inline: 'span', styles: {color: '#ff0000'}},
+                {title: 'Red paragraph - applies to block', block: 'p', styles: {color: '#ff0000'}},
+              ],
             images_upload_url: "/api/files/upload",
             paste_data_images: true,
             convert_urls: false,

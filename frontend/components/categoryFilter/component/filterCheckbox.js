@@ -1,10 +1,10 @@
 
 import React, { useEffect, useState } from "react";
-import {  get } from "lodash";
+import {  capitalize, get } from "lodash";
 import CheckBox from "../../check";
 import PropTypes from "prop-types";
 import Search from "./search";
-const FilterCheckbox = ({ data, handleFilterChange }) => {
+const FilterCheckbox = ({ data, handleFilterChange, title }) => {
   const [filterData, setFilterData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [showAll, setShowAll] = useState(false);
@@ -43,7 +43,7 @@ const FilterCheckbox = ({ data, handleFilterChange }) => {
   };
   return (
     <div className="filter-by-price-checkbox">
-      <Search searchData={searchData} onSearch={onSearch} />
+      <Search searchData={searchData} onSearch={onSearch} placeholder={`Search ${capitalize(title)}`} />
       <CheckBox
         type="checkbox"
         onChange={(e) => {
@@ -60,8 +60,9 @@ const FilterCheckbox = ({ data, handleFilterChange }) => {
 
 
 FilterCheckbox.propTypes = {
-    data: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
   handleFilterChange: PropTypes.func.isRequired,
+  title: PropTypes.string,
 };
 export default FilterCheckbox;

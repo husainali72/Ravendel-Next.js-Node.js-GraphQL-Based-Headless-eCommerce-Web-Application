@@ -8,7 +8,7 @@ import { ARRAY, CHOICE, RANGE } from "./constant";
 import AccordionComponent from "../accordian";
 import { applyFiltersFromUrl, updateUrl } from "./component/urlFilter";
 import { useRouter } from "next/router";
-const CategoryFilter = ({ filterCategoryData, handleFilter,activeSorting }) => {
+const CategoryFilter = ({ filterCategoryData, handleFilter,activeSorting, productData }) => {
   const [filterData, setFilteredData] = useState([]);
   const router = useRouter();
   
@@ -88,7 +88,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter,activeSorting }) => {
   };
   return (
     <div className=" category-filter-container">
-      {filterData?.length > 0 &&
+      {(productData.count > 1 && filterData?.length > 1) &&
         filterData?.map((filter, index) => (
           <div key={index} className="filter-section">
             {(() => {
@@ -102,6 +102,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter,activeSorting }) => {
                         body={
                           <FilterCheckbox
                             data={filter}
+                            title={get(filter, "heading", "")}
                             handleFilterChange={(e) =>
                               handleFilterChange(e, index, get(filter, "type"))
                             }
@@ -112,22 +113,24 @@ const CategoryFilter = ({ filterCategoryData, handleFilter,activeSorting }) => {
                   );
                 case RANGE:
                   return (
-                    data && (
-                      <AccordionComponent
-                        title={get(filter, "heading", "")}
-                        body={
-                          <FilterSlider
-                            data={filter}
-                            onBlur={() => {
-                              updateUrl(filterData, router,activeSorting);
-                              handleFilter(filterData);
-                            }}
-                            handleFilterChange={(e) =>
-                              handleFilterChange(e, index, get(filter, "type"))
-                            }
-                          />
-                        }
-                      />
+                    (data && filter?.data?.maxValue > filter?.data?.minValue)  && (
+                      <>
+                        <AccordionComponent
+                          title={get(filter, "heading", "")}
+                          body={
+                            <FilterSlider
+                              data={filter}
+                              onBlur={() => {
+                                updateUrl(filterData, router,activeSorting);
+                                handleFilter(filterData);
+                              }}
+                              handleFilterChange={(e) =>
+                                handleFilterChange(e, index, get(filter, "type"))
+                              }
+                            />
+                          }
+                        />
+                      </>
                     )
                   );
                 case CHOICE:
@@ -137,6 +140,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter,activeSorting }) => {
                         title={get(filter, "heading", "")}
                         body={
                           <FilterRadioButtons
+                            title={get(filter, "heading", "")}
                             data={filter}
                             handleFilterChange={(e) =>
                               handleFilterChange(e, index, get(filter, "type"))
@@ -161,6 +165,7 @@ CategoryFilter.propTypes = {
   filterCategoryData: PropTypes.array.isRequired,
   updateUrl: PropTypes.func.isRequired,
   activeSorting: PropTypes.object,
+  productData: PropTypes.object,
 };
 
 export default CategoryFilter;

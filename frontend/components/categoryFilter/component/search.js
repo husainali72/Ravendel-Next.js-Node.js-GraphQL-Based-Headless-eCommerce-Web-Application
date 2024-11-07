@@ -4,7 +4,7 @@ import { FaTimes } from "react-icons/fa"; // Import the cross icon from react-ic
 import { CiSearch } from "react-icons/ci";
 import InputField from "../../inputField";
 
-const Search = ({ searchData, onSearch }) => {
+const Search = ({ searchData, onSearch, placeholder }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Search = ({ searchData, onSearch }) => {
       <CiSearch />
         <InputField
           type="text"
-          placeholder="Enter your search"
+          placeholder={placeholder ? placeholder : "Enter your search"}
           value={searchQuery}
           onChange={handleInputChange}
           className="search-field"
@@ -46,6 +46,7 @@ const Search = ({ searchData, onSearch }) => {
 Search.propTypes = {
   searchData: PropTypes.array.isRequired,
   onSearch: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
 };
 
 export default Search;

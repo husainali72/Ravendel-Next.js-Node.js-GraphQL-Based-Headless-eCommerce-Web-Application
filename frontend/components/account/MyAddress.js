@@ -12,6 +12,7 @@ import CorporateFareOutlinedIcon from "@mui/icons-material/CorporateFareOutlined
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/bootstrap.css";
 import { Controller, useForm } from "react-hook-form";
 import Select from "react-select";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";

@@ -34,9 +34,9 @@ const AllproductComponent = () => {
     },
     {
       name: "name",
-      type: "name",
+      type: "link",
       title: "Name",
-      sortingactive: true
+      sortingactive: true,
     },
     {
       name: "brand",
@@ -83,7 +83,7 @@ const AllproductComponent = () => {
       let data = []
 
       products.products.map((product) => {
-        const { brand, _id, feature_image, date, status, name} = product
+        const { brand, _id, feature_image, date, status, name, url} = product
         let object = {
           id:  _id,
           image:feature_image || NoImagePlaceHolder,
@@ -91,6 +91,7 @@ const AllproductComponent = () => {
           brand: get(brand,'name',''),
           status: status,
           name: name,
+          url: url
         }
         data.push(object)
       })

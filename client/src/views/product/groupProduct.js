@@ -33,7 +33,7 @@ const GroupProductComponent = () => {
       name: "title",
       type: "text",
       title: "Title",
-      sortingactive: true
+      sortingactive: true,
     },
     {
       name: "productCounts",
@@ -65,7 +65,6 @@ const GroupProductComponent = () => {
   useEffect(() => {
     if (!isEmpty(get(groupProducts, 'groupProducts'))) {
       let data = []
-
       groupProducts.groupProducts.map((product) => {
         let object = {
           id: product.id,

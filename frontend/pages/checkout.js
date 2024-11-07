@@ -111,12 +111,14 @@ export const CheckOut = () => {
   const settings = useSelector((state) => state.setting);
   const [currencyOption, setCurrencyOption] = useState({});
   const [loading, setLoading] = useState(false);
+  const [pageLoader, setPageLoader] = useState(false);
   const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false);
   const [cartLoading, setCartLoading] = useState(false);
   const [isAddNewAddressForm, setIsAddNewAddressForm] = useState(false);
   const [isEditAddress, setIsEditAddress] = useState(false);
   const cart = useSelector((state) => state.cart);
   useEffect(() => {
+    setPageLoader(true);
     getUserCartData();
   }, []);
   useEffect(() => {
@@ -269,6 +271,7 @@ export const CheckOut = () => {
   }, [customerId]);
   useEffect(() => {
     const getProducts = async () => {
+      setPageLoader(true);
       const userSession = await getSession();
       if (session?.status === "authenticated" || userSession !== null) {
         setIsLogin(true);
@@ -289,6 +292,7 @@ export const CheckOut = () => {
         //If the user is not authenticated Redirect the user to the login page
         router.push("/login");
       }
+      setPageLoader(false);
     };
     getProducts();
   }, [carts]);
@@ -464,10 +468,10 @@ export const CheckOut = () => {
           CHECK_ZIPCODE,
           variable
         );
-        notify(
-          get(result, "checkZipcode.message"),
-          get(result, "checkZipcode.success")
-        );
+        // notify(
+        //   get(result, "checkZipcode.message"),
+        //   get(result, "checkZipcode.success")
+        // );
         setZipMessage({
           ...ZipMessage,
           shipping: shippingAdd,
@@ -844,6 +848,7 @@ export const CheckOut = () => {
     setIsAddNewAddressForm(false);
     setBillingInfo({ ...billingInfo, ...address });
   };
+
   if (islogin) {
     switch (formStep) {
       case 1:
@@ -861,6 +866,7 @@ export const CheckOut = () => {
                         toggleAddNewAddressForm={toggleAddNewAddressForm}
                         setBillingInfo={setBillingInfo}
                         SelectAddressBook={SelectAddressBook}
+                        ZipMessage={ZipMessage}
                         billingInfo={billingInfo}
                         shippingInfo={shippingInfo}
                         shippingAdd={shippingAdd}
@@ -897,6 +903,7 @@ export const CheckOut = () => {
                         <button
                           type="submit"
                           className="btn btn-success primary-btn-color checkout-continue-btn"
+                          disabled={!ZipMessage?.zipSuccess}
                         >
                           NEXT
                         </button>
@@ -955,6 +962,7 @@ export const CheckOut = () => {
                           prevFormStep={prevFormStep}
                           shippingAdd={shippingAdd}
                           billingInfo={billingInfo}
+                          totalSummary={totalSummary}
                         />
                         {loading && <Loading />}
                         <Orderdetail
@@ -1008,6 +1016,7 @@ export const CheckOut = () => {
   return (
     <div>
       <BreadCrumb title={"checkout"} />
+      {pageLoader && <Loading />}
       <section className="checkout-section">
         {islogin && cartItems && 0 < cartItems?.length ? (
           <Container>
@@ -1077,19 +1086,24 @@ export const CheckOut = () => {
           </Container>
         ) : (
           <Container className="empty-checkout-page">
-            <div className="checkout-unauthorised-container">
-              <h3>Please Login First</h3>
-            </div>
-            <div className="checkout-unauthorised-container">
-              <Link href="/login">
-                <button
-                  type="button"
-                  className="btn btn-success primary-btn-color checkout-login-btn"
-                >
-                  login
-                </button>
-              </Link>
-            </div>
+            {
+              !pageLoader &&
+              <>
+                <div className="checkout-unauthorised-container">
+                  <h3>Please Login First</h3>
+                </div>
+                <div className="checkout-unauthorised-container">
+                  <Link href="/login">
+                    <button
+                      type="button"
+                      className="btn btn-success primary-btn-color checkout-login-btn"
+                    >
+                      login
+                    </button>
+                  </Link>
+                </div>
+              </>
+            }
           </Container>
         )}
       </section>
