@@ -150,6 +150,7 @@ const GET_ALL_FUNC = async (modal, name, admin, sortField = "date") => {
     const sortObj = { [sortField]: -1 };
 
     if (modal === Product && !admin) response = await modal.find({ status: "Publish" }).sort(sortObj);
+    else if (modal === Customer) response = await modal.find({status: "ACTIVE"}).sort(sortObj);
     else response = await modal.find({}).sort(sortObj);
 
     if(response.length) {

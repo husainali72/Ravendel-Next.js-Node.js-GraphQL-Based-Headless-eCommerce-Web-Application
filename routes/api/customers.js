@@ -112,16 +112,27 @@ router.post("/login", (req, res) => {
     const password = req.body.password;
     // Find customer by email
     const pipeline = [
+      // {
+      //   $lookup: {
+      //     from: "carts",
+      //     localField: "_id",
+      //     foreignField: "userId",
+      //     as: "cartId",
+      //   },
+      // },
+      // { $set: { cartId: { $arrayElemAt: ["$cartId._id", 0] } } },
+      { $match: { email: email, status: "ACTIVE" } },
       {
-        $lookup: {
-          from: "carts",
-          localField: "_id",
-          foreignField: "userId",
-          as: "cartId",
+        $project: {
+          _id: 1,
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          phone: 1,
+          status: 1,
+          password: 1,
         },
       },
-      { $set: { cartId: { $arrayElemAt: ["$cartId._id", 0] } } },
-      { $match: { email: email, status: "ACTIVE" } },
     ];
     Customer.aggregate(pipeline).then((cust) => {
       let customer = cust[0];
