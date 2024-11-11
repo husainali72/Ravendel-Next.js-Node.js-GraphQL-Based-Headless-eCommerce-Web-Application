@@ -127,7 +127,7 @@ router.post("/login", (req, res) => {
       let customer = cust[0];
       // Check for customer
       if (!customer) {
-        return res.status(404).json({ success: false, message: "Invalid credentials." });
+        return res.status(404).json({ success: false, message: "Invalid Email or Password" });
       }
 
       // Check Password
@@ -158,7 +158,7 @@ router.post("/login", (req, res) => {
             res.status(200).json(data);
           });
         } else {
-          return res.status(404).json({ success: false, message: "Invalid credentials." });
+          return res.status(404).json({ success: false, message: "Invalid Email or Password" });
         }
       });
     });

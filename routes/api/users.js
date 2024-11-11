@@ -62,7 +62,7 @@ router.post("/login", (req, res) => {
   User.findOne({ email }).then((user) => {
     // Check for user
     if (!user) {
-      return res.status(404).json("Invalid credentials");
+      return res.status(404).json("Invalid Email or Password");
     }
     // Check Password
     bcrypt.compare(password, user.password).then((isMatch) => {
@@ -99,7 +99,7 @@ router.post("/login", (req, res) => {
         }
 
       } else {
-        return res.status(400).json("Invalid credentials");
+        return res.status(400).json("Invalid Email or Password");
       }
     });
   });
