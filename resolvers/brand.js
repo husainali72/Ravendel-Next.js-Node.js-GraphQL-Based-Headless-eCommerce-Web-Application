@@ -8,7 +8,7 @@ const {
   imageUpload,
   imageUnlink,
   putError,
-  duplicateData
+  duplicateData,
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -20,7 +20,7 @@ const {
 const { checkAwsFolder } = require("../config/aws");
 const fs = require("fs");
 
-var sdir = './assets/images/brand';
+var sdir = "./assets/images/brand";
 // var ldir = './assets/images/brand/large';
 // var mdir = './assets/images/brand/medium';
 // var tdir = './assets/images/brand/thumbnail';
@@ -41,6 +41,25 @@ if (!fs.existsSync(sdir)) {
 // if (!fs.existsSync(tdir)){
 //   fs.mkdirSync(tdir);
 // }
+
+const processBrands = async (brands, existingBrandNames) => {
+  let addBrands = [];
+  let duplicateBrands = [];
+
+  for (const brand of brands) {
+    const brandName = brand.name?.trim().toLowerCase();
+
+    if (!brandName || existingBrandNames.has(brandName)) {
+      duplicateBrands.push(brand.name);
+    } else {
+      brand.url = await updateUrl(brand.name, "Brand");
+      brand.meta = { title: "", description: "", keywords: "" };
+      addBrands.push(brand);
+    }
+  }
+
+  return { addBrands, duplicateBrands };
+};
 
 module.exports = {
   Query: {
@@ -68,52 +87,46 @@ module.exports = {
   },
   Mutation: {
     addBrand: async (root, args, { id }) => {
-      await checkAwsFolder('brand');
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "brand", false);
       }
+
+      if (!args.brands || !args.brands.length) {
+        return {
+          message: "Brand list is required",
+          success: false,
+        };
+      }
+
       try {
-        if (args.brands && !args.brands.length) {
+        const existingBrands = await Brand.find({}).select("name");
+        const existingBrandNames = new Set(
+          existingBrands.map((brand) => brand.name.toLowerCase())
+        );
+
+        let { addBrands, duplicateBrands } = await processBrands(
+          args.brands,
+          existingBrandNames
+        );
+
+        if (duplicateBrands.length) {
           return {
-            message: errors,
+            message: `${duplicateBrands.join(", ")} already exists`,
             success: false,
           };
         }
-        // const errors = _validate(["brands"], args);
-        // if (!isEmpty(errors)) {
-        //   return {
-        //     message: errors,
-        //     success: false,
-        //   };
-        // }
-        const brands = await Brand.find({});
-        let brandList = brands.map((brand) => brand.name.toLowerCase());
-        let addBrands = [];
-        let duplicateBrands = "";
-        for (let i in args.brands) {
-          if (
-            !isEmpty(args.brands[i].name) &&
-            !brandList.includes(args.brands[i].name.toLowerCase())
-          ) {
-            args.brands[i].url = await updateUrl(args.brands[i].name, "Brand");
-            args.brands[i].meta = { title: "", description: "", keywords: "" };
-            addBrands.push(args.brands[i]);
-          } else {
-            duplicateBrands += args.brands[i].name + " "
-          }
+
+        if (addBrands.length) {
+          await Brand.insertMany(addBrands);
         }
-        if (duplicateBrands.length) return {
-          message: `${duplicateBrands} already exists`,
-          success: false,
-        };
-        await Brand.insertMany(addBrands);
+
         return MESSAGE_RESPONSE("AddSuccess", "Brands", true);
       } catch (error) {
+        console.log(error);
         return MESSAGE_RESPONSE("CREATE_ERROR", "Brands", false);
       }
     },
     updateBrand: async (root, args, { id }) => {
-      await checkAwsFolder('brand');
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Brands", false);
       }
@@ -128,13 +141,18 @@ module.exports = {
             success: false,
           };
         }
+        console.log("args", args);
         const brand = await Brand.findById({ _id: args.id });
         if (brand) {
-          if (args.updated_brand_logo) {
+          if (args?.updated_brand_logo) {
+            // if no image then throw error
+            if (!args.updated_brand_logo[0]?.file) {
+              return MESSAGE_RESPONSE("ImageFileMissing", "Brand", false);
+            }
             let imgObject = await imageUpload(
               args.updated_brand_logo[0].file,
-              "assets/images/brand/", 
-              'Brand',
+              "assets/images/brand/",
+              "Brand",
               args.url
             );
             if (imgObject.success === false) {
@@ -153,15 +171,20 @@ module.exports = {
           brand.updated = Date.now();
 
           // console.log('BRAND',brand);
-          const duplicate = await duplicateData({ name: args.name }, Brand, args.id)
-          if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Brand Name", false)
+          const duplicate = await duplicateData(
+            { name: args.name },
+            Brand,
+            args.id
+          );
+          if (duplicate)
+            return MESSAGE_RESPONSE("DUPLICATE", "Brand Name", false);
           await brand.save();
           return MESSAGE_RESPONSE("UpdateSuccess", "Brands", true);
         } else {
           return MESSAGE_RESPONSE("NOT_EXIST", "Brands", false);
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
         return MESSAGE_RESPONSE("UPDATE_ERROR", "Brands", false);
       }
     },
@@ -174,7 +197,7 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "Brand", false);
       }
       try {
-        const brand = await Brand.deleteOne({_id:args.id});
+        const brand = await Brand.deleteOne({ _id: args.id });
         if (brand) {
           if (brand.brand_logo) {
             imageUnlink(brand.brand_logo);
@@ -182,9 +205,9 @@ module.exports = {
           let _id = args.id;
           const product = await Product.updateMany(
             { brand: _id },
-            { $unset: { brand: 1} }
+            { $unset: { brand: 1 } }
           );
-         
+
           return MESSAGE_RESPONSE("DELETE", "Brand", true);
         }
         return MESSAGE_RESPONSE("NOT_EXIST", "Brand", false);
