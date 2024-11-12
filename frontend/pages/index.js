@@ -29,6 +29,23 @@ export default function Home({
   parentCategories,
   homePageSections,
 }) {
+  console.log(homePageSections, "homePageSections");
+  console.log(parentCategories, "parentCategories");
+  console.log(homePageSliderInfo, "homePageSliderInfo");
+
+  useEffect(() => {
+    let variable = {
+      deviceType: 1,
+    };
+    const fetchData = async () => {
+      const { data: homePagedata } = await queryWithoutToken(
+        GET_HOMEPAGE_QUERY,
+        variable
+      );
+      console.log(homePagedata);
+    };
+    fetchData();
+  }, []);
   const initialRender = useRef(true);
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cartItems);
@@ -135,7 +152,7 @@ export async function getStaticProps() {
     let homepageSettings = get(fetchedHomePageData, "getSettings", {});
     homePageSliderInfo = get(homepageSettings, "appearance.home", {});
     seoInfo = get(homepageSettings, "seo", {});
-  } catch (e) { }
+  } catch (e) {}
   let variable = {
     deviceType: 1,
   };
@@ -148,7 +165,7 @@ export async function getStaticProps() {
     let sectionData = get(homePagedata, "getHomePage", []);
     homePageSections = get(sectionData, "sections", []);
     parentCategories = get(homePagedata, "getHomePage.parentCategories", []);
-  } catch (e) { }
+  } catch (e) {}
 
   return {
     props: {
