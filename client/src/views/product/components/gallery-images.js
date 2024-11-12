@@ -22,20 +22,21 @@ const GalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage }) => {
     onRemoveGalleryImage(gallery.filter((galleryImg) => galleryImg !== img));
   };
 
-  const isEven = (n) => {
-    return n % 2 === 0;
-  }
-
-  const swapImagePosition = (i) => {
-    
+  const swapImagePosition = (e, i) => {
+    e.preventDefault();
+    if(gallery){
+      let galleryImages = [...gallery];
+      [galleryImages[i], galleryImages[i+1]] = [galleryImages[i+1], galleryImages[i]];
+      setGallery([...galleryImages]);
+    }
   }
 
   return (
     <>
       <div className={classes.galleryImgOuterBox}>
-        {gallery
+        {(gallery && gallery.length > 1)
           ? gallery.map((img, index) => (
-            <div key={index} className={classes.galleryImgBox}>
+            <div key={index} className={classes.galleryImgBox + " gallery_image"}>
               <span
                 className={classes.galleryImgRemove}
                 onClick={() => removeImage(img)}
@@ -48,8 +49,8 @@ const GalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage }) => {
                 alt='product-gallery-img'
               />
               {
-                !isEven &&
-                <button onClick={() => swapImagePosition(index)}><SwapHorizRoundedIcon/></button>
+                (gallery.length > 1 &&  gallery.length !== (index + 1)) &&
+                <button className="icon-btn" onClick={(e) => swapImagePosition(e, index)}><SwapHorizRoundedIcon/></button>
               }
             </div>
           ))

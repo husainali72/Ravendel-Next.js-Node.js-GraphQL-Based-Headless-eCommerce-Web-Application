@@ -53,7 +53,7 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
   return (
     <>
       <div className={classes.galleryImgOuterBox}>
-        {product.gallery_image && product.gallery_image.length > 0 ?
+        {/* {product.gallery_image && product.gallery_image.length > 0 ?
           product.gallery_image.map((img, index) => (
             <div key={index} className={classes.galleryImgBox + " gallery_image"}>
               <span
@@ -74,8 +74,8 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
               }
             </div>
           ))
-          : null}
-        {gallery
+          : null} */}
+        {(gallery && gallery.length > 1)
           ? gallery.map((img, index) => (
             <div key={index} className={classes.galleryImgBox + " gallery_image"}>
               <span
