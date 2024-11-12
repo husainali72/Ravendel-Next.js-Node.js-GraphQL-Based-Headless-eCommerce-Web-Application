@@ -8,21 +8,21 @@ const notificationTemplate = {
     title: "🎉 New Order Alert!",
     message:
       "You’ve got a new order! Check your dashboard to see the details and get it ready to ship.",
-    app_url: `${APP_KEYS.ONE_SIGNAL_DEEPLINK}seller://ViewOrder/{id}`,
+    app_url: `${APP_KEYS.ONE_SIGNAL_DEEPLINK}seller://ViewOrder/{id}/true`,
   },
 
   ORDER_PLACED_CUSTOMER: {
     title: "🚀 Order Confirmed!",
     message:
       "We’re on it! Your items are being packed with care and will soon be on their way. Thanks for choosing Zemjet!",
-    app_url: `${APP_KEYS.ONE_SIGNAL_DEEPLINK}://OrdersDetail/{id}`,
+    app_url: `${APP_KEYS.ONE_SIGNAL_DEEPLINK}://OrdersDetail/{id}/true`,
   },
 
   ORDER_FAILED_CUSTOMER: {
     title: "😰 Oops! Order Failed!",
     message:
       "Something went wrong, and your order didn’t go through. Please check all your details and try again. If you need assistance, contact our support team",
-    app_url: `${APP_KEYS.ONE_SIGNAL_DEEPLINK}://OrdersDetail/{id}`,
+    app_url: `${APP_KEYS.ONE_SIGNAL_DEEPLINK}://OrdersDetail/{id}/true`,
   },
 };
 
