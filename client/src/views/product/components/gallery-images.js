@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ImageIcon from "@mui/icons-material/Image";
+import SwapHorizRoundedIcon from '@mui/icons-material/SwapHorizRounded';
 import viewStyles from "../../viewStyles";
 import NoImagePlaceHolder from "../../../assets/images/NoImagePlaceHolder.png";
 const GalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage }) => {
@@ -21,6 +22,14 @@ const GalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage }) => {
     onRemoveGalleryImage(gallery.filter((galleryImg) => galleryImg !== img));
   };
 
+  const isEven = (n) => {
+    return n % 2 === 0;
+  }
+
+  const swapImagePosition = (i) => {
+    
+  }
+
   return (
     <>
       <div className={classes.galleryImgOuterBox}>
@@ -38,6 +47,10 @@ const GalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage }) => {
                 className={classes.galleryImg}
                 alt='product-gallery-img'
               />
+              {
+                !isEven &&
+                <button onClick={() => swapImagePosition(index)}><SwapHorizRoundedIcon/></button>
+              }
             </div>
           ))
           : null}

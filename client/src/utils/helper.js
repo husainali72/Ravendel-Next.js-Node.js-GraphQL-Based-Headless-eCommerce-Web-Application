@@ -182,8 +182,6 @@ export const mutationResponseHandler = (response, key) => {
   } catch (e) {
     console.log("er", e);
   }
-  console.log(success);
-
   return [error, success, message];
 };
 

@@ -393,3 +393,19 @@
 .MuiTableCell-root  a:hover{
   text-decoration: underline;
 }
+.gallery_image .icon-btn{
+  background-color: transparent;
+  border: unset;
+  color: #263238;
+  cursor: pointer;
+  position: absolute;
+  top: 53%;
+  right: -30px;
+  transform: translateY(-50%);
+}
+.gallery_image{
+  margin-right: 34px !important;
+}
+.gallery_image:last-child{
+  margin-right: 0 !important;
+}
