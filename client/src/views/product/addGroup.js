@@ -42,7 +42,11 @@ import { client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { useNavigate, useParams } from "react-router-dom";
-import { validate, validatenested } from "../components/validate";
+import {
+  validate,
+  validatenested,
+  validatenestedArray,
+} from "../components/validate";
 import Stack from "@mui/material/Stack";
 import CloseIcon from "@mui/icons-material/Close";
 import { getUpdatedUrl } from "../../utils/service";
@@ -141,22 +145,58 @@ const AddProductTheme = () => {
     sku: "",
     quantity: "",
   });
+  // Validate Attributes
+  const validateAttributes = (attributes) => {
+    if (!attributes || attributes.length === 0) {
+      return "At least one attribute must be selected.";
+    }
+    console.log(attributes,'attributes')
+    const invalidAttributes = attributes.filter(
+      (attr) => !attr.attribute_id || !attr.attribute_value_id
+    );
+    if (invalidAttributes.length > 0) {
+      return "All attributes must have valid values.";
+    }
+    return null; // No errors
+  };
+
+  // Validate Variants
+  const validateVariants = (variants) => {
+    if (!variants || variants.length === 0) {
+      return "Variants must be generated from selected attributes.";
+    }
+    console.log(variants,'variants')
+    const invalidVariants = variants.filter((variant) => {
+      return (
+        !variant.productID 
+      );
+    });
+
+    if (invalidVariants.length > 0) {
+      return "Product is required";
+    }
+    return null; // No errors
+  };
+
   const addProduct = (e) => {
     e.preventDefault();
     groupProduct.taxClass = taxClass;
     groupProduct.shipping.shippingClass = shippingClass;
     // let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "title"], groupProduct);
     let errors = validate(["title"], groupProduct);
-    // let Errors = validatenested("pricing", ["price", "sellprice"], product);
-    if (!isEmpty(errors)) {
+    const attributeError = validateAttributes(groupProduct.attributes);
+    const variantError = validateVariants(combination);
+    console.log(attributeError, variantError, "attributeError");
+    if (!isEmpty(errors) || attributeError || variantError) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
           boolean: false,
-          message: errors,
+          message: errors || attributeError || variantError,
           error: true,
         },
       });
+      return;
     }
     // else if (!isEmpty(Errors)) {
     //   dispatch({
@@ -211,17 +251,23 @@ const AddProductTheme = () => {
       }
       const obj = {
         title: groupProduct?.title,
-        status:groupProduct?.status,
-        attributes: (id && attributes?.length <= 0) ? groupProduct?.attributes : attributes,
-        variations:  (id && variations?.length <= 0) ? groupProduct?.variations : variations,
+        status: groupProduct?.status,
+        attributes:
+          id && attributes?.length <= 0 ? groupProduct?.attributes : attributes,
+        variations:
+          id && variations?.length <= 0 ? groupProduct?.variations : variations,
         productIds: variations
-        ?.map(variation => variation?.productId)
-        .filter(productId =>productId&& productId !== null  && productId !== '')
-      }
-      if(id){
-        dispatch(groupProductUpdateAction({...obj, updateGroupId: id}, navigate))
-      }else{
-        dispatch(groupProductAddAction(obj, navigate))
+          ?.map((variation) => variation?.productId)
+          .filter(
+            (productId) => productId && productId !== null && productId !== ""
+          ),
+      };
+      if (id) {
+        dispatch(
+          groupProductUpdateAction({ ...obj, updateGroupId: id }, navigate)
+        );
+      } else {
+        dispatch(groupProductAddAction(obj, navigate));
       }
     }
   };
@@ -270,7 +316,7 @@ const AddProductTheme = () => {
       // const productVariants = ['65cb2b0ca9dfee40f95226ff', '65cb2b2ba9dfee40f9522716'];
       setGroupProduct({
         ...groupProduct,
-        status:get(groupProductState, 'groupProduct.status','Draft'),
+        status: get(groupProductState, "groupProduct.status", "Draft"),
         attributes: convertedAttributes,
         variations: convertedVariations,
         // attributes:  get(groupProductState, 'groupProduct.attributes', []),
@@ -351,7 +397,7 @@ const AddProductTheme = () => {
               <CardBlocks title="Status" nomargin>
                 <RadioGroup
                   name="status"
-                  value={get(groupProduct,'status','Draft')}
+                  value={get(groupProduct, "status", "Draft")}
                   onChange={handleChange}
                   row
                 >

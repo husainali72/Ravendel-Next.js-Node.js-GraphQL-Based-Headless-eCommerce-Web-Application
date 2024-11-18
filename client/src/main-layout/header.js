@@ -29,11 +29,13 @@ import "../App.css";
 import { get, isEmpty } from "lodash";
 import { useDispatch } from "react-redux";
 import { getDatesAction, getSettings } from "../store/action";
-const HeaderComponenet = ({onSidebarOpen}) => {
+import AlertModal from "../views/components/modal";
+const HeaderComponenet = ({ onSidebarOpen }) => {
   const classes = useStyles();
   const login = useSelector((state) => state.login);
   const logoState = useSelector((state) => state.settings);
   const [logo, setlogo] = useState("");
+  const [openModal, setOpenModal] = useState(false);
   const dispatch = useDispatch();
   const [activeUser, setActiveUser] = useState({
     name: "",
@@ -45,10 +47,10 @@ const HeaderComponenet = ({onSidebarOpen}) => {
     if (!isEmpty(get(logoState.settings, "appearance"))) {
       setlogo(get(logoState.settings.appearance.theme, "logo"));
     }
-  }, [get(logoState, "settings")])
+  }, [get(logoState, "settings")]);
   useEffect(() => {
-    dispatch(getSettings())
-  }, [])
+    dispatch(getSettings());
+  }, []);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -67,11 +69,34 @@ const HeaderComponenet = ({onSidebarOpen}) => {
     setActiveUser(login.user_token);
   }, [login.user_token]);
   const imageOnError = (event) => {
-    event.target.src = RavendelLogo
-  }
+    event.target.src = RavendelLogo;
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
 
   return (
     <AppBar className={classes.header}>
+      <AlertModal
+        confirm={logoutUser}
+        cancel={handleCloseModal}
+        showCard={true}
+        borderRadius="20px"
+        showCancelBtn={true}
+        showConfirmBtn={true}
+        minWidth={'400px'}
+        Component={
+          <>
+            {" "}
+            <p >Are you sure you want to log out?</p>
+          </>
+        }
+        open={openModal}
+      />
       <Toolbar className={classes.header}>
         <Link to={`${client_app_route_url}dashboard`}>
           <Typography variant="h6" component="h1" className={classes.textWhite}>
@@ -117,7 +142,7 @@ const HeaderComponenet = ({onSidebarOpen}) => {
                   <span className={classes.editProfile}>Edit Profile</span>
                 </Link>
               </MenuItem>
-              <MenuItem onClick={logoutUser}>Logout</MenuItem>
+              <MenuItem onClick={handleOpenModal}>Logout</MenuItem>
             </Menu>
           </Hidden>
         )}

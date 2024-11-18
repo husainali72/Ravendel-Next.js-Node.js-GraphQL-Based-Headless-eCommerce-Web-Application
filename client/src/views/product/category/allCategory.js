@@ -59,17 +59,18 @@ const AllCategoryComponent = () => {
   const [loading, setloading] = useState(false);
   const columndata = [
     {
-      name: "date",
-      type: "date",
-      title: "date",
-      sortingactive: true,
-    },
-    {
       name: "name",
       type: "text",
       title: "name",
       sortingactive: true,
     },
+    {
+      name: "date",
+      type: "date",
+      title: "date",
+      sortingactive: true,
+    },
+
     {
       name: "actions",
       type: "actions",
@@ -399,14 +400,14 @@ const AllCategoryComponent = () => {
                 )}
                 multiline
                 rows={3}
-                value={get(singleCategory,'description','')}
+                value={get(singleCategory, "description", "")}
                 onChange={handleChange}
                 style={{ marginRight: "20px" }}
               />
 
               <Box component="div" mb={2}>
                 <TextInput
-                  value={get(singleCategory,'meta.title','')}
+                  value={get(singleCategory, "meta.title", "")}
                   label="Meta Title"
                   name="metatitle"
                   onInputChange={(e) => {
@@ -422,7 +423,7 @@ const AllCategoryComponent = () => {
               </Box>
               <Box component="div" mb={2}>
                 <TextInput
-                  value={get(singleCategory,'meta.keywords','')}
+                  value={get(singleCategory, "meta.keywords", "")}
                   label="Meta Keyword"
                   name="metakeyword"
                   onInputChange={(e) => {
@@ -438,7 +439,7 @@ const AllCategoryComponent = () => {
               </Box>
               <Box component="div" mb={2}>
                 <TextInput
-                  value={get(singleCategory,'meta.description','')}
+                  value={get(singleCategory, "meta.description", "")}
                   label="Meta Description"
                   name="metadescription"
                   onInputChange={(e) => {

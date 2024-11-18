@@ -25,17 +25,18 @@ const AllbrandComponent = () => {
       sortingactive: false
     },
     {
-      name: "date",
-      type: "date",
-      title: "date",
-      sortingactive: true
-    },
-    {
       name: "name",
       type: "text",
       title: "Name",
       sortingactive: true
     },
+    {
+      name: "date",
+      type: "date",
+      title: "date",
+      sortingactive: true
+    },
+  
     {
       name: "actions",
       type: "actions",
