@@ -88,7 +88,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter,activeSorting, produc
   };
   return (
     <div className=" category-filter-container">
-      {(productData.count > 1 && filterData?.length > 1) &&
+      {(productData?.count > 1 && filterData?.length > 1) &&
         filterData?.map((filter, index) => (
           <div key={index} className="filter-section">
             {(() => {
