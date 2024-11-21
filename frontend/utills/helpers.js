@@ -52,9 +52,7 @@ export const getImage = (img, type, setting, isBanner) => {
   const placeHolderImage = dummyImage ? type && type === "localStorage"
     ? IMAGE_BASE_URL + dummyImage
     : BUCKET_BASE_URL + dummyImage : NoImagePlaceHolder?.src;
-  console.log('IMAGE_BASE_URL', IMAGE_BASE_URL);
-  console.log('type ', type );
-  console.log('IMAGE_BASE_URL + img', IMAGE_BASE_URL + img );
+  
   if (!img) {
     return placeHolderImage
   }
