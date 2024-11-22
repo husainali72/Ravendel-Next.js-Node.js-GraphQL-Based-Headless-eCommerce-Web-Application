@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
 import { ThemeProvider } from "@mui/material/styles";
-import { Grid, Button, TextField, Typography } from "@mui/material";
+import { Grid, Button, TextField, Typography, InputAdornment, IconButton } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
 import { LoginAction } from "../../store/action";
 import { Alert, Loading } from "../components";
@@ -10,6 +11,7 @@ import theme from "../../theme";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { isValidEmail, validate } from "../components/validate";
 import { isEmpty } from "lodash";
+
 const LoginComponent = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -19,20 +21,30 @@ const LoginComponent = () => {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   const login = (e) => {
     e.preventDefault();
-    let errors = validate(
-      [
-         "password",
-        "email",
-       ,
-      ],
-      values
-    );
+
+    // Helper function to validate email format
+    const isValidEmail = (email) => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    };
+
+    // Validate input fields
+    let errors = validate(["password", "email"], values);
+
     if (!isEmpty(errors)) {
+      // Handle validation errors
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -41,19 +53,22 @@ const LoginComponent = () => {
           error: true,
         },
       });
-    }else if(!isValidEmail(values.email)) {
+    } else if (!isValidEmail(values.email)) {
+      // Handle invalid email
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
           boolean: false,
-          message: 'Invalid email',
+          message: "Invalid email",
           error: true,
         },
       });
-    }else {
+    } else {
+      // Proceed with login action
       dispatch(LoginAction(values.email, values.password, navigate));
     }
   };
+
   return (
     <div className={classes.root}>
       <Alert />
@@ -80,11 +95,20 @@ const LoginComponent = () => {
               fullWidth
               label="Password"
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               autoComplete="new-password"
               variant="outlined"
               value={values.password}
               onChange={handleChange("password")}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleClickShowPassword} edge="end">
+                      {showPassword ? <Visibility />: <VisibilityOff /> }
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <Button
               className={classes.signInButton}
@@ -113,30 +137,24 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-
     backgroundColor: "#F4F6F8",
   },
-
   form: {
     backgroundColor: "#fff",
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     flexDirection: "column",
     width: "520px",
     height: "350px",
-    backgroundColor: "#fff",
   },
   title: {
     marginBottom: theme.spacing(4),
     textAlign: "center",
     marginTop: "100px",
-
     "&&": {
       marginBottom: theme.spacing(4),
-
       textAlign: "center",
-
       marginBottom: "10px",
     },
   },
@@ -155,7 +173,6 @@ const useStyles = makeStyles((theme) => ({
       marginRight: "15px",
       marginTop: "20px",
     },
-    "&:hover": {},
   },
 }));
 

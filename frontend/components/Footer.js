@@ -305,7 +305,12 @@ export default function Footer() {
           <div className="copyright">
             <p>
               ©{new Date().getFullYear()} Copyright:
-              {siteTitle && <a href="/" className="co-name">{siteTitle}</a> + ".All rights reserved"}
+              {siteTitle && (
+                <a href="/" className="co-name">
+                  {siteTitle}
+                </a>
+              )}{" "}
+              All rights reserved
             </p>
             <p className="design-by">
               Design By

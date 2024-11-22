@@ -100,14 +100,7 @@ const AddBrandsComponent = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item>
-                <Box component="div">
-                  <HelpPop
-                    helpmessage={`<span><div><strong>Brand Names</strong><p>Type the brand names you want to add into the text box. Enter one brand per line, such as:</p><ul style="list-style-type:disc"><li>Nike</li><li>ADIDAS</li><li>Apple</li><li>Microsoft</li></ul></div></span>`}
-                    className={classes.floatRight}
-                  />
-                </Box>
-              </Grid>
+
             </Grid>
           </CardBlocks>
         </Grid>

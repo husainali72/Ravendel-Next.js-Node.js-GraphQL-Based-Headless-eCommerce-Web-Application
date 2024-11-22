@@ -81,7 +81,7 @@ const EditBrandComponenet = ({ params }) => {
     }
   }, []);
   const updateBrand = () => {
-    let errors = validate(["name", "url"], brand);
+    let errors = validate([ "url","name",], brand);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,

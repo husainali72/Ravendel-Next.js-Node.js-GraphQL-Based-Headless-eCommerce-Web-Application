@@ -224,9 +224,9 @@ const Register = () => {
             />
 
             <div className="form-check register-top-space">
-                <a href="/abouts/terms&condition" rel="noopener noreferrer" target="_blank">
+                <a href="/terms-conditions" rel="noopener noreferrer" target="_blank">
                   <label className="form-check-label">
-                    I agree to terms & policies.
+                    I agree to Terms & Policies.
                   </label>
                 </a>
               <InputField
