@@ -20,14 +20,16 @@ const TotalSummary = ({totalSummary, couponCartDetail}) => {
                     </span>
                   </td>
                 </tr>
-                <tr>
-                  <td className="cartTotal_label  ">Discount on MRP</td>
-                  <td className="cartTotal_amount ">
-                    <span className="font-lg fw-900 text-brand textSuccess">
-                      - <Price price={discountTotal || 0} />
-                    </span>
-                  </td>
-                </tr>
+                {!isPriceZero(discountTotal) && (
+                  <tr>
+                    <td className="cartTotal_label  ">Discount on MRP</td>
+                    <td className="cartTotal_amount ">
+                      <span className="font-lg fw-900 text-brand textSuccess">
+                        - <Price price={discountTotal || 0} />
+                      </span>
+                    </td>
+                  </tr>
+                )}
                 {!isPriceZero(totalTax) && (
                   <tr>
                     <td className="cartTotal_label">Tax</td>

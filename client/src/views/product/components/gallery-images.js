@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ImageIcon from "@mui/icons-material/Image";
+import SwapHorizRoundedIcon from '@mui/icons-material/SwapHorizRounded';
 import viewStyles from "../../viewStyles";
 import NoImagePlaceHolder from "../../../assets/images/NoImagePlaceHolder.png";
 const GalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage }) => {
@@ -21,12 +22,21 @@ const GalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage }) => {
     onRemoveGalleryImage(gallery.filter((galleryImg) => galleryImg !== img));
   };
 
+  const swapImagePosition = (e, i) => {
+    e.preventDefault();
+    if(gallery){
+      let galleryImages = [...gallery];
+      [galleryImages[i], galleryImages[i+1]] = [galleryImages[i+1], galleryImages[i]];
+      setGallery([...galleryImages]);
+    }
+  }
+
   return (
     <>
       <div className={classes.galleryImgOuterBox}>
-        {gallery
+        {(gallery && gallery.length > 1)
           ? gallery.map((img, index) => (
-            <div key={index} className={classes.galleryImgBox}>
+            <div key={index} className={classes.galleryImgBox + " gallery_image"}>
               <span
                 className={classes.galleryImgRemove}
                 onClick={() => removeImage(img)}
@@ -38,6 +48,10 @@ const GalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage }) => {
                 className={classes.galleryImg}
                 alt='product-gallery-img'
               />
+              {
+                (gallery.length > 1 &&  gallery.length !== (index + 1)) &&
+                <button className="icon-btn" onClick={(e) => swapImagePosition(e, index)}><SwapHorizRoundedIcon/></button>
+              }
             </div>
           ))
           : null}

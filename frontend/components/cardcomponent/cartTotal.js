@@ -5,6 +5,7 @@ import Price from "../priceWithCurrency";
 import { useRouter } from "next/router";
 import {
   isAnyProductOutOfStock,
+  isPriceZero,
   setItemToLocalStorage,
 } from "../../utills/helpers";
 import Link from "next/link";
@@ -32,21 +33,24 @@ const CartTotalDetails = ({ totalSummary, cartItems }) => {
             <Price price={get(totalSummary, "mrpTotal", 0)} />
           </p>
         </div>
-        <div className="priceDetail-base-row">
-          <p className="mrp-price ">
-            Discount on MRP
-            <Tooltip
-              title="Your purchase price has already been updated with this discount value."
-              placement="top"
-            >
-              {/* <HelpIcon className="priceDetail-base-knowMore "/> */}
-              <i className="fa fa-question-circle priceDetail-base-knowMore"></i>
-            </Tooltip>
-          </p>
-          <p className="mtb2 freeshipping" style={{ fontSize: "14px" }}>
-            - <Price price={get(totalSummary, "discountTotal", 0)} />
-          </p>
-        </div>
+        {
+          !isPriceZero(get(totalSummary, "discountTotal")) &&
+          <div className="priceDetail-base-row">
+            <p className="mrp-price ">
+              Discount on MRP
+              <Tooltip
+                title="Your purchase price has already been updated with this discount value."
+                placement="top"
+              >
+                {/* <HelpIcon className="priceDetail-base-knowMore "/> */}
+                <i className="fa fa-question-circle priceDetail-base-knowMore"></i>
+              </Tooltip>
+            </p>
+            <p className="mtb2 freeshipping" style={{ fontSize: "14px" }}>
+              - <Price price={get(totalSummary, "discountTotal", 0)} />
+            </p>
+          </div>
+        }
 
         <div className="priceDetail-base-row">
           <p className="mrp-price">

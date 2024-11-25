@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ImageIcon from "@mui/icons-material/Image";
+import SwapHorizRoundedIcon from '@mui/icons-material/SwapHorizRounded';
 import viewStyles from "../../viewStyles";
 import { baseUrl, bucketBaseURL, getBaseUrl, imageOnError } from "../../../utils/helper";
 
@@ -33,12 +34,28 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
     setGallery(gallery.filter((galleryImg) => galleryImg !== img));
   };
 
+  useEffect(() => {
+    if(product.gallery_image && product.gallery_image.length > 0){
+      setGallery(product.gallery_image);
+    }
+  }, [product.gallery_image])
+  
+
+  const swapImagePosition = (e, i) => {
+    e.preventDefault();
+    if(gallery){
+      let galleryImages = [...gallery];
+      [galleryImages[i], galleryImages[i+1]] = [galleryImages[i+1], galleryImages[i]];
+      setGallery([...galleryImages]);
+    }
+  }
+
   return (
     <>
       <div className={classes.galleryImgOuterBox}>
-        {product.gallery_image && product.gallery_image.length > 0 ?
+        {/* {product.gallery_image && product.gallery_image.length > 0 ?
           product.gallery_image.map((img, index) => (
-            <div key={index} className={classes.galleryImgBox}>
+            <div key={index} className={classes.galleryImgBox + " gallery_image"}>
               <span
                 className={classes.galleryImgRemove}
                 onClick={() => removeImage(img)}
@@ -51,12 +68,16 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
                 alt="gallery-img"
                 onError={imageOnError}
               />
+              {
+                (product.gallery_image.length > 1 &&  product.gallery_image.length !== (index + 1)) &&
+                <button className="icon-btn" onClick={(e) => swapImagePosition(e, index)}><SwapHorizRoundedIcon/></button>
+              }
             </div>
           ))
-          : null}
-        {gallery
+          : null} */}
+        {(gallery && gallery.length > 1)
           ? gallery.map((img, index) => (
-            <div key={index} className={classes.galleryImgBox}>
+            <div key={index} className={classes.galleryImgBox + " gallery_image"}>
               <span
                 className={classes.galleryImgRemove}
                 onClick={() => removeImage(img)}
@@ -69,6 +90,10 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
                 alt='product-gallery-img'
                 onError={imageOnError}
               />
+              {
+                (gallery.length > 1 &&  gallery.length !== (index + 1)) &&
+                <button className="icon-btn" onClick={(e) => swapImagePosition(e, index)}><SwapHorizRoundedIcon/></button>
+              }
             </div>
           ))
           : null}
