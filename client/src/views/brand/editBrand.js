@@ -114,7 +114,7 @@ const EditBrandComponenet = ({ params }) => {
 
     setBrand({
       ...brand,
-      updated_brand_logo: get(files, "[0]", null),
+      updated_brand_logo: files,
     });
   };
 

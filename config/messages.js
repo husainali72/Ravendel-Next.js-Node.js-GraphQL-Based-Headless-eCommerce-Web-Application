@@ -53,6 +53,7 @@ module.exports = {
   Integer: ":item needs to contain only digits",
   MinNumber: ":item needs to contain minimum 6 digits",
   MaxNumber: ":item cannot contain more than 15 digits",
+  ImageFileMissing: "Image file is missing in request",         
   ImageSize: "File is larger than 5 mb",
   ImageFile: "Only one file is allowed to upload",
   ImageType: "Only jpg, jpeg, png files are allowed to upload",
