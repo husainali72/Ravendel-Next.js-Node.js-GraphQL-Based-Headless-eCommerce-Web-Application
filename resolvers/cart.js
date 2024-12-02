@@ -5,18 +5,23 @@ const Coupon = require("../models/Coupon");
 const Shipping = require("../models/Shipping");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const { GET_SINGLE_FUNC, GET_ALL_FUNC } = require("../config/api_functions");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const {
   putError,
   checkError,
   checkToken,
   MESSAGE_RESPONSE,
   againCalculateCart,
-  _validate, getdate, addCart, calculateCart, calculateCoupon,
+  _validate,
+  getdate,
+  addCart,
+  calculateCart,
+  calculateCoupon,
   toObjectID,
-  getBoughtTogetherProducts
+  getBoughtTogetherProducts,
 } = require("../config/helpers");
 const validate = require("../validations/cart");
+const Order = require("../models/Order");
 
 module.exports = {
   Query: {
@@ -62,7 +67,62 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    mostBoughtProducts: async (root, args, {}) => {
+      try {
+        // Fetch all orders from the Orders table
+        const orders = await Order.find({}); // You can add filters if needed
 
+        if (!orders || orders.length === 0) {
+          throw new Error("No orders found");
+        }
+
+        // Aggregate the most bought products from the orders
+        const productCounts = orders.reduce((acc, order) => {
+          order?.products?.forEach((item) => {
+            // Assuming each order has an `items` array with `productId` and `quantity`
+            acc[item.productId] = (acc[item.productId] || 0) + item.quantity;
+          });
+          return acc;
+        }, {});
+
+        // Convert the productCounts object into an array of { productId, count }
+        const productArray = Object.entries(productCounts).map(
+          ([productId, count]) => ({
+            productId,
+            count,
+          })
+        );
+
+        // Sort products by count in descending order
+        const sortedProducts = productArray.sort((a, b) => b.count - a.count);
+
+        // Check if products exist in the Product table and fetch their details
+        const existingProducts = await Product.find({
+          _id: { $in: sortedProducts.map((product) => product.productId) },
+        });
+
+        // Map the sorted products to include only those that exist in the Product table
+        const mostBoughtProducts = sortedProducts
+          .filter((product) =>
+            existingProducts.some(
+              (existingProduct) =>
+                existingProduct._id.toString() === product.productId
+            )
+          )
+          .map((product) =>
+            existingProducts.find(
+              (existingProduct) =>
+                existingProduct._id.toString() === product.productId
+            )
+          );
+
+        return { title: "Most Bought Products", products: mostBoughtProducts };
+      } catch (error) {
+        // Handle errors
+        const handledError = checkError(error);
+        throw new Error(handledError.custom_message);
+      }
+    },
 
     calculateCoupon: async (root, args, { id }) => {
       try {

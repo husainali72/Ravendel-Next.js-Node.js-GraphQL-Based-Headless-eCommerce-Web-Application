@@ -163,10 +163,9 @@ const AttributesComponent = ({
   }, [
     attributeState.attributes,
     product.variation_master,
-    product?.attributes,
+    // product?.attributes,
     product?.variations,
   ]);
-
   const changeSelectedValue = (e, i) => {
     currentAttribute.attribute_list[i].selected_values = e;
     setCurrentAttribute({
@@ -262,6 +261,7 @@ const AttributesComponent = ({
       });
     } else {
       isValidattribute = true;
+      product.attributes = [];
     }
     if (isValidattribute) {
       productStateChange({
@@ -292,11 +292,16 @@ const AttributesComponent = ({
           variants[attr.attribute_id].push(attr.attribute_value_id);
         }
       }
-    }
+    } 
+
     if (!Object.keys(variants).length) {
+      setcurrentVariants({
+        ...currentVariants,
+        combinations: [], // Clear combinations
+      });
       setLoading(false);
-      return;
-    }
+      return ;
+    } 
 
     variants = Object.values(variants);
     let combinations = allPossibleCases(variants);
