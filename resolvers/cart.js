@@ -69,60 +69,47 @@ module.exports = {
     },
     mostBoughtProducts: async (root, args, {}) => {
       try {
-        // Fetch all orders from the Orders table
-        const orders = await Order.find({}); // You can add filters if needed
-
-        if (!orders || orders.length === 0) {
-          throw new Error("No orders found");
-        }
-
-        // Aggregate the most bought products from the orders
-        const productCounts = orders.reduce((acc, order) => {
-          order?.products?.forEach((item) => {
-            // Assuming each order has an `items` array with `productId` and `quantity`
-            acc[item.productId] = (acc[item.productId] || 0) + item.quantity;
-          });
-          return acc;
-        }, {});
-
-        // Convert the productCounts object into an array of { productId, count }
-        const productArray = Object.entries(productCounts).map(
-          ([productId, count]) => ({
-            productId,
-            count,
-          })
-        );
-
-        // Sort products by count in descending order
-        const sortedProducts = productArray.sort((a, b) => b.count - a.count);
-
-        // Check if products exist in the Product table and fetch their details
-        const existingProducts = await Product.find({
-          _id: { $in: sortedProducts.map((product) => product.productId) },
-        });
-
-        // Map the sorted products to include only those that exist in the Product table
-        const mostBoughtProducts = sortedProducts
-          .filter((product) =>
-            existingProducts.some(
-              (existingProduct) =>
-                existingProduct._id.toString() === product.productId
-            )
-          )
-          .map((product) =>
-            existingProducts.find(
-              (existingProduct) =>
-                existingProduct._id.toString() === product.productId
-            )
+        // MongoDB aggregation to get the top 10 most bought products
+        const topProducts = await Order.aggregate([
+          { $unwind: "$products" }, // Unwind the products array in each order
+          {
+            $group: {
+              _id: "$products.productId", // Group by productId
+              totalQuantity: { $sum: "$products.quantity" }, // Sum the quantities
+            },
+          },
+          { $sort: { totalQuantity: -1 } }, // Sort by total quantity in descending order
+          { $limit: 10 }, // Limit to top 10 products
+        ]);
+    
+        // Extract product IDs from the aggregated results
+        const productIds = topProducts.map((product) => product._id);
+    
+        // Fetch product details from the Product table
+        const products = await Product.find({ _id: { $in: productIds } });
+    
+        // Map aggregated data with product details
+        const mostBoughtProducts = topProducts.map((product) => {
+          const productDetails = products.find(
+            (p) => p._id.toString() === product._id.toString()
           );
-
-        return { title: "Most Bought Products", products: mostBoughtProducts };
+          return {
+            ...productDetails.toObject(),
+            totalQuantity: product.totalQuantity,
+          };
+        });
+    
+        return {
+          title: "Most Bought Products",
+          products: mostBoughtProducts,
+        };
       } catch (error) {
         // Handle errors
         const handledError = checkError(error);
         throw new Error(handledError.custom_message);
       }
     },
+    
 
     calculateCoupon: async (root, args, { id }) => {
       try {
@@ -181,7 +168,7 @@ module.exports = {
           }
         }
       });
-
+    
       return response || [];
     },
     // calculateCart: async (root, args, { id }) => {
