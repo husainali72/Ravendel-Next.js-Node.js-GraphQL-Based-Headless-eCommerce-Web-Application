@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { isEmpty } from "../../../utils/helper";
-import { Grid } from "@mui/material";
+import { Button, FormControlLabel, Grid, Switch } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import ActionButton from "../../components/actionbutton";
 import theme from "../../../theme/index";
@@ -12,6 +12,7 @@ import DialogBox from "./setting-components/dialogBox";
 import { useForm } from "react-hook-form";
 import {
   getZipCode,
+  updateZipcodeStatusAction,
   zipCodeAddAction,
   zipCodeDeleteAction,
   zipCodeUpdateAction,
@@ -19,10 +20,12 @@ import {
 } from "../../../store/action/settingAction";
 import FileImportButton from "./setting-components/importFileButton";
 import { showAlertModal } from "../../components/alertModel";
+import { CardBlocks } from "../../components";
 var defaultobj = {
   id: "",
   zipcode: "",
 };
+
 const ZipCodesComponent = () => {
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
@@ -32,6 +35,8 @@ const ZipCodesComponent = () => {
   const [open, setOpen] = React.useState(false);
   const [edit, setEdit] = React.useState(false);
   const [loading, setloading] = useState(false);
+  const [isZipcodeActive, setIsZipcodeActive] = useState(false);
+
   const columndata = [
     {
       name: "zipcodes",
@@ -56,6 +61,7 @@ const ZipCodesComponent = () => {
       },
     },
   ];
+
   const onAdd = (data) => {
     setOpen(false);
     setEdit(false);
@@ -71,6 +77,7 @@ const ZipCodesComponent = () => {
     dispatch(zipCodeUpdateAction(zip));
     setzipcode(defaultobj);
   };
+
   const {
     register,
     handleSubmit,
@@ -86,17 +93,20 @@ const ZipCodesComponent = () => {
     setOpen(false);
     setzipcode(defaultobj);
   };
+
   useEffect(() => {
     if (!isEmpty(get(settingState, "loading"))) {
       setloading(get(settingState, "loading"));
     }
   }, [get(settingState, "loading")]);
+
   useEffect(() => {
     const settings = get(settingState, "settings", {});
     if (!isEmpty(settings)) {
-      if (Array.isArray(get(settings, "zipcode"))) {
+      setIsZipcodeActive(get(settings, "zipcode.status"));
+      if (Array.isArray(get(settings, "zipcode.zipcodes"))) {
         let data = [];
-        get(settingState, "settings.zipcode", [])
+        get(settingState, "settings.zipcode.zipcodes", [])
           ?.reverse()
           ?.map((zipcode) => {
             let object = {
@@ -119,8 +129,9 @@ const ZipCodesComponent = () => {
   const handleOnChangeSearch = (filtereData) => {
     setfilterdData(filtereData);
   };
+
   const uploadZipFile = (zipFile) => {
-    dispatch(zipCodeUploadFileAction({zipcode_file: zipFile}));
+    dispatch(zipCodeUploadFileAction({ zipcode_file: zipFile }));
   };
 
   const handlechange = (e, type) => {
@@ -128,10 +139,12 @@ const ZipCodesComponent = () => {
       const file = get(e, "target.files[0]");
       if (file) {
         showAlertModal({
-          title: `Are you sure you want to upload ${capitalize(file?.name)} file?`,
+          title: `Are you sure you want to upload ${capitalize(
+            file?.name
+          )} file?`,
           showCancelButton: true,
           confirmButtonText: "Upload",
-          confirmButtonColor:"#154050",
+          confirmButtonColor: "#154050",
           ConfirmedButton: () => uploadZipFile(file),
         });
       }
@@ -139,9 +152,18 @@ const ZipCodesComponent = () => {
       setzipcode({ ...zipcode, ["zipcode"]: get(e, "target.value") });
     }
   };
+
   const AddZipCodeDialogBox = () => {
     setOpen(true);
   };
+
+  const handleSwitchChange = (event) => {
+    setIsZipcodeActive(event.target.checked);
+  };
+  const updateZipcodeStatus = () => {
+    dispatch(updateZipcodeStatusAction({ status: isZipcodeActive }));
+  };
+
   return (
     <>
       <DialogBox
@@ -158,8 +180,8 @@ const ZipCodesComponent = () => {
         handleSubmit={handleSubmit}
         errors={errors}
       />
-      <Grid container spacing={0}>
-        <Grid item xl={5} md={1}>
+      <Grid container spacing={2}>
+        <Grid item xl={12} md={12} sm={12} xs={12}>
           <TableComponent
             loading={loading}
             columns={columndata}
@@ -183,10 +205,41 @@ const ZipCodesComponent = () => {
             title="All zip codes"
           />
         </Grid>
+
+        <Grid item xl={12} md={12} sm={12} xs={12}>
+          <CardBlocks title="Activate Zipcode Validation" nomargin>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isZipcodeActive}
+                  onChange={handleSwitchChange}
+                  name="zipcodeStatus"
+                  color="primary"
+                />
+              }
+              label={
+                isZipcodeActive
+                  ? "Zipcode Validation Enabled"
+                  : "Zipcode Validation Disabled"
+              }
+            />
+            <Grid item xs={12} mt={2}>
+              <Button
+                size="small"
+                color="primary"
+                variant="contained"
+                onClick={updateZipcodeStatus}
+              >
+                Save Change
+              </Button>
+            </Grid>
+          </CardBlocks>
+        </Grid>
       </Grid>
     </>
   );
 };
+
 export default function ZipCodes() {
   return (
     <ThemeProvider theme={theme}>

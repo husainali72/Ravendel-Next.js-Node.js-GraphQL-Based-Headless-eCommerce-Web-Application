@@ -411,13 +411,14 @@ const SeetingSchema = new Schema(
         }
       },
     },
-    zipcode: [
-      {
-        zipcode: {
-          type: String
-        }
-      }
-    ]
+    zipcode: {
+      status: { type: Boolean, default: false },
+      zipcodes: [
+        {
+          zipcode: { type: String },
+        },
+      ],
+    },
   },
   {
     timestamps: true,
@@ -565,8 +566,8 @@ const defaultSettings = [
     notification: {
       one_signal: {
         app_id: "",
-        rest_api_key: ""
-      }
+        rest_api_key: "",
+      },
     },
     appearance: {
       home: {

@@ -69,72 +69,76 @@ const ImageSetting = () => {
         // dispatch(oneSignalUpdateAction(imageSetting));
     };
 
-    return (<>
-        <>
-            <Alerts />
-            {settingState.loading ? <Loading /> : null}
-            <Grid item md={6} sm={12} xs={12}>
-                <Box component="div">
-                    <CardBlocks title="Image Storage" nomargin>
-                        <RadioGroup
-                            value={imageSetting?.status}
-                            name="status"
-                            onChange={handleChange}
-                            column
-                        >
-                            <FormControlLabel
-                                value="localStorage"
-                                control={<StyledRadio />}
-                                label="Local Storage"
-                            />
+  return (
+    <>
+      <>
+        <Alerts />
+        {settingState.loading ? <Loading /> : null}
+        <Grid item md={6} sm={12} xs={12}>
+          <Box component="div">
+            <CardBlocks title="Image Storage" nomargin>
+              <RadioGroup
+                value={imageSetting?.status}
+                name="status"
+                onChange={handleChange}
+                column
+              >
+                <FormControlLabel
+                  value="localStorage"
+                  control={<StyledRadio />}
+                  label="Local Storage"
+                />
 
-                            <FormControlLabel
-                                value="s3"
-                                control={<StyledRadio />}
-                                label="S3"
-                            />
+                <FormControlLabel
+                  value="s3"
+                  control={<StyledRadio />}
+                  label="S3"
+                />
 
-                            {imageSetting?.status === 's3' ? <Grid item md={6} sm={12} xs={12}>
-                                <Box component="div">
-                                    <SettingTextInput
-                                        label="S3 ID"
-                                        value={imageSetting?.s3_id}
-                                        onSettingInputChange={(val) =>
-                                            setImageSetting({ ...imageSetting, s3_id: val })
-                                        }
-                                    />
-                                </Box>
-                                <Box component="div">
-                                    <SettingTextInput
-                                        label="S3 Key"
-                                        value={imageSetting?.s3_key}
-                                        onSettingInputChange={(val) =>
-                                            setImageSetting({ ...imageSetting, s3_key: val })
-                                        }
-                                        type="password"
-                                    />
-                                </Box>
-                            </Grid> : null}
-                        </RadioGroup>
-                        <Grid item xs={12}>
-                            <Button
-                                size="small"
-                                color="primary"
-                                variant="contained"
-                                onClick={updateImageSetting}
-                            >
-                                Save Change
-                            </Button>
-                        </Grid>
-                    </CardBlocks>
-                    <CardBlocks title="Media">
-                    <Media />
-                    </CardBlocks>
-                </Box>
-
-
-            </Grid>
-        </>
-    </>)
-}
-export default ImageSetting
+                {imageSetting?.status === "s3" ? (
+                  <Grid item md={6} sm={12} xs={12}>
+                    <Box component="div">
+                      <SettingTextInput
+                        label="S3 ID"
+                        value={imageSetting?.s3_id}
+                        onSettingInputChange={(val) =>
+                          setImageSetting({ ...imageSetting, s3_id: val })
+                        }
+                      />
+                    </Box>
+                    <Box component="div">
+                      <SettingTextInput
+                        label="S3 Key"
+                        value={imageSetting?.s3_key}
+                        onSettingInputChange={(val) =>
+                          setImageSetting({ ...imageSetting, s3_key: val })
+                        }
+                        type="password"
+                      />
+                    </Box>
+                  </Grid>
+                ) : null}
+              </RadioGroup>
+              <Grid item xs={12}>
+                <Button
+                  size="small"
+                  color="primary"
+                  variant="contained"
+                  onClick={updateImageSetting}
+                >
+                  Save Change
+                </Button>
+              </Grid>
+            </CardBlocks>
+          </Box>
+        </Grid>
+        <Grid item md={12} sm={12} xs={12} mt={2}>
+          <CardBlocks title="Media" nomargin mt={2}>
+            <Media />
+          </CardBlocks>
+        </Grid>
+      </>
+    </>
+  );
+};
+export default ImageSetting;
