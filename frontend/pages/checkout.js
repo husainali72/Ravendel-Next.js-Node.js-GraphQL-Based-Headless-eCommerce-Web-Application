@@ -106,7 +106,7 @@ export const CheckOut = () => {
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
   const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
   const [currency, setCurrency] = useState("$");
-  const [ZipMessage, setZipMessage] = useState("");
+  const [zipMessage, setZipMessage] = useState("");
   const [couponCartDetail, setCouponCardDetail] = useState({});
   const settings = useSelector((state) => state.setting);
   const [currencyOption, setCurrencyOption] = useState({});
@@ -335,14 +335,12 @@ export const CheckOut = () => {
   } = useForm({ mode: "onSubmit" });
   const onSubmit = (data) => {
     const billingAddressType = !get(billingDetails, `billing.addressType`);
+    let isZipCodeValidation = zipMessage?.status
+      ? zipMessage?.zipSuccess
+      : true;
     const shippingAddressType =
       shippingAdd && !get(billingDetails, `shipping.addressType`);
-    if (
-      !billingAddressType &&
-      !shippingAddressType &&
-      ZipMessage &&
-      ZipMessage?.zipSuccess
-    ) {
+    if (!billingAddressType && !shippingAddressType && isZipCodeValidation) {
       let isAddressAlready = get(billingDetails, "billing.id") ? true : false;
       if (!isAddressAlready) {
         addNewAddress();
@@ -365,13 +363,8 @@ export const CheckOut = () => {
           message: `Address Type is required.`,
         });
       }
-      if (
-        !isAddNewAddressForm &&
-        !shippingAdd &&
-        ZipMessage &&
-        ZipMessage?.zipSuccess
-      ) {
-        notify(ZipMessage?.zipMessage, ZipMessage?.zipSuccess);
+      if (!isAddNewAddressForm && !shippingAdd && isZipCodeValidation) {
+        notify(zipMessage?.zipMessage, zipMessage?.zipSuccess);
       }
     }
   };
@@ -461,22 +454,37 @@ export const CheckOut = () => {
 
   const checkCode = async (code) => {
     try {
-      let variable = { zipcode: code.toString() };
+      console.log(
+        settings,
+        'get(settings, "zipcode.status")',
+        get(settings, "setting.zipcode.status")
+      );
+      if (get(settings, "setting.zipcode.status")) {
+        let variable = { zipcode: code.toString() };
 
-      if (code) {
-        const { data: result } = await queryWithoutToken(
-          CHECK_ZIPCODE,
-          variable
-        );
-        // notify(
-        //   get(result, "checkZipcode.message"),
-        //   get(result, "checkZipcode.success")
-        // );
+        if (code) {
+          const { data: result } = await queryWithoutToken(
+            CHECK_ZIPCODE,
+            variable
+          );
+          // notify(
+          //   get(result, "checkZipcode.message"),
+          //   get(result, "checkZipcode.success")
+          // );
+          setZipMessage({
+            ...zipMessage,
+            shipping: shippingAdd,
+            zipMessage: get(result, "checkZipcode.message"),
+            zipSuccess: get(result, "checkZipcode.success"),
+            status: true,
+          });
+        }
+      } else {
         setZipMessage({
-          ...ZipMessage,
-          shipping: shippingAdd,
-          zipMessage: get(result, "checkZipcode.message"),
-          zipSuccess: get(result, "checkZipcode.success"),
+          zipMessage: "",
+          zipSuccess: false,
+          ...zipMessage,
+          status: false,
         });
       }
     } catch (e) {}
@@ -572,7 +580,7 @@ export const CheckOut = () => {
       savedShippingInfo = shippingInfo;
       setShippingInfo({ ...billingInfo, ...shippingObject });
       setZipMessage({
-        ...ZipMessage,
+        ...zipMessage,
         zipMessage: "",
         zipSuccess: false,
       });
@@ -835,7 +843,7 @@ export const CheckOut = () => {
     });
     if (!shippingAdd) {
       setZipMessage({
-        ...ZipMessage,
+        ...zipMessage,
         zipMessage: "",
         zipSuccess: false,
       });
@@ -866,7 +874,7 @@ export const CheckOut = () => {
                         toggleAddNewAddressForm={toggleAddNewAddressForm}
                         setBillingInfo={setBillingInfo}
                         SelectAddressBook={SelectAddressBook}
-                        ZipMessage={ZipMessage}
+                        ZipMessage={zipMessage}
                         billingInfo={billingInfo}
                         shippingInfo={shippingInfo}
                         shippingAdd={shippingAdd}
@@ -883,7 +891,7 @@ export const CheckOut = () => {
                           checkCode={checkCode}
                           setZipMessage={setZipMessage}
                           control={control}
-                          ZipMessage={ZipMessage}
+                          ZipMessage={zipMessage}
                           handleZipCode={handleZipCode}
                           billingInfo={billingInfo}
                           shippingInfo={shippingInfo}
@@ -900,10 +908,13 @@ export const CheckOut = () => {
                           isAddNewAddressForm={isAddNewAddressForm}
                           addressList={addressList}
                         />
+                        {console.log(zipMessage)}
                         <button
                           type="submit"
                           className="btn btn-success primary-btn-color checkout-continue-btn"
-                          disabled={!ZipMessage?.zipSuccess}
+                          disabled={
+                            zipMessage?.status ? !zipMessage?.zipSuccess : false
+                          }
                         >
                           NEXT
                         </button>
@@ -1043,7 +1054,7 @@ export const CheckOut = () => {
                         control={control}
                         setZipMessage={setZipMessage}
                         checkCode={checkCode}
-                        ZipMessage={ZipMessage}
+                        ZipMessage={zipMessage}
                         handleZipCode={handleZipCode}
                         billingInfo={billingInfo}
                         shippingInfo={shippingInfo}
@@ -1086,8 +1097,7 @@ export const CheckOut = () => {
           </Container>
         ) : (
           <Container className="empty-checkout-page">
-            {
-              !pageLoader &&
+            {!pageLoader && (
               <>
                 <div className="checkout-unauthorised-container">
                   <h3>Please Login First</h3>
@@ -1103,7 +1113,7 @@ export const CheckOut = () => {
                   </Link>
                 </div>
               </>
-            }
+            )}
           </Container>
         )}
       </section>

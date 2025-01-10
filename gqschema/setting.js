@@ -11,20 +11,28 @@ module.exports = `
     notification: Notification
     imageStorage: ImageStorage
     appearance: Appearance
-    zipcode: [Zipcode]
+    zipcode: ZipcodeSetting
     createdAt: Date
     updatedAt: Date
   }
 
+
   type dateformat {
     id: String
-    value: String
+    value: String 
   }
+  
+  type ZipcodeSetting {
+    zipcodes: [Zipcode]
+    status: Boolean
+  }
+
+
   type ImageStorage {
     status: String
     s3_id: String
     s3_key: String
-  }
+}
 
   type General {
     date_format: String
@@ -395,6 +403,7 @@ module.exports = `
       sandbox_publishable_key: String
       live_publishable_key: String
     ): Setting
+    updateZipCodeStatus( status: Boolean! ): Setting
     updatePaymentPaypal(
       enable: Boolean
       title: String

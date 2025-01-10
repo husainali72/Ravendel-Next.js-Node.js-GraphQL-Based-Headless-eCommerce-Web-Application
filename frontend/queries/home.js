@@ -91,6 +91,9 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
       imageStorage {
         status
       }
+      zipcode {
+        status
+      }
       appearance {
         home {
           slider {

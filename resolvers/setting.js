@@ -1,6 +1,6 @@
 const Setting = require("../models/Setting");
-const Zipcode = require('../models/Zipcode')
-const Categories = require("../models/ProductCat")
+const Zipcode = require("../models/Zipcode");
+const Categories = require("../models/ProductCat");
 const {
   isEmpty,
   putError,
@@ -9,14 +9,15 @@ const {
   imageUnlink,
   checkToken,
   getdate,
-  addZipcodes
+  addZipcodes,
+  MESSAGE_RESPONSE,
 } = require("../config/helpers");
 //const setting = require("../validations/setting");
 //const sanitizeHtml = require("sanitize-html");
 const { checkAwsFolder } = require("../config/aws");
 const fs = require("fs");
 
-var sdir = './assets/images/setting';
+var sdir = "./assets/images/setting";
 // var ldir = './assets/images/setting/large';
 // var mdir = './assets/images/setting/medium';
 // var tdir = './assets/images/setting/thumbnail';
@@ -72,13 +73,15 @@ module.exports = {
   Setting: {
     zipcode: async (root, args) => {
       try {
-        const zipcodes = await Zipcode.find()
-        if (zipcodes) return zipcodes
+        const zipcodes = await Zipcode.find();
+        const setting = await Setting.find();
+        if (zipcodes)
+          return { status: setting[0].zipcode.status, zipcodes: zipcodes };
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
+    },
   },
   Mutation: {
     updateGeneral: async (root, args, { id }) => {
@@ -377,6 +380,30 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+
+    updateZipCodeStatus: async (root, args, context) => {
+      try {
+        // Find the settings document
+        const setting = await Setting.findOne({});
+        if (!setting) {
+          throw new Error("Settings not found.");
+        }
+
+        // Update the status field in the zipcode object
+        setting.zipcode.status = args.status;
+
+        // Save the changes
+        await setting.save();
+
+        return MESSAGE_RESPONSE("UpdateSuccess", "Zipcode", true);
+      } catch (error) {
+        console.error("Error updating ZIP code status:", error);
+        throw new Error(
+          error.custom_message || "Failed to update ZIP code status."
+        );
+      }
+    },
+
     updateAppearanceHome: async (root, args, { id }) => {
       checkToken(id);
       try {

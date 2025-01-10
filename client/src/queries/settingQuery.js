@@ -189,8 +189,11 @@ const SETTING_TILE_DATA = gql`
       s3_key
     }
     zipcode {
-      id
-      zipcode
+      status
+      zipcodes {
+        id
+        zipcode
+      }
     }
     createdAt
     updatedAt
@@ -589,13 +592,20 @@ const UPDATE_ZIPCODE = gql`
   }
 `;
 const UPLOAD_ZIPCODE_FILE = gql`
-  mutation ($zipcode_file: Upload) 
-  {
+  mutation ($zipcode_file: Upload) {
     addZipCodeUsingFile(zipcode_file: $zipcode_file) {
       message
       success
     }
   }
+`;
+const UPDATE_ZIP_STATUS = gql`
+  mutation ($status: Boolean!) {
+    updateZipCodeStatus(status: $status) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
 `;
 
 const DELETE_ZIPCODE = gql`
@@ -659,6 +669,7 @@ export {
   GET_ZIPCODE,
   ADD_ZIPCODE,
   UPDATE_ZIPCODE,
+  UPDATE_ZIP_STATUS,
   DELETE_ZIPCODE,
   UPDATE_IMAGE_STORAGE,
   UPLOAD_ZIPCODE_FILE,
