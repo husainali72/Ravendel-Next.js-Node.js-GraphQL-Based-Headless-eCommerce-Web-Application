@@ -156,6 +156,7 @@ module.exports = `
     cart(id: ID!): Cart
     calculateCart(userId: ID, cartItems: [calculateCartProducts]): Cart
     cartAdditionalDetails(productIds: [ID]): customArray
+    mostBoughtProducts: customArray
     #calculateCart(cartItems: [calculateCartProducts]): calculatedCart
     #calculateCoupon(couponCode: String,cartItem: [couponCartProducts], totalShipping : String
       #totalTax : String,grandTotal:String,cartTotal:String): calculateCoupon

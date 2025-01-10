@@ -28,6 +28,7 @@ import notify from "../utills/notifyToast";
 import { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
 import EmptyCart from "../components/shoppage/emptyCartpage";
+import AdditionalCartDetail from "../components/cardcomponent/additionalCartDetail";
 const YourCard = () => {
   const session = useSession();
   const cart = useSelector((state) => state.cart);
@@ -242,8 +243,10 @@ const YourCard = () => {
                   />
                 </div>
               </div>
-            ) : (
-             <EmptyCart/>
+            ) : (<>
+              <EmptyCart />
+              <AdditionalCartDetail />
+              </>
             )}
           </Container>
         </section>

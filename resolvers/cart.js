@@ -5,18 +5,23 @@ const Coupon = require("../models/Coupon");
 const Shipping = require("../models/Shipping");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const { GET_SINGLE_FUNC, GET_ALL_FUNC } = require("../config/api_functions");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const {
   putError,
   checkError,
   checkToken,
   MESSAGE_RESPONSE,
   againCalculateCart,
-  _validate, getdate, addCart, calculateCart, calculateCoupon,
+  _validate,
+  getdate,
+  addCart,
+  calculateCart,
+  calculateCoupon,
   toObjectID,
-  getBoughtTogetherProducts
+  getBoughtTogetherProducts,
 } = require("../config/helpers");
 const validate = require("../validations/cart");
+const Order = require("../models/Order");
 
 module.exports = {
   Query: {
@@ -62,7 +67,49 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-
+    mostBoughtProducts: async (root, args, {}) => {
+      try {
+        // MongoDB aggregation to get the top 10 most bought products
+        const topProducts = await Order.aggregate([
+          { $unwind: "$products" }, // Unwind the products array in each order
+          {
+            $group: {
+              _id: "$products.productId", // Group by productId
+              totalQuantity: { $sum: "$products.quantity" }, // Sum the quantities
+            },
+          },
+          { $sort: { totalQuantity: -1 } }, // Sort by total quantity in descending order
+          { $limit: 10 }, // Limit to top 10 products
+        ]);
+    
+        // Extract product IDs from the aggregated results
+        const productIds = topProducts.map((product) => product._id);
+    
+        // Fetch product details from the Product table
+        const products = await Product.find({ _id: { $in: productIds } });
+    
+        // Map aggregated data with product details
+        const mostBoughtProducts = topProducts.map((product) => {
+          const productDetails = products.find(
+            (p) => p._id.toString() === product._id.toString()
+          );
+          return {
+            ...productDetails.toObject(),
+            totalQuantity: product.totalQuantity,
+          };
+        });
+    
+        return {
+          title: "Most Bought Products",
+          products: mostBoughtProducts,
+        };
+      } catch (error) {
+        // Handle errors
+        const handledError = checkError(error);
+        throw new Error(handledError.custom_message);
+      }
+    },
+    
 
     calculateCoupon: async (root, args, { id }) => {
       try {
@@ -121,7 +168,7 @@ module.exports = {
           }
         }
       });
-
+    
       return response || [];
     },
     // calculateCart: async (root, args, { id }) => {

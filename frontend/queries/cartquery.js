@@ -187,3 +187,8 @@ export const CART_ADDITIONAL_DETAIL = gql`
     cartAdditionalDetails(productIds: $productIds)
   }
 `;
+export const MOST_BOUGHT_PRODUCTS = gql`
+  query Query {
+    mostBoughtProducts 
+  }
+`;
